@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* Add to global CSS */
-@font-face {
+/* @font-face {
   font-family: 'Akira Expanded';
   src: url('/fonts/Akira.woff2') format('woff2');
-}
+} */
 
 body {
   @apply bg-black text-white;
