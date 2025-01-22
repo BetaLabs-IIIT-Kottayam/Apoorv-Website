@@ -52,7 +52,7 @@ const Home = () => {
             src={gate} 
             alt="Torii Gate" 
             className="w-full h-full object-cover"
-            style={{ filter: "grayscale(60%) brightness(120%)" }}
+            style={{ filter: "grayscale(80%) brightness(120%)" }}
           />
         </div>
         <CherryBlossom />
