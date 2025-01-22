@@ -4,6 +4,8 @@ import Events from "./pages/Events";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
 import Developers from "./pages/Developers";
+import Notfound from "./pages/Notfound";
+// import Loader from "./components/Loader";
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/team" element={<Team />} />
         <Route path="/developers" element={<Developers />} />
+        <Route path="/*" element={<Notfound />} />
       </Routes>
     </Router>
   );

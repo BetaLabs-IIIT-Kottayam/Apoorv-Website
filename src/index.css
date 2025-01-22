@@ -84,3 +84,16 @@ body {
   display: flex;
   width: fit-content;
 }
+
+@keyframes fade {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-fade {
+  animation: fade 1.5s infinite ease-in-out; 
+}
