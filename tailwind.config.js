@@ -8,6 +8,7 @@ module.exports = {
       fontFamily: {
         shippori: ["Shippori Mincho", "serif"],
         noto: ["Noto Sans JP", "sans-serif"],
+        gang: ["Gang of Three", "sans-serif"],        
       },
       colors: {
         primary: "#B22222", // Red

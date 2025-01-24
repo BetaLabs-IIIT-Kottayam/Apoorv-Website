@@ -9,7 +9,7 @@ const Team = () => {
 
   return (
     <div className="min-h-screen bg-black py-24 px-8">
-      <h2 className="font-akira text-5xl text-white mb-24 text-center">
+      <h2 className="font-gang text-5xl text-white mb-24 text-center">
         THE<span className="text-red-500">.</span>CLAN
       </h2>
 
@@ -28,10 +28,10 @@ const Team = () => {
                   opacity-80 group-hover:scale-110 transition-transform duration-500" />
               </div>
               
-              <h3 className="font-shippori text-2xl text-white mb-2">
+              <h3 className="font-gang text-2xl text-white mb-2">
                 {member.name}
               </h3>
-              <p className="font-inter text-red-500">{member.role}</p>
+              <p className="font-gang text-red-500">{member.role}</p>
               
               <div className="mt-6 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
             </div>

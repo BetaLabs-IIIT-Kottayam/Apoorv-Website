@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 /* Add to global CSS */
-/* @font-face {
-  font-family: 'Akira Expanded';
-  src: url('/fonts/Akira.woff2') format('woff2');
-} */
+
+@font-face {
+  font-family: 'Gang of Three';
+  src: url('/src/assets/go3v2.ttf') format('truetype');
+}
 
 body {
   @apply bg-black text-white;

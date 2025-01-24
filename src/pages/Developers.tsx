@@ -10,7 +10,7 @@ const developers = [
 const Developers = () => {
   return (
     <div className="bg-black text-white min-h-screen p-8">
-      <h1 className="text-6xl font-shippori text-primary text-center mb-8">
+      <h1 className="text-6xl font-gang text-primary text-center mb-8">
         Developers
       </h1>
       <div className="flex flex-wrap justify-center gap-8">
@@ -24,15 +24,15 @@ const Developers = () => {
             {/* Add developer photo here */}
             {/* Example: <img src="/dev1.jpg" alt={dev.name} className="w-24 h-24 rounded-full object-cover" /> */}
             <div className="w-24 h-24 bg-gradient-to-r from-accent to-gray-800 rounded-full flex items-center justify-center">
-              <p className="text-white font-shippori text-center">
+              <p className="text-white font-gang text-center">
                 {dev.name.split(" ")[0][0]}
                 {/* {dev.name.split(" ")[1][0]} */}
               </p>
             </div>
-            <h2 className="text-lg font-shippori text-white mt-2">
+            <h2 className="text-lg font-gang text-white mt-2">
               {dev.name}
             </h2>
-            <p className="text-sm text-gray-300 font-noto">{dev.role}</p>
+            <p className="text-sm text-gray-300 font-gang">{dev.role}</p>
           </motion.div>
         ))}
       </div>

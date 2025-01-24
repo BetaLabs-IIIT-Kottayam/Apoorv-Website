@@ -18,7 +18,8 @@ const Home = () => {
     { jp: 'プ', en: 'P' },
     { jp: 'ー', en: 'O' },
     { jp: 'ル', en: 'O' },
-    { jp: 'ヴ', en: 'RV' }
+    { jp: 'ヴ', en: 'R' },
+    { jp: ' ', en: 'V' },
   ];
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Home = () => {
     }, 202.5);
 
     return () => clearInterval(timer);
-  }, [typingState]);
+  }, [typingState, titleMap.length]);
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
@@ -80,7 +81,7 @@ const Home = () => {
                         {index <= typingState.currentIndex && (
                           <motion.span
                             key={`char-${index}`}
-                            className="font-shippori text-5xl md:text-6xl text-white"
+                            className="font-gang text-5xl md:text-6xl text-white"
                           >
                             {typingState.showEnglish ? char.en : char.jp}
                           </motion.span>
@@ -92,7 +93,7 @@ const Home = () => {
                     <motion.span
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="font-akira text-3xl md:text-4xl text-red-500"
+                      className="font-gang text-5xl md:text-4xl text-red-500"
                     >
                       2025
                     </motion.span>
@@ -100,17 +101,17 @@ const Home = () => {
                 </div>
 
                 {/* Japanese Subtitle */}
-                <AnimatePresence>
+                {/* <AnimatePresence>
                   {typingState.showJapaneseSubtitle && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="font-shippori text-2xl md:text-3xl text-gray-300"
+                      className="font-gang text-2xl md:text-3xl text-gray-300"
                     >
                       {titleMap.map(char => char.jp).join('')} 2025
                     </motion.div>
                   )}
-                </AnimatePresence>
+                </AnimatePresence> */}
               </div>
             </div>
 
@@ -121,16 +122,18 @@ const Home = () => {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-inter text-lg md:text-xl text-gray-400 mb-16"
+              className="font-gang text-lg md:text-xl text-gray-400 mb-16"
             >
-              Where Technology Meets the Way of the Samurai
+              We are a global community of warriors, craftsmen, and visionaries. 
+              Our mission is to preserve ancient traditions and forge new legacies. 
+              Join us in the quest to unlock the secrets of the future.
             </motion.p>
 
             {/* CTA Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-red-500 text-white font-inter px-8 py-4 rounded-lg text-lg shadow-lg hover:shadow-red-500/30 transition-all"
+              className="bg-red-500 text-white font-gang px-8 py-4 rounded-lg text-lg shadow-lg hover:shadow-red-500/30 transition-all"
             >
               Embrace the Challenge
             </motion.button>
@@ -148,11 +151,11 @@ const Home = () => {
             <div className="animate-marquee whitespace-nowrap flex items-center">
               {[...Array(8)].map((_, i) => (
                 <span key={i} className="flex items-center mx-8">
-                  <span className="text-red-500 font-akira mx-2">⚔</span>
-                  <span className="text-white font-inter">
+                  <span className="text-red-500 font-gang mx-2">⚔</span>
+                  <span className="text-white font-gang">
                     CRAFTED BY APOORV CORE TEAM 2025 - 侍 CODE - 
                   </span>
-                  <span className="text-red-500 font-akira mx-2">⚔</span>
+                  <span className="text-red-500 font-gang mx-2">⚔</span>
                 </span>
               ))}
             </div>
@@ -161,11 +164,11 @@ const Home = () => {
             <div className="animate-marquee absolute top-0 whitespace-nowrap flex items-center">
               {[...Array(8)].map((_, i) => (
                 <span key={i} className="flex items-center mx-8">
-                  <span className="text-red-500 font-akira mx-2">⚔</span>
-                  <span className="text-white font-inter">
+                  <span className="text-red-500 font-gang mx-2">⚔</span>
+                  <span className="text-white font-gang">
                     CRAFTED BY APOORV CORE TEAM 2025 - 侍 CODE - 
                   </span>
-                  <span className="text-red-500 font-akira mx-2">⚔</span>
+                  <span className="text-red-500 font-gang mx-2">⚔</span>
                 </span>
               ))}
             </div>

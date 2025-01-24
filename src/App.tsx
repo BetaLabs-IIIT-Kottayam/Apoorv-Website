@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import Home from "./pages/Home";
+import { Route, BrowserRouter as Router, Routes } from "react-router";
+import Developers from "./pages/Developers";
 import Events from "./pages/Events";
+import Home from "./pages/Home";
+import Notfound from "./pages/Notfound";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
-import Developers from "./pages/Developers";
-import Notfound from "./pages/Notfound";
 // import Loader from "./components/Loader";
 
 function App() {

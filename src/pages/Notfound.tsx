@@ -1,5 +1,5 @@
 // PageNotFound Component
-import React from 'react';
+import React from "react";
 
 const PageNotFound: React.FC = () => {
   return (

@@ -32,7 +32,7 @@ const Sponsors = () => {
             size: { value: 3 },
             move: { 
               enable: true, 
-              speed: 1,
+              speed: 2,
               direction: "bottom",
               straight: true
             },
@@ -49,11 +49,11 @@ const Sponsors = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-20"
         >
-          <h2 className="font-akira text-5xl text-white mb-6">
+          <h2 className="font-gang text-5xl text-white mb-6">
             HONORED <span className="text-red-500">ALLIES</span>
           </h2>
           <div className="h-1 bg-red-500 w-48 mx-auto mb-8" />
-          <p className="font-inter text-gray-400 max-w-2xl mx-auto">
+          <p className="font-gang text-gray-400 max-w-2xl mx-auto">
             Join the legacy of visionary organizations shaping the future of tech and culture. 
             Your support fuels innovation and preserves ancient traditions.
           </p>
@@ -69,14 +69,14 @@ const Sponsors = () => {
               viewport={{ once: true }}
               className="border-2 border-white/10 bg-black/30 backdrop-blur-lg p-8"
             >
-              <h3 className="font-shippori text-2xl text-red-500 mb-6">{tier.name}</h3>
+              <h3 className="font-gang text-2xl text-red-500 mb-6">{tier.name}</h3>
               
               <div className="space-y-6">
                 <div className="border-b border-white/10 pb-6">
-                  <h4 className="font-inter text-white mb-4">Benefits Include:</h4>
+                  <h4 className="font-gang text-white mb-4">Benefits Include:</h4>
                   <ul className="space-y-3">
                     {tier.benefits.map((benefit) => (
-                      <li key={benefit} className="flex items-center font-inter text-gray-400">
+                      <li key={benefit} className="flex items-center font-gang text-gray-400">
                         <div className="w-2 h-2 bg-red-500 mr-3" />
                         {benefit}
                       </li>
@@ -85,11 +85,11 @@ const Sponsors = () => {
                 </div>
 
                 <div>
-                  <h4 className="font-inter text-white mb-4">Current Sponsors:</h4>
+                  <h4 className="font-gang text-white mb-4">Current Sponsors:</h4>
                   <div className="flex flex-wrap gap-6">
                     {tier.sponsors.map((sponsor) => (
                       <div key={sponsor} className="py-2 px-4 border border-white/20 hover:border-red-500 transition-all">
-                        <p className="font-inter text-white">{sponsor}</p>
+                        <p className="font-gang text-white">{sponsor}</p>
                       </div>
                     ))}
                   </div>
@@ -105,12 +105,12 @@ const Sponsors = () => {
           whileInView={{ opacity: 1 }}
           className="text-center"
         >
-          <h3 className="font-shippori text-3xl text-white mb-12">Previous Champions</h3>
+          <h3 className="font-gang text-3xl text-white mb-12">Previous Champions</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="aspect-square bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center">
                 {/* Add sponsor logo */}
-                <span className="font-inter text-gray-400">Logo {i+1}</span>
+                <span className="font-gang text-gray-400">Logo {i+1}</span>
               </div>
             ))}
           </div>
@@ -123,13 +123,13 @@ const Sponsors = () => {
           className="text-center mt-24"
         >
           <div className="border-2 border-white/10 p-8 max-w-2xl mx-auto">
-            <h3 className="font-akira text-2xl text-white mb-6">BECOME A PATRON</h3>
-            <p className="font-inter text-gray-400 mb-8">
+            <h3 className="font-gang text-2xl text-white mb-6">BECOME A PATRON</h3>
+            <p className="font-gang text-gray-400 mb-8">
               Forge your legacy with us. Contact our sponsorship team to discuss partnership opportunities.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
-              className="bg-red-500 text-white font-inter px-8 py-3 rounded-none border-2 border-white"
+              className="bg-red-500 text-white font-gang px-8 py-3 rounded-none border-2 border-white"
             >
               INITIATE ALLIANCE
             </motion.button>
