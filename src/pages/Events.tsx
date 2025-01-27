@@ -1,7 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { CherryBlossom } from "../components/CherryBlossom";
-import Navbar from "../components/Navbar";
 import Ninja from "../assets/Ninja.png";
 
 const Events = () => {
@@ -138,9 +136,6 @@ const Events = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      <CherryBlossom />
-      <Navbar />
-
       <div className="relative z-10 max-w-7xl mx-auto px-8 py-24">
         <motion.h2
           initial={{ opacity: 0, scale: 0.8 }}

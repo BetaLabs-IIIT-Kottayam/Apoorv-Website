@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 
-// Dummy data for developers
 const developers = [
   { id: 1, name: "Ryu Hayabusa", role: "Frontend Developer" },
   { id: 2, name: "Kasumi", role: "Backend Developer" },
@@ -9,30 +8,40 @@ const developers = [
 
 const Developers = () => {
   return (
-    <div className="bg-black text-white min-h-screen p-8">
-      <h1 className="text-6xl font-gang text-primary text-center mb-8">
-        Developers
+    <div className="min-h-screen bg-black py-24 px-8">
+      <h1 className="font-gang text-5xl text-white mb-24 text-center">
+        DEV<span className="text-primary">.</span>ELOPERS
       </h1>
-      <div className="flex flex-wrap justify-center gap-8">
+
+      <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
         {developers.map((dev) => (
           <motion.div
             key={dev.id}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="w-64 bg-gradient-to-r from-primary to-secondary p-6 rounded-lg shadow-lg flex flex-col items-center"
+            whileHover={{ y: -20 }}
+            className="relative bg-black border-2 border-white/10 p-8"
           >
-            {/* Add developer photo here */}
-            {/* Example: <img src="/dev1.jpg" alt={dev.name} className="w-24 h-24 rounded-full object-cover" /> */}
-            <div className="w-24 h-24 bg-gradient-to-r from-accent to-gray-800 rounded-full flex items-center justify-center">
-              <p className="text-white font-gang text-center">
-                {dev.name.split(" ")[0][0]}
-                {/* {dev.name.split(" ")[1][0]} */}
-              </p>
+            <div className="absolute inset-0 bg-[url('/texture.png')] opacity-10" />
+            
+            <div className="relative z-10">
+              <div className="h-64 bg-white/10 mb-6 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('/dev-pattern.png')] bg-cover bg-center 
+                  opacity-80 group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center">
+                    <span className="text-4xl font-gang text-primary">
+                      {dev.name.split(" ")[0][0]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <h3 className="font-gang text-2xl text-white mb-2">
+                {dev.name.toUpperCase()}
+              </h3>
+              <p className="font-gang text-primary">{dev.role.toUpperCase()}</p>
+              
+              <div className="mt-6 h-[2px] bg-gradient-to-r from-primary to-transparent w-1/2" />
             </div>
-            <h2 className="text-lg font-gang text-white mt-2">
-              {dev.name}
-            </h2>
-            <p className="text-sm text-gray-300 font-gang">{dev.role}</p>
           </motion.div>
         ))}
       </div>

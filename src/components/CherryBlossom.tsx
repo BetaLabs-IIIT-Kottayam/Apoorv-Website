@@ -7,7 +7,8 @@ export const CherryBlossom = () => {
           className="absolute animate-blossom-fall"
           style={{
             left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 10}s`,
+            animationDelay: `${Math.random() * 15}s`,
+            animationDuration: `${Math.random() * 5 + 10}s`,
             opacity: Math.random() * 0.4 + 0.2,
             fontSize: `${Math.random() * 8 + 8}px`,
             filter: `blur(${Math.random() * 3}px)`,

@@ -38,24 +38,10 @@ body {
     caret 0.75s step-end infinite;
 }
 
-/* Cherry blossom fall animation */
-@keyframes fall {
-  0% {
-    transform: translateY(-100vh) rotate(0deg);
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-  }
-}
-
-.animate-fall {
-  animation: fall 10s linear infinite;
-}
-
 /* Add to CSS */
 @keyframes blossom-fall {
   0% {
-    transform: translateY(-100vh) rotate(0deg);
+    transform: translateY(-10vh) rotate(0deg);
   }
   100% {
     transform: translateY(100vh) rotate(360deg);
@@ -68,7 +54,7 @@ body {
 }
 
 .animate-blossom-fall {
-  animation: blossom-fall 15s linear infinite;
+  animation: blossom-fall linear infinite;
 }
 
 .animate-caret-blink {
