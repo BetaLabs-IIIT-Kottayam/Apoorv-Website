@@ -7,11 +7,13 @@ import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import AudioPlayer from "./components/AudioPlayer";
 // import Footer from "./components/Footer";
 
 function App() {
   return (
     <Router>
+      <AudioPlayer />
       <div>
         <Navbar />
         <main>
