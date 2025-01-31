@@ -13,7 +13,7 @@ export const Navbar = () => {
           侍 FEST
         </motion.h1>
         <div className="flex gap-8">
-          {['Home', 'Events', 'Sponsors', 'Team' , 'Developers'].map((item) => (
+          {['Home', 'Events', 'Sponsors', 'Merch', 'Team' , 'Developers'].map((item) => (
             <NavLink
               to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
               key={item}
