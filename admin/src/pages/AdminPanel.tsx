@@ -206,7 +206,7 @@ const AdminLayout = () => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {sizeData.map((entry, index) => (
+                {sizeData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -232,7 +232,7 @@ const AdminLayout = () => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {orderStatus.map((entry, index) => (
+                {orderStatus.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
