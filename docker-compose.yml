@@ -1,17 +1,15 @@
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres_db
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: apoorv@2025
-      POSTGRES_DB: apoorv
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: apoorv@2025
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mongodata:/data/db
 
   redis:
     image: redis:latest
@@ -25,19 +23,28 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: server
-    restart: always
     depends_on:
-      - postgres
+      - mongodb
       - redis
     ports:
       - "5000:5000"
     environment:
-      DATABASE_URL: "postgres://admin:apoorv%402025@postgres:5432/apoorv"
+      DATABASE_URL: "mongodb://admin:apoorv%402025@mongodb"
       JWT_SECRET: '<fFU0z}r0"ebh?)+!.?TollIG[+GHH[_q^{GwhUJ+9RAQcVjGh+X#:)`{Jl_Hsl'
+      PORT: 5000
+      ADMIN_USERNAME: "admin"
+      ADMIN_PASSWORD: "admin@apoorv"
       NODE_ENV: development
-    volumes:
-      - ./server:/app
-      - /app/node_modules
+
+    develop:
+      watch:
+        - path: ./server/package.json
+          action: rebuild
+        - path: ./server/pnpm-lock.yaml
+          action: rebuild
+        - path: ./server
+          target: /app
+          action: sync
 
   client:
     build:
@@ -72,4 +79,4 @@ services:
       - server
 
 volumes:
-  pgdata:
+  mongodata:
