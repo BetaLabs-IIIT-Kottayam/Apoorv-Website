@@ -2,11 +2,17 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import 'express-async-errors'
+// import './types/express/index.d.ts'
+
 import connectDB from "./utils/db"
+import { createAdmin } from "./controllers/authController"
+
 import errorHandlerMiddleware from "./middlewares/error-handler"
 import notFound from "./middlewares/not-found"
-import { createAdmin, login } from "./controllers/authController"
-import { authenticateUser } from "./middlewares/authMiddleware"
+
+
+import authRouter from "./routes/authRouter"
+import merchRouter from "./routes/merchRouter"
 
 
 dotenv.config()
@@ -17,19 +23,21 @@ app.use(express.json())
 app.use(cors())
 
 
-app.get("/api/v1", (req, res) => {
-  res.send("Welcome to the server")
-})
+// app.get("/api/v1", (req, res) => {
+//   res.send("Welcome to the server")
+// })
 
-app.use("/api/v1/public", (req, res) => {
-  res.send("Welcome to the public route")
-})
-app.use("/api/v1/private", authenticateUser(),  (req, res) => {
-  res.send("Welcome to the private route")
-})
-app.use("/api/v1/login", login)
+// app.use("/api/v1/public", (req, res) => {
+//   res.send("Welcome to the public route")
+// })
+// app.use("/api/v1/private", authenticateUser(),  (req, res) => {
+//   res.send("Welcome to the private route")
+// })
+app.use("/api/v1/login", authRouter)
+app.use("/api/v1/merch", merchRouter)
 // app.use("/api/v1/profile", profileRouter)
 // app.use("/api/v1/rides", rideRouter)
+
 
 
 
