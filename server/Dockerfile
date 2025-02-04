@@ -2,9 +2,11 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 RUN npm install -g pnpm && pnpm install
+
+RUN pnpm install
 
 COPY . .
 
@@ -12,4 +14,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["pnpm", "run", "dev"]
+CMD ["pnpm", "dev"]

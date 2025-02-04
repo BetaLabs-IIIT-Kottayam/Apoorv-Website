@@ -15,7 +15,7 @@ declare global {
     }
 }
 
-const authenticateUser = (role: string = 'user') => {
+const authenticateUser = (role?: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         const authHeader = req.headers.authorization
 
@@ -29,15 +29,16 @@ const authenticateUser = (role: string = 'user') => {
             const payload = JWT.verify(token, process.env.JWT_SECRET as string) as JwtPayload
             req.user = payload
 
-            if (role && payload.role !== role) {
-                throw new UnauthorizedError('Unauthorized role')
-            }
-
-            next()
         } catch (error) {
             throw new UnauthenticatedError('Authentication Invalid')
         }
+
+        if (role && req.user?.role !== role) {
+            throw new UnauthorizedError('Unauthorized role')
+        }
+        next()
     }
 }
+
 
 export { authenticateUser }
