@@ -22,7 +22,7 @@ const orderSchema: Schema = new Schema({
     items: [{
         merchId: { type: mongoose.Types.ObjectId, ref: 'Merch', required: true },
         size: { type: String, enum: ['S', 'M', 'L'], required: true },
-        // color: { type: String, required: true },
+        color: { type: String, required: true },
         // variant: { type: String, required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },

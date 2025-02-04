@@ -13,6 +13,7 @@ import notFound from "./middlewares/not-found"
 
 import authRouter from "./routes/authRouter"
 import merchRouter from "./routes/merchRouter"
+import orderRouter from "./routes/orderRouter"
 
 
 dotenv.config()
@@ -33,8 +34,9 @@ app.use(cors())
 // app.use("/api/v1/private", authenticateUser(),  (req, res) => {
 //   res.send("Welcome to the private route")
 // })
-app.use("/api/v1/login", authRouter)
+app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/merch", merchRouter)
+app.use("/api/v1/order", orderRouter)
 // app.use("/api/v1/profile", profileRouter)
 // app.use("/api/v1/rides", rideRouter)
 
