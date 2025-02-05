@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router"; // Use 'react-router-dom' instead of 'react-router'
+import { Route, BrowserRouter as Router, Routes } from "react-router";
 import AudioPlayer from "./components/AudioPlayer";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import Montana from "./components/StaggerAnimation";
 import Developers from "./pages/Developers";
 import Events from "./pages/Events";
-import Home from "./pages/Home";
 import Merch from "./pages/Merch";
 import Notfound from "./pages/Notfound";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
-import AdminDashboard from "./pages/AdminPanel";
-import Montana from "./components/StaggerAnimation";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +39,6 @@ function App() {
         {!isAdminRoute && showNav && <Navbar />} {/* Render Navbar correctly */}
         <main>
           <Routes>
-            <Route path="/admin/*" element={<AdminDashboard />} />
             <Route path="/" element={<Montana />} />
             <Route path="/events" element={<Events />} />
             <Route path="/sponsors" element={<Sponsors />} />
