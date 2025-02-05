@@ -103,9 +103,9 @@ const Developers = () => {
   }, []);
 
   const developers = [
-    { id: 1, name: "Ryu Hayabusa", role: "Frontend Developer" },
-    { id: 2, name: "Kasumi", role: "Backend Developer" },
-    { id: 3, name: "Ayane", role: "UI/UX Designer" },
+    { id: 1, name: "Shashank Upadhyay", role: "Dev" },
+    { id: 2, name: "Anshumohan Acharya", role: "Dev" },
+    { id: 3, name: "Akhilesh Nekar", role: "Dev" },
   ];
 
   return (

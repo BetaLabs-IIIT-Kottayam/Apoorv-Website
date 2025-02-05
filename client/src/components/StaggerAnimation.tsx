@@ -93,7 +93,7 @@ const Montana: React.FC = () => {
   const imageUrls = [
     "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=140&h=180&fit=crop",
     "https://plus.unsplash.com/premium_photo-1711987494491-e2d3add52ff2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8amFwYW5lc2UlMjBhcnR8ZW58MHx8MHx8fDA%3D",
-    "https://images.unsplash.com/photo-1445205170230-053b83016050?w=140&h=180&fit=crop",
+    "https://images.unsplash.com/photo-1615790469537-7c9d8e95c047?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFwYW5lc2UlMjBzYW11cmFpfGVufDB8fDB8fHww",
     "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=140&h=180&fit=crop",
     "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=140&h=180&fit=crop",
     "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=140&h=180&fit=crop",
