@@ -10,7 +10,6 @@ import Merch from "./pages/Merch";
 import Notfound from "./pages/Notfound";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
-import AdminDashboard from "./pages/AdminPanel";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +30,6 @@ function App() {
         {!isAdminRoute && <Navbar />}
         <main>
           <Routes>
-            <Route path="/admin/*" element={<AdminDashboard />} />
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
             <Route path="/sponsors" element={<Sponsors />} />

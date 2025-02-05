@@ -1,28 +1,40 @@
 import {
-    Check,
-    Clock,
-    Package,
-    Shirt,
-    ShoppingBag,
-    TrendingUp,
-    Users,
+  Check,
+  Clock,
+  Edit,
+  Package,
+  Plus,
+  Save,
+  Shirt,
+  ShoppingBag,
+  Trash,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
+import { fetchStatistics } from "../api";
+
+interface Statistics {
+  totalOrders: number;
+  totalRevenue: number;
+  itemsSold: number;
+  uniqueCustomers: number;
+}
 
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -52,9 +64,39 @@ const AdminLayout = () => {
       code: "11223",
     },
   ]);
+
+  // New state for CMS
+  const [merch, setMerch] = useState([
+    {
+      _id: 1,
+      name: "Warrior's Hoodie",
+      description: "Comfortable hoodie with warrior design",
+      price: 50,
+      sizes: [
+        { size: "S", stock: 10, available: true },
+        { size: "M", stock: 15, available: true },
+        { size: "L", stock: 12, available: true },
+      ],
+      isActive: true,
+    },
+  ]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [newMerch, setNewMerch] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    sizes: [
+      { size: "S", stock: 0, available: true },
+      { size: "M", stock: 0, available: true },
+      { size: "L", stock: 0, available: true },
+      { size: "XL", stock: 0, available: true },
+      { size: "2XL", stock: 0, available: true },
+    ],
+    isActive: true,
+  });
+
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // Sample data
   const salesData = [
     { day: "Mon", sales: 12, revenue: 600 },
     { day: "Tue", sales: 19, revenue: 950 },
@@ -71,6 +113,7 @@ const AdminLayout = () => {
   ];
 
   const sizeData = [
+    { name: "XS", value: 30 },
     { name: "S", value: 30 },
     { name: "M", value: 45 },
     { name: "L", value: 35 },
@@ -84,6 +127,59 @@ const AdminLayout = () => {
   ];
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+
+  // CMS functions
+  const handleAddMerch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMerch([...merch, { ...newMerch, _id: merch.length + 1 }]);
+    setNewMerch({
+      name: "",
+      description: "",
+      price: 0,
+      sizes: [
+        { size: "XS", stock: 0, available: true },
+        { size: "S", stock: 0, available: true },
+        { size: "M", stock: 0, available: true },
+        { size: "L", stock: 0, available: true },
+        { size: "XL", stock: 0, available: true },
+        { size: "2XL", stock: 0, available: true },
+      ],
+      isActive: true,
+    });
+  };
+
+  const handleDelete = (id: number) => {
+    setMerch(merch.filter((item) => item._id !== id));
+  };
+
+  const handleEdit = (id: number) => {
+    const itemToEdit = merch.find((item) => item._id === id);
+    setEditingId(id);
+    setNewMerch(itemToEdit);
+  };
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMerch(
+      merch.map((item) =>
+        item._id === editingId ? { ...newMerch, _id: editingId } : item
+      )
+    );
+    setEditingId(null);
+    setNewMerch({
+      name: "",
+      description: "",
+      price: 0,
+      sizes: [
+        { size: "S", stock: 0, available: true },
+        { size: "M", stock: 0, available: true },
+        { size: "L", stock: 0, available: true },
+        { size: "XL", stock: 0, available: true },
+        { size: "2XL", stock: 0, available: true },
+      ],
+      isActive: true,
+    });
+  };
 
   const markAsDelivered = (orderId: number) => {
     setOrders(
@@ -101,9 +197,24 @@ const AdminLayout = () => {
     return status === "delivered" ? Check : Clock;
   };
 
-  const filteredOrders = orders.filter((order) =>
+  const filteredOrders = orders?.filter((order) =>
     statusFilter === "all" ? true : order.status === statusFilter
   );
+
+  const [stats, setStats] = useState<Statistics | null>(null);
+
+  useEffect(() => {
+    const getStats = async () => {
+      const data = await fetchStatistics();
+      setStats(data);
+    };
+
+    getStats();
+  }, []);
+
+  if (!stats) {
+    return <div>Loading...</div>;  // Loading state
+  }
 
   const AnalyticsTab = () => (
     <>
@@ -112,31 +223,31 @@ const AdminLayout = () => {
         {[
           {
             title: "Total Orders",
-            value: "150",
+            value: stats.totalOrders,
             icon: Package,
             color: "bg-blue-500",
           },
           {
             title: "Total Revenue",
-            value: "₹7,500",
+            value: `₹${stats.totalRevenue}`,
             icon: ShoppingBag,
             color: "bg-green-500",
           },
           {
             title: "Items Sold",
-            value: "155",
+            value: stats.itemsSold,
             icon: Shirt,
             color: "bg-purple-500",
           },
-          {
-            title: "Daily Average",
-            value: "₹1,250",
-            icon: TrendingUp,
-            color: "bg-yellow-500",
-          },
+          // {
+          //   title: "Daily Average",
+          //   value: "₹1,250",
+          //   icon: TrendingUp,
+          //   color: "bg-yellow-500",
+          // },
           {
             title: "Unique Customers",
-            value: "145",
+            value: stats.uniqueCustomers,
             icon: Users,
             color: "bg-red-500",
           },
@@ -323,6 +434,113 @@ const AdminLayout = () => {
     </div>
   );
 
+  // New CMS Tab
+  const MerchTab = () => (
+    <div className="space-y-6">
+      <div className="bg-white/5 rounded-lg border border-white/10 p-6">
+        <h2 className="text-xl font-bold text-white mb-4">
+          {editingId ? "Edit Merchandise" : "Add New Merchandise"}
+        </h2>
+        <form
+          onSubmit={editingId ? handleUpdate : handleAddMerch}
+          className="space-y-4"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="text"
+              placeholder="Name"
+              className="bg-white/10 text-white rounded p-2"
+              value={newMerch.name}
+              onChange={(e) =>
+                setNewMerch({ ...newMerch, name: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              className="bg-white/10 text-white rounded p-2"
+              value={newMerch.price}
+              onChange={(e) =>
+                setNewMerch({ ...newMerch, price: Number(e.target.value) })
+              }
+            />
+          </div>
+          <textarea
+            placeholder="Description"
+            className="w-full bg-white/10 text-white rounded p-2"
+            value={newMerch.description}
+            onChange={(e) =>
+              setNewMerch({ ...newMerch, description: e.target.value })
+            }
+          />
+          <div className="grid grid-cols-5 gap-4">
+            {newMerch.sizes.map((size, index) => (
+              <div key={size.size} className="space-y-2">
+                <label className="text-white">{size.size}</label>
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  className="w-full bg-white/10 text-white rounded p-2"
+                  value={size.stock}
+                  onChange={(e) => {
+                    const updatedSizes = [...newMerch.sizes];
+                    updatedSizes[index].stock = Number(e.target.value);
+                    setNewMerch({ ...newMerch, sizes: updatedSizes });
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            {editingId ? (
+              <Save className="w-4 h-4" />
+            ) : (
+              <Plus className="w-4 h-4" />
+            )}
+            {editingId ? "Update Merchandise" : "Add Merchandise"}
+          </button>
+        </form>
+      </div>
+
+      <div className="bg-white/5 rounded-lg border border-white/10 p-6">
+        <h2 className="text-xl font-bold text-white mb-4">
+          Manage Merchandise
+        </h2>
+        <div className="space-y-4">
+          {merch.map((item) => (
+            <div
+              key={item._id}
+              className="flex items-center justify-between p-4 bg-white/10 rounded"
+            >
+              <div>
+                <h3 className="text-white font-bold">{item.name}</h3>
+                <p className="text-gray-400">₹{item.price}</p>
+                <p className="text-gray-400 text-sm">{item.description}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(item._id)}
+                  className="p-2 bg-yellow-500 rounded"
+                >
+                  <Edit className="w-4 h-4 text-white" />
+                </button>
+                <button
+                  onClick={() => handleDelete(item._id)}
+                  className="p-2 bg-red-500 rounded"
+                >
+                  <Trash className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -331,11 +549,11 @@ const AdminLayout = () => {
             Apoorv Merchandise Dashboard
           </h1>
           <p className="text-gray-400 mt-2">
-            Real-time merchandise analytics and order management
+            Real-time merchandise analytics and management
           </p>
         </div>
 
-        {/* Tabs */}
+        {/* Updated Tabs */}
         <div className="flex gap-4 mb-8">
           <button
             className={`px-4 py-2 rounded-lg ${
@@ -357,10 +575,26 @@ const AdminLayout = () => {
           >
             Orders
           </button>
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              activeTab === "merchandise"
+                ? "bg-white/20 text-white"
+                : "bg-white/5 text-gray-400"
+            }`}
+            onClick={() => setActiveTab("merchandise")}
+          >
+            Manage Merchandise
+          </button>
         </div>
 
-        {/* Tab Content */}
-        {activeTab === "analytics" ? <AnalyticsTab /> : <OrdersTab />}
+        {/* Updated Tab Content */}
+        {activeTab === "analytics" ? (
+          <AnalyticsTab />
+        ) : activeTab === "orders" ? (
+          <OrdersTab />
+        ) : (
+          <MerchTab />
+        )}
       </div>
     </div>
   );

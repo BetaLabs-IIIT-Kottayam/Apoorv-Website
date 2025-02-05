@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const developers = [
-  { id: 1, name: "Ryu Hayabusa", role: "Frontend Developer" },
-  { id: 2, name: "Kasumi", role: "Backend Developer" },
-  { id: 3, name: "Ayane", role: "UI/UX Designer" },
+  { id: 1, name: "Shashank Upadhyay", role: "Frontend Developer" },
+  { id: 2, name: "Anshumohan Acharya", role: "Backend Developer" },
+  { id: 3, name: "Akhilesh Nekar", role: "UI/UX Designer" },
 ];
 
 const Developers = () => {

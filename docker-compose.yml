@@ -58,6 +58,7 @@ services:
       - VITE_API_URL=http://localhost:5000
     volumes:
       - ./client:/app
+      - /app/node_modules
     depends_on:
       - server
 
@@ -68,11 +69,12 @@ services:
     container_name: admin
     restart: always
     ports:
-      - "5174:5173"
+      - "5174:5174"
     environment:
       - VITE_API_URL=http://localhost:5000
     volumes:
       - ./admin:/app
+      - /app/node_modules
     depends_on:
       - server
 
