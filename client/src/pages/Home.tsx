@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { CherryBlossom } from "../components/CherryBlossom";
 import gate from "../assets/gate.png";
+import { Link } from "react-router";
 
 const Home = () => {
   const titleMap = [
@@ -70,13 +71,15 @@ const Home = () => {
             </motion.p>
 
             {/* CTA Button */}
+            <Link to="/events">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-red-500 text-white font-gang px-8 py-4 rounded-lg text-lg shadow-lg hover:shadow-red-500/30 transition-all"
-            >
+              >
               Embrace the Challenge
             </motion.button>
+              </Link>
           </div>
         </main>
 

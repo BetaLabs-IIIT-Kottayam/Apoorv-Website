@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 
-function Loader() {
+function Curtain() {
     const [showCurtain, setShowCurtain] = useState(true);
 
     useEffect(() => {
@@ -38,4 +38,4 @@ function Loader() {
 
 }
 
-export default Loader
+export default Curtain
