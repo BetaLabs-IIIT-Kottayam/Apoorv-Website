@@ -6,6 +6,7 @@ import 'express-async-errors'
 
 import connectDB from "./utils/db"
 import { createAdmin } from "./controllers/authController"
+import { startCleanupJob } from "./utils/orderCleanup"
 
 import errorHandlerMiddleware from "./middlewares/error-handler"
 import notFound from "./middlewares/not-found"
@@ -52,6 +53,7 @@ const start = async () => {
   try {
     await connectDB()
     await createAdmin()
+    startCleanupJob()
     app.listen(port, () => {
       console.log(`[server]: Server is running at http://localhost:${port}`)
     })
