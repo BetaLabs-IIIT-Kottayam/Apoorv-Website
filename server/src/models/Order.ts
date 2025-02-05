@@ -1,10 +1,19 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+// Buyer details interface
+interface IBuyerDetails {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+}
+
 interface IOrderItem {
     merchId: mongoose.Types.ObjectId;
     size: 'S' | 'M' | 'L';
     quantity: number;
     price: number;
+    color: string;
 }
 
 interface IOrder extends Document {
@@ -12,6 +21,11 @@ interface IOrder extends Document {
     totalAmount: number;
     secretCode: string;
     status: string;
+    razorpayOrderId: string;
+    razorpayPaymentId?: string;
+    paidAt?: Date;
+    expiredAt?: Date;
+    buyerDetails: IBuyerDetails;  // Added buyer details
 }
 
 const generateSecretCode = (): string => {
@@ -28,8 +42,48 @@ const orderSchema: Schema = new Schema({
         price: { type: Number, required: true },
     }],
     totalAmount: { type: Number, required: true },
-    secretCode: { type: String, default: generateSecretCode },
-    status: { type: String, default: 'Pending' },
+    secretCode: { type: String },
+    razorpayOrderId: {
+        type: String,
+        required: true,
+    },
+    razorpayPaymentId: {
+        type: String,
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'Paid', 'Expired', 'Delivered'],
+        default: 'Pending',
+    },
+    buyerDetails: {
+        firstName: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        lastName: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        email: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            match: [
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                'Please provide a valid email'
+            ]
+        },
+        phone: {
+            type: String,
+            required: true,
+            trim: true
+        }
+    },
+    paidAt: Date,
+    expiredAt: Date,
 }, { timestamps: true });
 
 const Order = mongoose.model<IOrder>('Order', orderSchema);

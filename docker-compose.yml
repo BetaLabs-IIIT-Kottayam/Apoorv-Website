@@ -34,6 +34,8 @@ services:
       PORT: 5000
       ADMIN_USERNAME: "admin"
       ADMIN_PASSWORD: "admin@apoorv"
+      RAZORPAY_KEY_ID: "rzp_test_p97D3qHDRCTNj3"
+      RAZORPAY_KEY_SECRET: "648srnhyHGOAlYIgzN7pcnIQ"
       NODE_ENV: development
 
     develop:

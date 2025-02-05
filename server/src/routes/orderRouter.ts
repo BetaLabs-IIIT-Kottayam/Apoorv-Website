@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { authenticateUser } from '../middlewares/authMiddleware';
-import { createOrder, getAllOrders, getOrderById, updateOrderStatus, verifyOrder } from '../controllers/orderController';
+import { createOrder, getAllOrders, getOrderById, updateOrderStatus, verifyPayment } from '../controllers/orderController';
 
 const router = express.Router();
 
@@ -15,6 +15,6 @@ router.route('/:id')
     .get(getOrderById)
     .patch(updateOrderStatus);
 
-router.post('/verify', authenticateUser(), verifyOrder);
+router.post('/verifyPayment', authenticateUser(), verifyPayment)
 
 export default router;
