@@ -3,16 +3,14 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm install
+RUN npm install -g pnpm && pnpm install
 
-# Copy source code
+RUN pnpm install
+
 COPY . .
 
-# Expose port
-EXPOSE 5173
+EXPOSE 5174
 
-# Start Vite dev server
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["pnpm", "dev"]
