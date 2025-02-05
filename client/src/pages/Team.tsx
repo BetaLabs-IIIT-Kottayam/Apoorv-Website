@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Loader from "../components/Loader"; // Make sure to import your Loader component
+import Loader from "../components/Loader"; 
+import BackgroundImage from "../assets/dragon2.png"; 
 
 const Team = () => {
   const [contentVisible, setContentVisible] = useState(false);
@@ -8,6 +9,9 @@ const Team = () => {
   const members = [
     { id: 1, name: "TAKESHI", role: "DAIMYO" },
     { id: 2, name: "AKIRA", role: "SOFTWARE SAMURAI" },
+    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
+    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
+    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
     { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
   ];
 
@@ -22,6 +26,43 @@ const Team = () => {
   return (
     <div className="min-h-screen bg-black py-24 px-8">
       <Loader />
+      {contentVisible && (
+        <div
+          className="fixed inset-0 bg-cover bg-no-repeat opacity-80"
+          style={{
+            backgroundImage: `url(${BackgroundImage})`,
+            backgroundSize: "50%",
+            backgroundPosition: "left center",
+            filter: "brightness(120%)",
+            zIndex: 0
+          }}
+        ></div>
+      )}
+       <style>
+        {`
+          @media (max-width: 1024px) {
+            div[style*="background-size: 50%"] {
+              background-size: 70%;
+              background-position: right center;
+            }
+          }
+          @media (max-width: 768px) {
+            div[style*="background-size: 50%"] {
+              background-size: cover !important;
+              background-position: center center !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
+          @media (max-width: 480px) {
+            div[style*="background-size: 10%"] {
+              background-size: 50%;
+              background-position: center center !important;
+              transform: scale(1.1);
+            }
+          }
+        `}
+      </style>
       {contentVisible && (
         <>
           <motion.h2

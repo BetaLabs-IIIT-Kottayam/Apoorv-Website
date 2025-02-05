@@ -47,7 +47,31 @@ const Sponsors = () => {
           }}
         ></div>
       )}
-      
+      <style>
+        {`
+          @media (max-width: 1024px) {
+            div[style*="background-size: 50%"] {
+              background-size: 70%;
+              background-position: right center;
+            }
+          }
+          @media (max-width: 768px) {
+            div[style*="background-size: 50%"] {
+              background-size: cover !important;
+              background-position: center center !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
+          @media (max-width: 480px) {
+            div[style*="background-size: 10%"] {
+              background-size: 50%;
+              background-position: center center !important;
+              transform: scale(1.1);
+            }
+          }
+        `}
+      </style>
       {contentVisible && (
         <Particles
           init={particlesInit}
