@@ -6,8 +6,8 @@ import { createOrder, getAllOrders, getOrderById, updateOrderStatus, verifyPayme
 const router = express.Router();
 
 router.route('/')
-    .all(authenticateUser())
     .post(createOrder)
+    .all(authenticateUser())
     .get(getAllOrders);
 
 router.route('/:id')
@@ -15,6 +15,6 @@ router.route('/:id')
     .get(getOrderById)
     .patch(updateOrderStatus);
 
-router.post('/verifyPayment', authenticateUser(), verifyPayment)
+router.post('/verifyPayment', verifyPayment)
 
 export default router;

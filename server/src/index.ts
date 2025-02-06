@@ -5,8 +5,8 @@ import 'express-async-errors'
 // import './types/express/index.d.ts'
 
 import connectDB from "./utils/db"
-import { createAdmin } from "./controllers/authController"
-import { startCleanupJob } from "./utils/orderCleanup"
+import createAdmin from "./utils/createAdmin"
+import startCleanupJob from "./utils/orderCleanup"
 
 import errorHandlerMiddleware from "./middlewares/error-handler"
 import notFound from "./middlewares/not-found"
@@ -15,6 +15,7 @@ import notFound from "./middlewares/not-found"
 import authRouter from "./routes/authRouter"
 import merchRouter from "./routes/merchRouter"
 import orderRouter from "./routes/orderRouter"
+import dashboardRouter from "./routes/dashboardRouter"
 
 
 dotenv.config()
@@ -38,6 +39,7 @@ app.use(cors())
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/merch", merchRouter)
 app.use("/api/v1/order", orderRouter)
+app.use("/api/v1/dashboard", dashboardRouter)
 // app.use("/api/v1/profile", profileRouter)
 // app.use("/api/v1/rides", rideRouter)
 

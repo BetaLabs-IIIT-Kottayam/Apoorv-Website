@@ -1,5 +1,5 @@
+import { NextFunction, Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
-import { Request, Response, NextFunction, ErrorRequestHandler } from "express"
 
 interface CustomError extends Error {
   statusCode?: number,

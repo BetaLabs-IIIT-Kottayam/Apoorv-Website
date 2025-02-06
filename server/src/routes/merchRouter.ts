@@ -15,14 +15,14 @@ const router = express.Router();
 
 // Merch routes
 router.route('/')
+    .get(getAllMerch)
     .all(authenticateUser())
     .post(upload.array('files'), createMerch)
-    .get(getAllMerch);
 
 router.route('/:id')
-    .all(authenticateUser())
     .get(getMerchById)
+    .all(authenticateUser())
     .patch(upload.array('files'), updateMerch)
-    .delete(deleteMerch);
+    .delete(deleteMerch)
 
 export default router;
