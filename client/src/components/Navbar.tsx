@@ -35,7 +35,7 @@ export const Navbar: React.FC = () => {
         {/* Desktop Nav Links */}
         <div className="hidden lg:flex gap-8">
           {navItems.map((item) => (
-            <Link to={item === "Home" ? "/" : `/${item.toLowerCase()}`} key={item} className="relative group">
+            <Link to={item === "Home" ? "/home" : `/${item.toLowerCase()}`} key={item} className="relative group">
               <motion.div
                 whileHover={{ color: "#FF1A1A" }}
                 className="text-white font-gang cursor-pointer transition-colors duration-300"

@@ -68,7 +68,7 @@ const Events = () => {
       onClick={onClose}
     >
       <motion.div
-        className="relative w-[800px] h-[500px] 
+        className="relative w-full max-w-[800px] h-[500px] 
         bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] 
         rounded-t-[400px] rounded-b-2xl 
         border-8 border-red-900/30 
@@ -96,29 +96,29 @@ const Events = () => {
           <div className="absolute inset-2 border-4 border-dashed border-red-900/20 rounded-t-[380px] rounded-b-xl"></div>
           <div className="absolute inset-6 border-2 border-solid border-red-900/10 rounded-t-[360px] rounded-b-xl"></div>
         </div>
-
+  
         {/* Cute Ninja Cartoon */}
-        <img src={Ninja} alt="Ninja Cartoon" className="absolute bottom-6 w-42 h-32" />
-
+        <img src={Ninja} alt="Ninja Cartoon" className="absolute bottom-6 w-42 h-32 md:w-42 md:h-32" />
+  
         {/* Modal Content */}
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8 overflow-y-auto">
           <h2
-            className="text-6xl font-gang mb-6 text-red-500 font-bold 
+            className="text-4xl md:text-6xl font-gang mb-6 text-red-500 font-bold 
             drop-shadow-[0_0_10px_rgba(255,26,26,0.3)]
             bg-white/5 px-6 py-2 rounded-xl"
           >
             {event.title}
           </h2>
-          <div className="flex justify-center gap-8 mb-6 text-white">
-            <span className="font-gang text-xl text-red-400 bg-white/10 px-4 py-2 rounded-full">
+          <div className="flex justify-center gap-4 mb-6 text-white">
+            <span className="font-gang text-lg md:text-xl text-red-400 bg-white/10 px-4 py-2 rounded-full">
               {event.category}
             </span>
-            <span className="font-gang text-xl text-white/70 bg-white/10 px-4 py-2 rounded-full">
+            <span className="font-gang text-lg md:text-xl text-white/70 bg-white/10 px-4 py-2 rounded-full">
               {event.date}
             </span>
           </div>
           <p
-            className="font-gang text-2xl text-white/80 max-w-2xl mb-4 
+            className="font-gang text-lg md:text-2xl text-white/80 max-w-2xl mb-4 
             bg-white/5 px-6 py-4 rounded-xl"
           >
             {event.description}

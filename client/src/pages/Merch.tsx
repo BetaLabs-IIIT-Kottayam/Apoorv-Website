@@ -3,12 +3,36 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, X, Plus, Minus, Trash2 } from "lucide-react";
 import BackgroundImage from "../assets/dragon.png";
 import Loader from "../components/Loader";
+import { Link,useNavigate } from "react-router";
+import CheckoutForm from "../components/CheckoutForm";
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  sizes: string[];
+  colors: string[];
+  image: string;
+}
+
+interface CartItem extends Product {
+  size: string;
+  color: string;
+  quantity: number;
+}
 
 const Merch = () => {
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [contentVisible, setContentVisible] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
+  // const [selectedItem, setSelectedItem] = useState(null);
+  // const [cart, setCart] = useState([]);
+  // const [contentVisible, setContentVisible] = useState(false);
+  // const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [contentVisible, setContentVisible] = useState<boolean>(false);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -47,7 +71,29 @@ const Merch = () => {
     }
   ];
 
-  const addToCart = useCallback((product, size, color) => {
+  // const addToCart = useCallback((product, size, color) => {
+  //   const existingItemIndex = cart.findIndex(
+  //     item => item.id === product.id && item.size === size && item.color === color
+  //   );
+
+  //   if (existingItemIndex > -1) {
+  //     const updatedCart = [...cart];
+  //     updatedCart[existingItemIndex].quantity += 1;
+  //     setCart(updatedCart);
+  //   } else {
+  //     setCart([
+  //       ...cart,
+  //       {
+  //         ...product,
+  //         size,
+  //         color,
+  //         quantity: 1
+  //       }
+  //     ]);
+  //   }
+  //   setSelectedItem(null);
+  // }, [cart]);
+  const addToCart = useCallback((product: Product, size: string, color: string) => {
     const existingItemIndex = cart.findIndex(
       item => item.id === product.id && item.size === size && item.color === color
     );
@@ -82,7 +128,7 @@ const Merch = () => {
     setCart(updatedCart);
   }, [cart]);
 
-  const CartCheckout = () => (
+  const CartCheckout: React.FC = () => (
     <motion.div 
       initial={{ x: "100%" }}
       animate={{ x: 0 }}
@@ -149,6 +195,10 @@ const Merch = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               className="w-full bg-red-500 text-white py-3 rounded-lg"
+              onClick={() => {
+                setIsCartOpen(false);
+                setIsCheckoutOpen(true);
+              }}
             >
               Checkout
             </motion.button>
@@ -249,6 +299,7 @@ const Merch = () => {
             </div>
           </div>
         </motion.div>
+        
       </motion.div>
     );
   };
@@ -332,7 +383,7 @@ const Merch = () => {
             </motion.div>
           )}
 
-          <AnimatePresence>
+            <AnimatePresence>
             {selectedItem && (
               <ProductModal
                 product={selectedItem}
@@ -340,7 +391,14 @@ const Merch = () => {
               />
             )}
             {isCartOpen && <CartCheckout />}
-          </AnimatePresence>
+            {isCheckoutOpen && (
+              <CheckoutForm
+                cart={cart}
+                setCart={setCart}
+                setIsCartOpen={setIsCartOpen}
+              />
+            )}
+          </AnimatePresence>  
         </>
       )}
     </div>

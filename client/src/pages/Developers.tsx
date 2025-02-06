@@ -91,6 +91,7 @@ import { motion } from "framer-motion";
 import BackgroundImage from "../assets/samurai.png";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
+import akhileshImage from "../assets/akhilesh.jpg"
 
 const Developers = () => {
   const [contentVisible, setContentVisible] = useState(false);
@@ -103,9 +104,9 @@ const Developers = () => {
   }, []);
 
   const developers = [
-    { id: 1, name: "Shashank Upadhyay", role: "Dev" },
-    { id: 2, name: "Anshumohan Acharya", role: "Dev" },
-    { id: 3, name: "Akhilesh Nekar", role: "Dev" },
+    { id: 1, name: "Shashank Upadhyay", role: "Dev" , imageUri : ""},
+    { id: 2, name: "Anshumohan Acharya", role: "Dev" , imageUri : ""},
+    { id: 3, name: "Akhilesh Nekar", role: "Dev" ,imageUri : akhileshImage},
   ];
 
   return (
@@ -156,11 +157,12 @@ const Developers = () => {
                       opacity-80 group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-md">
+                      {/* <div className="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-md">
                         <span className="text-4xl font-gang text-primary">
                           {dev.name.split(" ")[0][0]}
                         </span>
-                      </div>
+                      </div> */}
+                      <img src={dev.imageUri}></img>
                     </div>
                   </div>
                   

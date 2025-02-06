@@ -10,6 +10,7 @@ import Merch from "./pages/Merch";
 import Notfound from "./pages/Notfound";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
+import Home from "./pages/Home";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +41,7 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Montana />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/events" element={<Events />} />
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/team" element={<Team />} />
