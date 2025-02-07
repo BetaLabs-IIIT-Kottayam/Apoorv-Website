@@ -27,14 +27,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { fetchStatistics } from "../api";
-
-interface Statistics {
-  totalOrders: number;
-  totalRevenue: number;
-  itemsSold: number;
-  uniqueCustomers: number;
-}
+import { axiosInstance } from "../api";
 
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -201,57 +194,119 @@ const AdminLayout = () => {
     statusFilter === "all" ? true : order.status === statusFilter
   );
 
-  const [stats, setStats] = useState<Statistics | null>(null);
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalRevenue: 0,
+    itemsSold: 0,
+    dailyAverage: 0,
+    uniqueCustomers: 0,
+  });
 
   useEffect(() => {
-    const getStats = async () => {
-      const data = await fetchStatistics();
-      setStats(data);
+    const fetchStats = async () => {
+      try {
+        const response = await axiosInstance.get("/order/stats");
+        console.log("Raw Response:", response); // Logs full response
+        console.log("Data:", response.data); // Logs extracted data
+        setStats(response.data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        if (error) {
+          console.error("Response Data:", error);
+        }
+      }
     };
+    fetchStats();
+  }, []);  
 
-    getStats();
-  }, []);
-
-  if (!stats) {
-    return <div>Loading...</div>;  // Loading state
-  }
+  const statCards = [
+    {
+      title: "Total Orders",
+      value: stats.totalOrders,
+      icon: Package,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Total Revenue",
+      value: `₹${stats.totalRevenue}`,
+      icon: ShoppingBag,
+      color: "bg-green-500",
+    },
+    {
+      title: "Items Sold",
+      value: stats.itemsSold,
+      icon: Shirt,
+      color: "bg-purple-500",
+    },
+    {
+      title: "Daily Average",
+      value: `₹${stats.dailyAverage.toFixed(2)}`,
+      icon: TrendingUp,
+      color: "bg-yellow-500",
+    },
+    {
+      title: "Unique Customers",
+      value: stats.uniqueCustomers,
+      icon: Users,
+      color: "bg-red-500",
+    },
+  ];
 
   const AnalyticsTab = () => (
     <>
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
         {[
           {
             title: "Total Orders",
-            value: stats.totalOrders,
+            value: "150",
             icon: Package,
             color: "bg-blue-500",
           },
           {
             title: "Total Revenue",
-            value: `₹${stats.totalRevenue}`,
+            value: "₹7,500",
             icon: ShoppingBag,
             color: "bg-green-500",
           },
           {
             title: "Items Sold",
-            value: stats.itemsSold,
+            value: "155",
             icon: Shirt,
             color: "bg-purple-500",
           },
-          // {
-          //   title: "Daily Average",
-          //   value: "₹1,250",
-          //   icon: TrendingUp,
-          //   color: "bg-yellow-500",
-          // },
+          {
+            title: "Daily Average",
+            value: "₹1,250",
+            icon: TrendingUp,
+            color: "bg-yellow-500",
+          },
           {
             title: "Unique Customers",
-            value: stats.uniqueCustomers,
+            value: "145",
             icon: Users,
             color: "bg-red-500",
           },
         ].map((stat, i) => (
+          <div
+            key={i}
+            className="bg-white/5 rounded-lg border border-white/10 p-6"
+          >
+            <div className="flex items-center">
+              <div className={`p-3 rounded-full ${stat.color}`}>
+                <stat.icon className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-gray-400 text-sm">{stat.title}</p>
+                <p className="text-white text-2xl font-bold">{stat.value}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div> */}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        {statCards.map((stat, i) => (
           <div
             key={i}
             className="bg-white/5 rounded-lg border border-white/10 p-6"
