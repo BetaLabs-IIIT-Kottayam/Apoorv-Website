@@ -36,6 +36,9 @@ services:
       ADMIN_PASSWORD: "admin@apoorv"
       RAZORPAY_KEY_ID: "rzp_test_p97D3qHDRCTNj3"
       RAZORPAY_KEY_SECRET: "648srnhyHGOAlYIgzN7pcnIQ"
+      SMTP_SERVICE: "gmail"
+      SMTP_USER: "user"
+      SMTP_PASS: "pass"
       NODE_ENV: development
 
     develop:
