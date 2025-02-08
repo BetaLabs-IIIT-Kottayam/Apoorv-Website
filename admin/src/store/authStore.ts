@@ -11,7 +11,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
 
   login: async (username, password) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/logout`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -32,7 +32,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   checkAuth: async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/me`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/me`, {
+      method: "GET",
       credentials: "include",
     });
     if (res.ok) {
