@@ -1,7 +1,7 @@
 import CustomAPIError from "./custom-api"
 import { StatusCodes } from "http-status-codes"
 
-export default class UnautherizedError extends CustomAPIError {
+export default class UnauthorizedError extends CustomAPIError {
   statusCode: number
 
   constructor(msg: string) {

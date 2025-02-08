@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/authStore";
 import {
   Check,
   Clock,
@@ -12,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { redirect } from "react-router";
 import {
   Bar,
   BarChart,
@@ -121,6 +123,17 @@ const AdminLayout = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
+  const user = useAuthStore((state) => state.user);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    checkAuth().then(() => {
+      if (!user) {
+        redirect("/login");
+      }
+    });
+  }, [user, checkAuth]);
+
   // CMS functions
   const handleAddMerch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -217,7 +230,7 @@ const AdminLayout = () => {
       }
     };
     fetchStats();
-  }, []);  
+  }, []);
 
   const statCards = [
     {
