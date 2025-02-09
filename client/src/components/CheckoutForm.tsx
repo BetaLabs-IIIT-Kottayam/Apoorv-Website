@@ -15,6 +15,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   setCart,
   setIsCheckoutOpen,
 }) => {
+
+  console.log(cart)
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -66,10 +68,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           },
           body: JSON.stringify({
             items: cart.map((item) => ({
-              merchId: item.id,
+              merchId: item._id,
               quantity: item.quantity,
-              color: "Black",
-              size: "M",
+              color: item.color,
+              size: item.size,
             })),
             buyerDetails: {
               firstName: formData.firstName,
@@ -102,30 +104,37 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       if (!res) {
         throw new Error("Razorpay SDK failed to load");
       }
-
-      const order = await createOrder();
+    
+      const orderResponse = await createOrder();
+      console.log("Order created:", orderResponse); // Add this log
+      console.log("Order Check:", orderResponse.order.razorpayOrderId)
+    
+      if (!orderResponse || !orderResponse.order.razorpayOrderId) { // Add this check
+        throw new Error("Invalid order response from server");
+      }
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: Math.round(totalAmount * 100),
         currency: "INR",
-        name: "Your Store Name",
+        name: "Apoorv",
         description: "Purchase from Merch Store",
-        order_id: order.id,
+        order_id: orderResponse.order.razorpayOrderId,
         handler: async (response: any) => {
+          console.log("Razorpay Response: ", response)
           try {
             const verificationResponse = await fetch(
               `${import.meta.env.VITE_API_URL}/api/v1/order/verifyPayment`,
               {
                 method: "POST",
                 headers: {
-                  "Content-Type": "application/json",
+                  "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_signature: response.razorpay_signature,
-                  order: order,
+                  order: response,
                 }),
               }
             );
@@ -147,6 +156,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           lastName: formData.lastName,
           email: formData.email,
           contact: formData.phone,
+        },
+        method: {
+          upi: true,  // Enable UPI
+          netbanking: true,
+          card: true,
+          wallet: true,
         },
         theme: {
           color: "#EF4444",

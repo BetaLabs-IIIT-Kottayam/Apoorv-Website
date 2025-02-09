@@ -14,9 +14,8 @@ export interface Product {
 }
 
 export interface CartItem extends Product {
-  id: string;
+  _id: string;
   name: string;
-  description: string;
   price: number;
   quantity: number;
   size: string;
@@ -89,20 +88,10 @@ const Merch = () => {
         return;
       }
 
-      // if (!validateProduct(product)) {
-      //   setError("Invalid product data");
-      //   return;
-      // }
-
-      // if (!product.sizes.includes(size) || !product.colors.includes(color)) {
-      //   setError("Invalid size or color selection");
-      //   return;
-      // }
-
       setCart((prevCart) => {
         const existingItemIndex = prevCart.findIndex(
           (item) =>
-            item.id === product.id
+            item.id === product.id && item.size === size && item.color === color
         );
 
         if (existingItemIndex > -1) {
@@ -206,10 +195,7 @@ const Merch = () => {
     >
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl text-white font-gang">Your Cart</h2>
-        <button 
-          onClick={() => setIsCartOpen(false)}
-          aria-label="Close cart"
-        >
+        <button onClick={() => setIsCartOpen(false)} aria-label="Close cart">
           <X className="text-gray-400 hover:text-white" />
         </button>
       </div>
@@ -320,10 +306,7 @@ const Merch = () => {
             <h2 className="font-gang text-xl md:text-3xl text-white">
               {product.name}
             </h2>
-            <button 
-              onClick={onClose}
-              aria-label="Close modal"
-            >
+            <button onClick={onClose} aria-label="Close modal">
               <X className="text-gray-400 hover:text-white" />
             </button>
           </div>
@@ -388,7 +371,9 @@ const Merch = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => addToCart(product, selectedSize, selectedColor)}
+                  onClick={() =>
+                    addToCart(product, selectedSize, selectedColor)
+                  }
                   className="bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center gap-2 text-xs md:text-base"
                 >
                   <ShoppingCart size={16} />
@@ -460,7 +445,7 @@ const Merch = () => {
                 {error}
               </div>
             )}
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {products.map((product) => (
                 <motion.div
@@ -471,7 +456,7 @@ const Merch = () => {
                   role="button"
                   tabIndex={0}
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       setSelectedItem(product);
                     }
                   }}
@@ -490,7 +475,10 @@ const Merch = () => {
                     <span className="text-white font-gang text-lg">
                       ${product.price}
                     </span>
-                    <ShoppingCart className="text-gray-400" aria-hidden="true" />
+                    <ShoppingCart
+                      className="text-gray-400"
+                      aria-hidden="true"
+                    />
                   </div>
                 </motion.div>
               ))}
@@ -507,7 +495,7 @@ const Merch = () => {
             >
               <ShoppingCart size={20} />
               <span className="font-gang text-xs md:text-base">
-                {cart.length} item{cart.length !== 1 ? 's' : ''}
+                {cart.length} item{cart.length !== 1 ? "s" : ""}
               </span>
             </motion.button>
           )}
