@@ -37,8 +37,12 @@ const createMerch = async (req: Request, res: Response) => {
 };
 
 const getAllMerch = async (req: Request, res: Response) => {
-    const merch = await Merch.find({}).select('-photos');
-    res.status(StatusCodes.OK).json({ merch, count: merch.length });
+    const merch = await Merch.find({});
+    const merchWithSinglePhoto = merch.map(item => ({
+        ...item.toObject(),
+        photos: item.photos.length > 0 ? [item.photos[0]] : []
+    }));
+    res.status(StatusCodes.OK).json({ merch: merchWithSinglePhoto, count: merchWithSinglePhoto.length });
 };
 
 const getMerchById = async (req: Request, res: Response) => {
