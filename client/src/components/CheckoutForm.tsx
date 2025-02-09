@@ -131,14 +131,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_signature: response.razorpay_signature,
-                  order: response,
-                }),
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpaySignature: response.razorpay_signature,
+                })
               }
             );
-
+            console.log("Verification response",verificationResponse)
             if (!verificationResponse.ok) {
               throw new Error("Payment verification failed");
             }

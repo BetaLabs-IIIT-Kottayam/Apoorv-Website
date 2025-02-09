@@ -11,9 +11,9 @@ router.route('/')
     .get(getAllOrders);
 
 router.route('/:id')
-    .all(authenticateUser())
-    .get(getOrderById)
-    .patch(updateOrderStatus);
+    // .all(authenticateUser())
+    .get(authenticateUser(), getOrderById)
+    .patch(authenticateUser(),updateOrderStatus);
 
 router.post('/verifyPayment', verifyPayment)
 

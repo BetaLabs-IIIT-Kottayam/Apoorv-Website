@@ -107,17 +107,17 @@ const createOrder = async (req: Request, res: Response) => {
 
 const verifyPayment = async (req: Request, res: Response) => {
     const {
-        razorpayOrderId,
         razorpayPaymentId,
+        razorpayOrderId,
         razorpaySignature
     } = req.body;
-
+    
     if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
         throw new BadRequestError("Missing payment verification details");
     }
 
     // Find the order
-    const order = await Order.findOne({ razorpayOrderId });
+    const order = await Order.findOne({ razorpayOrderId: razorpayOrderId });
     if (!order) {
         throw new NotFoundError(`No order found with Razorpay ID ${razorpayOrderId}`);
     }
@@ -127,10 +127,10 @@ const verifyPayment = async (req: Request, res: Response) => {
     const crypto = require('crypto');
     const expectedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
-        .update(body.toString())
+        .update(body)
         .digest("hex");
 
-    if (expectedSignature !== razorpaySignature) {
+    if (expectedSignature != razorpaySignature) {
         throw new UnauthenticatedError("Invalid payment signature");
     }
 
