@@ -38,28 +38,50 @@ const createMerch = async (req: Request, res: Response) => {
 
 const getAllMerch = async (req: Request, res: Response) => {
     const merch = await Merch.find({});
-    const merchWithSinglePhoto = merch.map(item => ({
-        ...item.toObject(),
-        photos: item.photos.length > 0 ? [item.photos[0]] : []
-    }));
-    res.status(StatusCodes.OK).json({ merch: merchWithSinglePhoto, count: merchWithSinglePhoto.length });
-};
-
-const getMerchById = async (req: Request, res: Response) => {
+    
+    const merchWithFormattedPhotos = merch.map(item => {
+      const itemObj = item.toObject();
+      const formattedPhotos = item.photos.map(photo => ({
+        url: `data:${photo.contentType};base64,${photo.data.toString('base64')}`
+      }));
+      
+      return {
+        ...itemObj,
+        photos: formattedPhotos.length > 0 ? [formattedPhotos[0]] : [] // Keep only first photo as per original logic
+      };
+    });
+  
+    res.status(StatusCodes.OK).json({ 
+      merch: merchWithFormattedPhotos, 
+      count: merchWithFormattedPhotos.length 
+    });
+  };
+  
+  const getMerchById = async (req: Request, res: Response) => {
     const { id } = req.params;
-
+    
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new BadRequestError("Invalid merchandise ID");
+      throw new BadRequestError("Invalid merchandise ID");
     }
-
+    
     const merch = await Merch.findById(id);
     
     if (!merch) {
-        throw new NotFoundError(`No merchandise found with id ${id}`);
+      throw new NotFoundError(`No merchandise found with id ${id}`);
     }
-
-    res.status(StatusCodes.OK).json({ merch });
-};
+  
+    const merchObj = merch.toObject();
+    const formattedPhotos = merch.photos.map(photo => ({
+      url: `data:${photo.contentType};base64,${photo.data.toString('base64')}`
+    }));
+  
+    res.status(StatusCodes.OK).json({ 
+      merch: {
+        ...merchObj,
+        photos: formattedPhotos
+      } 
+    });
+  };
 
 const updateMerch = async (req: Request, res: Response) => {
     const { id } = req.params;
