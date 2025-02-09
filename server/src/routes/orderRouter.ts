@@ -6,7 +6,7 @@ import { createOrder, getAllOrders, getOrderById, updateOrderStatus, verifyPayme
 const router = express.Router();
 
 router.route('/')
-    .all(authenticateUser())
+    // .all(authenticateUser())
     .post(createOrder)
     .get(getAllOrders);
 

@@ -58,11 +58,20 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_URL=http://localhost:5000
-    volumes:
-      - ./client:/app
-      - /app/node_modules
+    # volumes:
+    #   - ./client:/app
+    #   - /app/node_modules
     depends_on:
       - server
+    develop:
+      watch:
+        - path: ./client/package.json
+          action: rebuild
+        - path: ./client/pnpm-lock.yaml
+          action: rebuild
+        - path: ./client
+          target: /app
+          action: sync
 
   admin:
     build:
