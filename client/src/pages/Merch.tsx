@@ -313,7 +313,7 @@ const Merch = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             <motion.img
-              src={product.image || "/placeholder-image.jpg"}
+              src={product.photos[0].url || "/placeholder-image.jpg"}
               alt={product.name}
               className="w-full rounded-lg border border-white/10 object-cover"
               whileHover={{ scale: 1.05 }}
@@ -462,7 +462,7 @@ const Merch = () => {
                   }}
                 >
                   <img
-                    src={product.image}
+                    src={product.photos[0].url || "/placeholder-image.jpg"}
                     alt={product.name}
                     className="w-full h-64 object-cover rounded-lg mb-4"
                     loading="lazy"
