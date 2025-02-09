@@ -10,6 +10,7 @@ interface IBuyerDetails {
 
 interface IOrderItem {
     merchId: mongoose.Types.ObjectId;
+    merchName: string;
     size: 'S' | 'M' | 'L';
     quantity: number;
     price: number;
@@ -26,6 +27,8 @@ interface IOrder extends Document {
     paidAt?: Date;
     expiredAt?: Date;
     buyerDetails: IBuyerDetails;  // Added buyer details
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const generateSecretCode = (): string => {
@@ -89,3 +92,5 @@ const orderSchema: Schema = new Schema({
 const Order = mongoose.model<IOrder>('Order', orderSchema);
 
 export default Order;
+
+export { IBuyerDetails, IOrderItem, IOrder };

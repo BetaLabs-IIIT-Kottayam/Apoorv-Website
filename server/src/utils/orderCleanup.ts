@@ -53,7 +53,9 @@ const cleanupPendingOrders = async () => {
 };
 
 // Schedule cleanup job to run every 5 minutes
-export const startCleanupJob = () => {
+const startCleanupJob = () => {
   scheduleJob('*/5 * * * *', cleanupPendingOrders);
   console.log('Order cleanup job scheduled');
 };
+
+export default startCleanupJob;

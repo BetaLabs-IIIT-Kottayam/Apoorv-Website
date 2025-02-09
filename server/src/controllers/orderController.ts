@@ -5,6 +5,8 @@ import Merch from "../models/Merch";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import Razorpay from "razorpay";
+import generateInvoice from "../utils/generateInvoice";
+import transporter from "../utils/mailService";
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID!,
@@ -69,6 +71,9 @@ const createOrder = async (req: Request, res: Response) => {
         // payment_capture: 1,
     });
 
+    // Generate a four-digit secret code for easy verification
+    const secretCode = Math.floor(1000 + Math.random() * 9000).toString();
+
     // Create pre-order in database
     const order = await Order.create({
         items,
@@ -80,7 +85,8 @@ const createOrder = async (req: Request, res: Response) => {
             lastName: buyerDetails.lastName,
             email: buyerDetails.email,
             phone: buyerDetails.phone
-        }
+        },
+        secretCode: secretCode.toString()
     });
 
     // const order = await Order.create({
@@ -139,7 +145,53 @@ const verifyPayment = async (req: Request, res: Response) => {
         { new: true, runValidators: true }
     ).populate('items.merchId');
 
-    res.status(StatusCodes.OK).json({ order: updatedOrder });
+    const invoice = generateInvoice(updatedOrder!);
+    const pdfBuffer = invoice.output('arraybuffer');
+
+    const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: updatedOrder?.buyerDetails.email,
+        subject: `Order Confirmation - ${order._id}`,
+        text: `
+    Dear ${updatedOrder?.buyerDetails.firstName} ${updatedOrder?.buyerDetails.lastName},
+    
+    Thank you for your order!
+    
+    Order Details:
+    Order ID: ${updatedOrder?._id}
+    Secret Code: ${updatedOrder?.secretCode}
+    Total Amount: ₹${updatedOrder?.totalAmount}
+    
+    Order Items:
+    ${updatedOrder?.items.map(item => `
+    - ${item.merchName}
+      Color: ${item.color}
+      Size: ${item.size}
+      Quantity: ${item.quantity}
+      Price: ₹${item.price}
+      Total: ₹${item.price * item.quantity}
+    `).join('\n')}
+    
+    Please find the invoice attached.
+    
+    Best regards,
+    Team Apoorv
+        `,
+        attachments: [{
+            filename: `invoice-${order._id}.pdf`,
+            content: Buffer.from(pdfBuffer),
+            contentType: 'application/pdf'
+        }]
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Don't throw error here - we don't want to fail the order creation if email fails
+    }
+
+    res.status(StatusCodes.OK).json({ order: updatedOrder, invoice: Buffer.from(pdfBuffer).toString('base64') });
 };
 
 const getAllOrders = async (req: Request, res: Response) => {

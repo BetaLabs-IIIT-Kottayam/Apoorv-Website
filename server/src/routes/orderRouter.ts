@@ -15,6 +15,6 @@ router.route('/:id')
     .get(getOrderById)
     .patch(updateOrderStatus);
 
-router.post('/verifyPayment', authenticateUser(), verifyPayment)
+router.post('/verifyPayment', verifyPayment)
 
 export default router;
