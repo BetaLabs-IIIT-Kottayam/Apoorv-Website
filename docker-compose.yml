@@ -34,8 +34,8 @@ services:
       PORT: 5000
       ADMIN_USERNAME: "admin"
       ADMIN_PASSWORD: "admin@apoorv"
-      RAZORPAY_KEY_ID: "rzp_test_p97D3qHDRCTNj3"
-      RAZORPAY_KEY_SECRET: "648srnhyHGOAlYIgzN7pcnIQ"
+      RAZORPAY_KEY_ID: "rzp_test_Ar28lFL78DCFaF"
+      RAZORPAY_KEY_SECRET: "4zb95zJewnYiCjpIlJndHO5k"
       SMTP_SERVICE: "gmail"
       SMTP_USER: "anshumohan22bcy19@iiitkottayam.ac.in"
       SMTP_PASS: "dosp dprv tnfs zuef"

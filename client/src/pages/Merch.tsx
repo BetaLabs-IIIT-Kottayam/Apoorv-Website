@@ -6,20 +6,26 @@ import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
 
 export interface Product {
-  id: string; // Matches MongoDB _id
+  _id : string,
+  id: string;
   name: string;
   price: number;
   description: string;
-  images: { data: Buffer; contentType: string }[]; // Aligns with 'photos'
+  photos: { url: string }[];
+  sizes?: string[];
+  colors?: string[];
 }
 
 export interface CartItem extends Product {
-  _id: string;
-  name: string;
-  price: number;
   quantity: number;
   size: string;
   color: string;
+}
+
+interface ProductModalProps {
+  product: Product;
+  onClose: () => void;
+  addToCart: (product: Product, size: string, color: string) => void;
 }
 
 const RATE_LIMIT_MS = 500;
@@ -43,19 +49,6 @@ const Merch = () => {
     lastOperation = now;
     return true;
   };
-
-  // const validateProduct = (product: Product) => {
-  //   return (
-  //     product &&
-  //     typeof product.id === "number" &&
-  //     typeof product.name === "string" &&
-  //     typeof product.price === "number" &&
-  //     product.price > 0 &&
-  //     typeof product.description === "string" &&
-  //     Array.isArray(product.sizes) &&
-  //     Array.isArray(product.colors)
-  //   );
-  // };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -119,7 +112,7 @@ const Merch = () => {
       });
 
       setSelectedItem(null);
-      setIsCartOpen(true); // Open cart after adding item
+      setIsCartOpen(true);
       setError("");
     },
     []
@@ -274,7 +267,7 @@ const Merch = () => {
     </motion.div>
   );
 
-  const ProductModal = ({ product, onClose, addToCart }) => {
+  const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, addToCart }) => {
     const defaultSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
     const defaultColors = ["Black", "White"];
 
@@ -300,7 +293,7 @@ const Merch = () => {
           initial={{ scale: 0.8, y: 50 }}
           animate={{ scale: 1, y: 0 }}
           className="bg-gradient-to-br from-gray-900 to-black p-4 md:p-6 rounded-lg border border-red-500/30 w-full max-w-md md:max-w-2xl"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <div className="flex justify-between items-start mb-4 md:mb-6">
             <h2 className="font-gang text-xl md:text-3xl text-white">
@@ -371,9 +364,7 @@ const Merch = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() =>
-                    addToCart(product, selectedSize, selectedColor)
-                  }
+                  onClick={() => addToCart(product, selectedSize, selectedColor)}
                   className="bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center gap-2 text-xs md:text-base"
                 >
                   <ShoppingCart size={16} />
@@ -401,6 +392,7 @@ const Merch = () => {
 
   return (
     <div className="relative min-h-screen bg-black">
+      <Loader />
       {contentVisible && (
         <>
           <div
@@ -455,14 +447,14 @@ const Merch = () => {
                   className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
                   role="button"
                   tabIndex={0}
-                  onKeyPress={(e) => {
+                  onKeyPress={(e: React.KeyboardEvent) => {
                     if (e.key === "Enter" || e.key === " ") {
                       setSelectedItem(product);
                     }
                   }}
                 >
                   <img
-                    src={product.photos[0].url || "/placeholder-image.jpg"}
+                    src={product.photos[0]?.url || "/placeholder-image.jpg"}
                     alt={product.name}
                     className="w-full h-64 object-cover rounded-lg mb-4"
                     loading="lazy"

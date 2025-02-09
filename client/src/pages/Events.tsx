@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState,useEffect } from "react";
-import Ninja from "../assets/Ninja.png";
+// import Ninja from "../assets/Ninja.png";
 import BackgroundImage from "../assets/cherryBlossom.png"; // Add your portrait image
 import Loader from "../components/Loader";
 
@@ -24,35 +24,173 @@ const Events = () => {
     return () => clearTimeout(timer);
   }, []);
   const events = [
+    // CULTURAL CLUB - DANCE
     {
-      title: "Code Katana",
-      category: "Tech",
-      date: "Mar 15",
+      title: "Solo Sizzle",
+      category: "Dance",
+      date: "Mar 18",
       description:
-        "A coding competition where developers showcase their programming prowess through intense challenges.",
+        "Get ready for a mesmerizing celebration of rhythm, grace, and unparalleled talent! Apoorv 25  proudly presents the Solo Sizzle,where individual performers take center stage to showcase their passion and prowess in a dance extravaganza like never before. It's not just a dance, it's a canvas for self expression and innovation.",
       details:
-        "Participants will solve complex algorithmic problems, demonstrating speed, efficiency, and innovative problem-solving skills.",
+        "Dancers take the stage to showcase their passion and prowess in a breathtaking solo dance performance.",
     },
     {
-      title: "Robo Ronin",
+      title: "Pulse and Beats",
+      category: "Dance",
+      date: "Mar 19",
+      description:
+        "Experience the beauty and power of dance at  Apoorv 25's PULSE AND BEATS! With stunning costumes and mesmerizing lighting, the stage will burst with color and energy, transport us to a realm of pure artistic expression.Our group dancing event is jam-packed with addictive music and high-energy dances.",
+      details:
+        "Teams will set the stage on fire with synchronized choreography, dynamic energy, and captivating storytelling through dance.",
+    },
+    {
+      title: "Ultimate Dance Showdown",
+      category: "Dance",
+      date: "Mar 20",
+      description:
+        "The Ultimate Dance Showdown is a high-energy event where teams of five showcase their dance prowess. Each team must include a minimum of one female member. Prepare for an electrifying competition filled with diverse talents and creative spot choreography.Compete in a high-energy dance battle for the title of ultimate champions.",
+      details:
+        "Each team of five, including at least one female member, will face off in a dynamic dance competition featuring diverse styles and creativity.",
+    },
+  
+    // CULTURAL CLUB - MUSIC
+    {
+      title: "Beyond the Harmony",
+      category: "Music",
+      date: "Mar 21",
+      description:
+        "Beyond the Harmony - Apoorv 25 ! Ready to let your voice shine at Beyond the Harmony? This is your stage to showcase your vocal talent and unleash your creativity. Whether you're a beginner or a pro, it's your time to shine!The event offers a chance to perform, win exciting prizes , and be part of an inspiring and captivating musical experience.",
+      details:
+        "Step up, grab the mic, and let your voice shine in this inspiring and captivating musical experience!",
+    },
+    {
+      title: "Strings and Keys",
+      category: "Music",
+      date: "Mar 22",
+      description:
+        "Strings and Keys -Apoorv '25! Get ready to showcase your talent at Strings and Keys—Apoorv's instrumental competition!Whether you're a beginner or a pro, this is your chance to let your music shine.Open to all music lovers, the event offers exciting prizes, a stage to perform, and an experience to remember.",
+      details:
+        "Whether you're a beginner or a pro, this event offers you the chance to showcase your instrumental skills and win exciting prizes.",
+    },
+  
+    // CULTURAL CLUB - DRAMA
+    {
+      title: "Stage Buster",
+      category: "Drama",
+      date: "Mar 23",
+      description:
+        "Experience the thrill of cinema live on stage! In this team-based event, 2-3 members recreate iconic movie scenes and embody unforgettable characters. With rounds focusing on scene recreation and character impersonation, participants showcase their creativity, acting skills, and love for storytelling.",
+      details:
+        "Teams of 2-3 members will bring cinematic magic to life, showcasing their acting skills and storytelling abilities.",
+    },
+  
+    // CULTURAL CLUB - ART
+    {
+      title: "Printscapes",
+      category: "Art",
+      date: "Mar 24",
+      description:
+        "Dive into a world where ink dances with imagination and every print tells a story. Explore the magic of monoprinting, where no two artworks are ever the same.With each press, textures come alive, colors collide, and unexpected beauty emerges. Embrace the unpredictable and transform it into art. Create, discover, and leave your mark.",
+      details:
+        "Experiment with textures and colors as you bring your creative vision to life through the unpredictable magic of printmaking.",
+    },
+    {
+      title: "Face Off",
+      category: "Art",
+      date: "Mar 25",
+      description:
+        "Transform faces into living canvases! Our face painting competition is a colorful celebration of artistic talent.Brush, blend, and bring your imagination to life on the human face.From whimsical designs to intricate details, let your face painting artistry shine.Join us for a lively contest where creativity knows no bounds. ",
+      details:
+        "Unleash your creativity and transform faces with vibrant colors, intricate details, and captivating designs.",
+    },
+    //FASHION CLUB
+    {
+      title: "Vogue Fusion",
+      category: "Fashion",
+      date: "Mar 25",
+      description:
+        "The Vogue Fusion -APOORV 25!Gear up to dazzle the world with your talent!The fusion wear combines elements from different cultures and eras, creating unique and versatile outfits.The vogue fusion is the chance to show your unique fusion of different styles and let people be amazed with your outfits.Lets add beauty to the apoorv and light up our campus with our outfits",
+      details:
+        "Unleash your creativity and transform faces with vibrant colors, intricate details, and captivating designs.",
+    },
+    //CINEVEDIKA
+    // TECH CLUB
+    {
+      title: "Hackoona Matata",
+      category: "Hackathon",
+      date: "Mar 26",
+      description:
+        "Hackoona Matata is an exhilarating hackathon where teams of 4-5 participants come together to solve problem statements across various elds like tech, healthcare,sustainability, and more. In race against time, teams collaborate to build innovative solutions, showcase their skills, and pitch their ideas to expert judges.",
+      details:
+        "Collaborate, code, and create groundbreaking projects across various domains like tech, healthcare, and sustainability.",
+    },
+    {
+      title: "Last Bot Standing",
       category: "Robotics",
-      date: "Mar 16",
+      date: "Mar 27",
       description:
-        "An epic robotics tournament featuring cutting-edge autonomous and remote-controlled robots.",
+        "Welcome to the ultimate bot battle royale—where only the strongest, smartest, and most savage survive! Build, program, and unleash your robot into the combat arena, where it will face off against others in a no-holds-barred mechanical showdown. Outmaneuver, outthink, and outlast your opponents until only one bot remains victorious!",
       details:
-        "Teams design and battle advanced robotic systems in multiple challenge categories.",
+        "Design, build, and program your robot to outmaneuver and outlast the competition in this thrilling mechanical showdown.",
     },
     {
-      title: "Digital Dojo",
-      category: "Workshop",
-      date: "Mar 17",
+      title: "Break It to Make It",
+      category: "Tech Challenge",
+      date: "Mar 28",
       description:
-        "Intensive technical workshops for skill enhancement and technological learning.",
+        "Break it down, crack the code, and rebuild it better! In this brain-melting challenge, you’ll be given a mysterious electronic circuit and tasked with reverse-engineering its secrets.With only a simulation tool and your wits, you must decode, reconstruct, and prove your hacker-level hardware skills. If you love puzzles, this is your playground!",
       details:
-        "Expert-led sessions covering emerging technologies, hands-on coding, and professional development.",
+        "Use your problem-solving skills and simulation tools to crack the code and prove your hardware expertise.",
+    },
+    {
+      title: "Chaos by Design",
+      category: "Tech Challenge",
+      date: "Mar 28",
+      description:
+        "Welcome to the dark side of design! In this chaotically cursed competition, your mission is to create the most frustratingly functional user interface ever seen. Think buttons that run away, pop-ups that never close, and passwords that change as you type—all in the name of beautifully bad UX. Make the judges suffer,make them laugh, and prove you truly understand how NOT to design a UI",
+      details:
+        "Use your problem-solving skills and simulation tools to crack the code and prove your hardware expertise.",
+    },
+    {
+      title: "Digital Detective Hunt",
+      category: "Tech Challenge",
+      date: "Mar 28",
+      description:
+        "Step into the shoes of a cyber detective in this thrilling hunt to uncover the identity of an anonymous target! Armed with clues and basic yet powerful cyber tools, you'll navigate thedigital world to track down the mystery person. Decode, analyze, and investigate like a pro, all while honing your cybersecurity skills. Get ready to uncover secrets and feel like a true cyber sleuth!",
+      details:
+        "Use your problem-solving skills and simulation tools to crack the code and prove your hardware expertise.",
+    },
+  
+    // SPORTS CLUB
+    {
+      title: "Valorant Showdown",
+      category: "E-Sports",
+      date: "Mar 29",
+      description:
+        "An adrenaline-pumping Valorant tournament featuring top teams competing for glory!",
+      details:
+        "Teams will battle it out in high-stakes matches, showcasing their strategy, communication, and precision.",
+    },
+    {
+      title: "Free Fire Frenzy",
+      category: "E-Sports",
+      date: "Mar 30",
+      description:
+        "An intense Free Fire tournament where teams compete in fast-paced survival battles!",
+      details:
+        "With strategy, precision, and teamwork, only the best will claim victory in this electrifying gaming event.",
+    },
+    {
+      title: "BGMI Blitz",
+      category: "E-Sports",
+      date: "Mar 31",
+      description:
+        "A high-stakes BGMI competition where players showcase their skills and battle for dominance!",
+      details:
+        "Join teams from around the world as they fight for supremacy in this competitive gaming showdown.",
     },
   ];
-
+  
   const FanModal = ({
     event,
     onClose,
@@ -68,9 +206,9 @@ const Events = () => {
       onClick={onClose}
     >
       <motion.div
-        className="relative w-full max-w-[800px] h-[500px] 
+        className="relative w-full max-w-[800px] min-h-[300px] 
         bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] 
-        rounded-t-[400px] rounded-b-2xl 
+        rounded-2xl                  
         border-8 border-red-900/30 
         shadow-2xl shadow-red-900/40 
         overflow-hidden"
@@ -93,41 +231,54 @@ const Events = () => {
       >
         {/* Elegant Border Decoration */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-2 border-4 border-dashed border-red-900/20 rounded-t-[380px] rounded-b-xl"></div>
-          <div className="absolute inset-6 border-2 border-solid border-red-900/10 rounded-t-[360px] rounded-b-xl"></div>
+          <div className="absolute inset-2 border-4 border-dashed border-red-900/20 
+            rounded-xl"></div>
+          <div className="absolute inset-6 border-2 border-solid border-red-900/10 
+            rounded-xl"></div>
         </div>
   
-        {/* Cute Ninja Cartoon */}
-        <img src={Ninja} alt="Ninja Cartoon" className="absolute bottom-6 w-42 h-32 md:w-42 md:h-32" />
+        {/* Cute Ninja Cartoon - Commented out for now */}
+        {/* <img 
+          src={Ninja} 
+          alt="Ninja Cartoon" 
+          className="absolute bottom-6 w-42 h-32" 
+        /> */}
   
         {/* Modal Content */}
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8 overflow-y-auto">
-          <h2
-            className="text-4xl md:text-6xl font-gang mb-6 text-red-500 font-bold 
-            drop-shadow-[0_0_10px_rgba(255,26,26,0.3)]
-            bg-white/5 px-6 py-2 rounded-xl"
-          >
-            {event.title}
-          </h2>
-          <div className="flex justify-center gap-4 mb-6 text-white">
-            <span className="font-gang text-lg md:text-xl text-red-400 bg-white/10 px-4 py-2 rounded-full">
-              {event.category}
-            </span>
-            <span className="font-gang text-lg md:text-xl text-white/70 bg-white/10 px-4 py-2 rounded-full">
-              {event.date}
-            </span>
+        <div className="relative py-8 px-4 md:px-8">
+          <div className="flex flex-col items-center text-center">
+            <h2
+              className="text-3xl md:text-6xl font-gang mb-4 md:mb-6 text-red-500 font-bold 
+              drop-shadow-[0_0_10px_rgba(255,26,26,0.3)]
+              bg-white/5 px-4 md:px-6 py-2 rounded-xl"
+            >
+              {event.title}
+            </h2>
+            <div className="flex justify-center gap-2 md:gap-4 mb-4 md:mb-6 text-white">
+              <span className="font-gang text-base md:text-xl text-red-400 bg-white/10 px-3 md:px-4 py-1 md:py-2 rounded-full">
+                {event.category}
+              </span>
+              <span className="font-gang text-base md:text-xl text-white/70 bg-white/10 px-3 md:px-4 py-1 md:py-2 rounded-full">
+                {event.date}
+              </span>
+            </div>
+            <p
+              className="font-gang text-base md:text-2xl text-white/80 max-w-2xl mb-4 
+              bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl"
+            >
+              {event.description}
+            </p>
+            <p
+              className="font-gang text-sm md:text-xl text-white/60 max-w-2xl
+              bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl"
+            >
+              {event.details}
+            </p>
           </div>
-          <p
-            className="font-gang text-lg md:text-2xl text-white/80 max-w-2xl mb-4 
-            bg-white/5 px-6 py-4 rounded-xl"
-          >
-            {event.description}
-          </p>
         </div>
       </motion.div>
     </motion.div>
   );
-
   return (
     <div className="relative min-h-screen bg-black">
       <Loader />
