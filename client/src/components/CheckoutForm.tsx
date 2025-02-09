@@ -1,263 +1,264 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { X, ArrowLeft, ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router";
-import BackgroundImage from "../assets/dragon.png"; 
+import { X } from "lucide-react";
+import { CartItem } from "../pages/Merch";
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  size: string;
-  color: string;
+interface CheckoutFormProps {
+  cart: CartItem[];
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  setIsCheckoutOpen: (isOpen: boolean) => void;
 }
 
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
-interface FormErrors {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phoneNumber?: string;
-}
-
-// interface CheckoutFormProps {
-//   cart: CartItem[];
-//   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-//   setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
-// }
-
-const CheckoutForm = ({ cart, setCart, setIsCartOpen }) => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
+const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  cart = [],
+  setCart,
+  setIsCheckoutOpen,
+}) => {
+  const [formData, setFormData] = useState({
+    email: "",
     firstName: "",
     lastName: "",
-    email: "",
-    phoneNumber: ""
+    phone: "",
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const validateForm = (): FormErrors => {
-    const newErrors: FormErrors = {};
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phoneNumber.replace(/\D/g, ''))) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
-    }
-    return newErrors;
+  // Ensure safe calculation of total amount with proper type checking
+  const calculateTotal = (items: CartItem[]): number => {
+    if (!Array.isArray(items) || items.length === 0) return 0;
+    return items.reduce((total, item) => {
+      const itemPrice = Number(item.price) || 0;
+      const itemQuantity = Number(item.quantity) || 0;
+      return total + itemPrice * itemQuantity;
+    }, 0);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    const newErrors = validateForm();
-    
-    if (Object.keys(newErrors).length === 0) {
-      // Here you would typically process the order
-      console.log("Order processed:", { formData, cart });
-      // Clear cart and redirect
-      setCart([]);
-      setIsCartOpen(false);
-      navigate("/order-confirmation");
-    } else {
-      setErrors(newErrors);
-    }
-  };
+  const totalAmount = calculateTotal(cart);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [e.target.name]: e.target.value,
     }));
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
+  };
+
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const createOrder = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/order`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: cart.map((item) => ({
+              merchId: item.id,
+              quantity: item.quantity,
+              color: "Black",
+              size: "M",
+            })),
+            buyerDetails: {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: formData.email,
+              phone: formData.phone,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to create order");
+
+      const order = await response.json();
+      return order;
+    } catch (err) {
+      console.error("Error creating order:", err);
+      throw err;
     }
   };
 
-//   const handleBack = (): void => {
-//     navigate(-1);
-//   };
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await initializeRazorpay();
+      if (!res) {
+        throw new Error("Razorpay SDK failed to load");
+      }
+
+      const order = await createOrder();
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: Math.round(totalAmount * 100),
+        currency: "INR",
+        name: "Your Store Name",
+        description: "Purchase from Merch Store",
+        order_id: order.id,
+        handler: async (response: any) => {
+          try {
+            const verificationResponse = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/v1/order/verifyPayment`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                  order: order,
+                }),
+              }
+            );
+
+            if (!verificationResponse.ok) {
+              throw new Error("Payment verification failed");
+            }
+
+            // Clear cart and show success
+            setCart([]);
+            setIsCheckoutOpen(false);
+          } catch (err) {
+            console.error("Payment verification error:", err);
+            setError("Payment verification failed. Please contact support.");
+          }
+        },
+        prefill: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: {
+          color: "#EF4444",
+        },
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+    } catch (err) {
+      console.error("Payment error:", err);
+      setError("Failed to initiate payment. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-black relative">
-      <div 
-        className="fixed inset-0 bg-cover bg-no-repeat opacity-40"
-        style={{ 
-          backgroundImage: `url(${BackgroundImage})`, 
-          backgroundSize: '50%', 
-          backgroundPosition: "top right",
-          filter: "brightness(120%)",
-          zIndex: 0 
-        }} 
-      />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-y-auto"
+    >
+      <motion.div
+        initial={{ scale: 0.8, y: 50 }}
+        animate={{ scale: 1, y: 0 }}
+        className="bg-gradient-to-br from-gray-900 to-black p-6 rounded-lg border border-red-500/30 w-full max-w-2xl"
+      >
+        <div className="flex justify-between items-start mb-6">
+          <h2 className="font-gang text-2xl text-white">Checkout</h2>
+          <button onClick={() => setIsCheckoutOpen(false)}>
+            <X className="text-gray-400 hover:text-white" />
+          </button>
+        </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-gray-900 to-black p-6 rounded-lg border border-red-500/30"
-        >
-          <div className="flex items-center mb-8">
-            {/* <button 
-              onClick={handleBack}
-              className="text-gray-400 hover:text-white mr-4"
-              type="button"
-            >
-              <ArrowLeft size={24} />
-            </button> */}
-            <h1 className="text-2xl text-white font-gang">Checkout</h1>
+        <form onSubmit={handlePayment} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">
+                First Name:
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                required
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-full bg-black/50 border border-white/20 rounded px-3 py-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">
+                Last Name:
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                required
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-full bg-black/50 border border-white/20 rounded px-3 py-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full bg-black/50 border border-white/20 rounded px-3 py-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Phone</label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full bg-black/50 border border-white/20 rounded px-3 py-2 text-white"
+              />
+            </div>
           </div>
 
-          {/* Selected Items Section */}
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <ShoppingBag className="text-red-500" size={24} />
-              <h2 className="text-xl text-white font-gang">Your Selected Items</h2>
-            </div>
-            <div className="space-y-4">
-              {cart.map((item) => (
-                <motion.div
-                  key={`${item.id}-${item.size}-${item.color}`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="bg-black/30 rounded-lg p-4 border border-white/10"
-                >
-                  <div className="flex items-start gap-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-lg"
-                    />
-                    <div className="flex-grow">
-                      <h3 className="text-white font-gang">{item.name}</h3>
-                      <p className="text-gray-400 text-sm">
-                        Size: {item.size} | Color: {item.color}
-                      </p>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-gray-400">Quantity: {item.quantity}</span>
-                        <span className="text-white font-gang">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-              <div className="flex justify-between items-center py-4 border-t border-white/10">
-                <span className="text-lg text-white font-gang">Total Amount</span>
-                <span className="text-xl text-red-500 font-gang">${total.toFixed(2)}</span>
-              </div>
+          <div className="border-t border-white/10 pt-4">
+            <div className="flex justify-between text-white mb-4">
+              <span className="font-gang">Total Amount:</span>
+              <span className="font-gang">${totalAmount.toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Contact Information Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-xl text-white font-gang">Contact Information</h2>
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-500 p-3 rounded">
+              {error}
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-white font-gang mb-1">First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    className={`w-full bg-black/50 border ${
-                      errors.firstName ? 'border-red-500' : 'border-white/20'
-                    } rounded p-2 text-white focus:border-red-500 focus:outline-none`}
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-white font-gang mb-1">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className={`w-full bg-black/50 border ${
-                      errors.lastName ? 'border-red-500' : 'border-white/20'
-                    } rounded p-2 text-white focus:border-red-500 focus:outline-none`}
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
-                  )}
-                </div>
-              </div>
+          )}
 
-              <div>
-                <label className="block text-white font-gang mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`w-full bg-black/50 border ${
-                    errors.email ? 'border-red-500' : 'border-white/20'
-                  } rounded p-2 text-white focus:border-red-500 focus:outline-none`}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-white font-gang mb-1">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  className={`w-full bg-black/50 border ${
-                    errors.phoneNumber ? 'border-red-500' : 'border-white/20'
-                  } rounded p-2 text-white focus:border-red-500 focus:outline-none`}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
-                )}
-              </div>
-
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full bg-red-500 text-white py-3 rounded-lg font-gang mt-6"
-              >
-                Complete Order
-              </motion.button>
-            </form>
-          </div>
-        </motion.div>
-      </div>
-    </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={loading}
+            className="w-full bg-red-500 text-white py-3 rounded-lg disabled:opacity-50"
+            type="submit"
+          >
+            {loading ? "Processing..." : "Proceed to Pay"}
+          </motion.button>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 };
 
