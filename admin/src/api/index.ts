@@ -23,6 +23,17 @@ import { useState, useEffect } from 'react';
 type OrderStatus = 'Pending' | 'Paid' | 'Expired' | 'Delivered';
 type MerchSize = 'S' | 'M' | 'L';
 
+interface MerchData {
+    colors: string[];
+    description: string;
+    name: string;
+    photos: string[];
+    price: number;
+    sizes: string[];
+    __v: number;
+    _id: string;
+  }
+
 interface BuyerDetails {
     firstName: string;
     lastName: string;
@@ -31,7 +42,7 @@ interface BuyerDetails {
 }
 
 interface OrderItem {
-    merchId: string;
+    merchId: MerchData;
     merchName: string;
     size: MerchSize;
     quantity: number;
@@ -67,6 +78,7 @@ export const fetchOrders = async (): Promise<OrdersResponse> => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data)
         return data;
     } catch (error) {
         console.error('Error fetching orders:', error);

@@ -12,8 +12,6 @@ import { Loader, Package, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-type OrderStatus = "Delivered" | "Paid";
-
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
   const [data, setData] = useState<DashboardStats | null>(null);
@@ -74,7 +72,7 @@ const AdminLayout = () => {
   if (!data) {
     return null;
   }
-  
+
   const AnalyticsTab = () => (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
@@ -102,9 +100,6 @@ const AdminLayout = () => {
       "secretCode" | "firstName" | "email"
     >("secretCode");
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>(
-      "all"
-    );
 
     const filteredOrders = orders.filter((order) => {
       const matchesSearch =
@@ -119,9 +114,7 @@ const AdminLayout = () => {
               .toLowerCase()
               .includes(searchQuery.toLowerCase()));
 
-      const matchesStatus = statusFilter === "all";
-
-      return matchesSearch && matchesStatus;
+      return matchesSearch;
     });
 
     if (isLoading)
@@ -161,19 +154,6 @@ const AdminLayout = () => {
                 />
               </div>
             </div>
-            <select
-              className="bg-black text-white rounded-lg px-4 py-2"
-              value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value as "all" | OrderStatus)
-              }
-            >
-              <option value="all">All Orders</option>
-              <option value="Pending">Pending</option>
-              <option value="Paid">Paid</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Expired">Expired</option>
-            </select>
           </div>
         </div>
 
@@ -194,45 +174,49 @@ const AdminLayout = () => {
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order._id} className="border-b border-white/10">
-                  <td className="py-4 px-4 text-white">{order._id}</td>
-                  <td className="py-4 px-4 text-white">
+                <tr
+                  key={order._id}
+                  className="hover:bg-gray-800/50 transition-colors"
+                >
+                  <td className="px-4 py-3 text-sm text-white">{order._id}</td>
+                  <td className="px-4 py-3 text-sm text-white">
                     {formatDate(order.createdAt)}
                   </td>
-                  <td className="py-4 px-4 text-white">
+                  <td className="px-4 py-3 text-sm text-white">
                     {`${order.buyerDetails.firstName} ${order.buyerDetails.lastName}`}
                   </td>
-                  <td className="py-4 px-4 text-white">
+                  <td className="px-4 py-3 text-sm text-white">
                     {order.buyerDetails.email}
                   </td>
-                  <td className="py-4 px-4 text-white">
-                    {order.items
-                      .map(
-                        (item) =>
-                          `${item.merchName} (${item.size}) x${item.quantity}`
-                      )
-                      .join(", ")}
+                  <td className="px-4 py-3 text-sm text-white">
+                    {order.items.map((item, idx) => (
+                      <div key={idx}>
+                        {`${item.merchId.name} (${item.color} - ${item.size}) x${item.quantity}`}
+                      </div>
+                    ))}
                   </td>
-                  <td className="py-4 px-4 text-white">
+                  <td className="px-4 py-3 text-sm text-white">
                     {formatCurrency(order.totalAmount)}
                   </td>
-                  <td className="py-4 px-4 text-white">{order.secretCode}</td>
-                  <td className="py-4 px-4">
-                    <div
-                      className={`flex items-center gap-2 ${getStatusColor(
+                  <td className="px-4 py-3 text-sm text-white">
+                    {order.secretCode}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                         order.status
                       )}`}
                     >
-                      <span>{order.status}</span>
-                    </div>
+                      {order.status}
+                    </span>
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="px-4 py-3">
                     {order.status === "Paid" && (
                       <button
                         onClick={() =>
                           updateOrderStatus(order._id, "Delivered")
                         }
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-colors"
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors"
                       >
                         Mark Delivered
                       </button>
@@ -254,25 +238,29 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       // Send logout request to backend
-      await axios.post('http://localhost:5000/api/v1/auth/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      await axios.post(
+        "http://localhost:5000/api/v1/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       // Clear token and redirect to login
-      localStorage.removeItem('token');
-      navigate('/login');
+      localStorage.removeItem("token");
+      navigate("/login");
     } catch (err) {
       // Even if logout fails, clear token and redirect
-      localStorage.removeItem('token');
-      navigate('/login');
+      console.log(err);
+      localStorage.removeItem("token");
+      navigate("/login");
     }
   };
-
 
   return (
     <div className="min-h-screen bg-black">
@@ -286,7 +274,7 @@ const AdminLayout = () => {
               Real-time merchandise analytics and management
             </p>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
             className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
           >
