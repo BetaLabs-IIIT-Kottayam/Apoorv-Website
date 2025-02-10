@@ -218,8 +218,7 @@ const getOrderById = async (req: Request, res: Response) => {
 };
 
 const updateOrderStatus = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { status } = req.body;
+    const { status = 'Delivered', id } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestError("Invalid order ID");

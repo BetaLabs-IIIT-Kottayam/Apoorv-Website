@@ -10,11 +10,12 @@ router.route('/')
     .post(createOrder)
     .get(getAllOrders);
 
+router.post('/verifyPayment', verifyPayment)
+
 router.route('/:id')
     // .all(authenticateUser())
     .get(authenticateUser(), getOrderById)
     .patch(authenticateUser(),updateOrderStatus);
 
-router.post('/verifyPayment', verifyPayment)
 
 export default router;
