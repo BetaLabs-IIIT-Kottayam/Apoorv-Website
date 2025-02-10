@@ -1,10 +1,10 @@
-import { useAuthStore } from "@/store/authStore";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 const LoginForm = () => {
@@ -12,7 +12,6 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,19 +20,31 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      await login(username, password);
-      navigate("/dashboard"); // Redirect on success
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
+      const response = await axios.post('http://localhost:5000/api/v1/auth/login', {
+        username,
+        password
+      });
+
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token);
+      
+      // Navigate to dashboard
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        // Axios-specific error handling
+        setError(err.response?.data?.message || "Login failed");
+      } else {
+        // Generic error handling
+        setError("An unexpected error occurred");
+      }
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center top-1/2">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="flex justify-center items-center min-h-screen">
+      <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6 p-6">
         <div className="space-y-2">
           <Label htmlFor="username">Username</Label>
           <Input
@@ -65,7 +76,11 @@ const LoginForm = () => {
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={loading}
+        >
           {loading ? "Logging in..." : "Login"}
         </Button>
       </form>

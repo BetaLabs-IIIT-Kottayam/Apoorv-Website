@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.route('/')
     // .all(authenticateUser())
-    .get(getDashboardStats)
+    .get(authenticateUser(), getDashboardStats)
 
 export default router;

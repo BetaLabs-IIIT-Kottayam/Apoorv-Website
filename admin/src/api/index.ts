@@ -5,6 +5,11 @@ const API_BASE_URL = "http://localhost:5000/api/v1"; // Replace with your backen
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  }
 });
 
 export const fetchDashboardStats = async (): Promise<DashboardStats> => {

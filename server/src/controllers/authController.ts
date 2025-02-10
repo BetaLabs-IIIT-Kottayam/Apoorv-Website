@@ -49,20 +49,6 @@ const login = async (req: Request, res: Response) => {
   });
 };
 
-const getMe = async (req: Request, res: Response) => {
-  const token = req.cookies.token;
-  if (!token) {
-    throw new UnauthorizedError("Not authorized to access this route");
-  }
-
-  try {
-    const user = JWT.verify(token, process.env.JWT_SECRET as string);
-    res.json({ user });
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
-  }
-};
-
 const logout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.json({ message: "Logged out" });
@@ -85,4 +71,4 @@ const logout = async (req: Request, res: Response) => {
 //     }
 // };
 
-export { getMe, login, logout };
+export { login, logout };
