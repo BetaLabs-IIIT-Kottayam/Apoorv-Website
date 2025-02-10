@@ -1,13 +1,11 @@
-import { fetchDashboardStats } from "@/api";
+import { fetchDashboardStats, formatCurrency, formatDate, getStatusColor, useOrders } from "@/api";
 import SizeDistributionChart from "@/components/SizeDistributionChart";
 import { DashboardStats } from "@/types";
 import {
-  CheckCircle,
-  Clock,
   Loader,
   Package,
   Search,
-  ShoppingBag,
+  ShoppingBag
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -24,7 +22,7 @@ import {
   YAxis,
 } from "recharts";
 
-type OrderStatus = "delivered" | "not_delivered";
+type OrderStatus = "Delivered" | "Paid";
 
 interface Order {
   id: number;
@@ -37,131 +35,27 @@ interface Order {
   date: string;
 }
 
-interface Analytics {
-  totalOrders: number;
-  totalRevenue: number;
-  itemsSold: number;
-  dailyAverage: number;
-  uniqueCustomers: number;
-}
-
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchField, setSearchField] = useState<"code" | "customer" | "email">(
-    "code"
-  );
   const [data, setData] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: 1,
-      customer: "John Doe",
-      email: "john@example.com",
-      items: ["Warrior's Hoodie"],
-      total: "₹50",
-      status: "not_delivered",
-      code: "12345",
-      date: "2024-02-09",
-    },
-    {
-      id: 2,
-      customer: "Jane Smith",
-      email: "jane@example.com",
-      items: ["Event T-Shirt", "Bushido Cap"],
-      total: "₹40",
-      status: "not_delivered",
-      code: "67890",
-      date: "2024-02-08",
-    },
-    {
-      id: 3,
-      customer: "Mike Johnson",
-      email: "mike@example.com",
-      items: ["Event T-Shirt"],
-      total: "₹20",
-      status: "delivered",
-      code: "11223",
-      date: "2024-02-07",
-    },
-  ]);
-
-  const [analytics, setAnalytics] = useState<Analytics>({
-    totalOrders: orders.length,
-    totalRevenue: orders.reduce(
-      (acc, order) => acc + parseInt(order.total.slice(1)),
-      0
-    ),
-    itemsSold: orders.reduce((acc, order) => acc + order.items.length, 0),
-    dailyAverage:
-      orders.reduce((acc, order) => acc + parseInt(order.total.slice(1)), 0) /
-      30,
-    uniqueCustomers: new Set(orders.map((order) => order.email)).size,
-  });
-
-  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [orders, ] = useState<Order[]>([]);
 
   //TODO: Order status - Paid but not delivered, Paid delivered
   const orderStatus = [
     {
-      name: "Not Delivered",
-      value: orders.filter((o) => o.status === "not_delivered").length,
+      name: "Paid",
+      value: orders.filter((o) => o.status === "Paid").length,
     },
     {
       name: "Delivered",
-      value: orders.filter((o) => o.status === "delivered").length,
+      value: orders.filter((o) => o.status === "Delivered").length,
     },
   ];
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
-
-  const markAsDelivered = (orderId: number) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === orderId ? { ...order, status: "delivered" } : order
-      )
-    );
-    updateAnalytics();
-  };
-
-  const updateAnalytics = () => {
-    setAnalytics({
-      totalOrders: orders.length,
-      totalRevenue: orders.reduce(
-        (acc, order) => acc + parseInt(order.total.slice(1)),
-        0
-      ),
-      itemsSold: orders.reduce((acc, order) => acc + order.items.length, 0),
-      dailyAverage:
-        orders.reduce((acc, order) => acc + parseInt(order.total.slice(1)), 0) /
-        30,
-      uniqueCustomers: new Set(orders.map((order) => order.email)).size,
-    });
-  };
-
-  const getStatusColor = (status: OrderStatus) => {
-    return status === "delivered" ? "text-green-500" : "text-yellow-500";
-  };
-
-  const getStatusIcon = (status: OrderStatus) => {
-    return status === "delivered" ? CheckCircle : Clock;
-  };
-
-  const filteredOrders = orders.filter((order) => {
-    const matchesStatus =
-      statusFilter === "all" || order.status === statusFilter;
-    const searchTerm = searchQuery.toLowerCase();
-    const matchesSearch =
-      searchField === "code"
-        ? order.code.toLowerCase().includes(searchTerm)
-        : searchField === "customer"
-        ? order.customer.toLowerCase().includes(searchTerm)
-        : order.email.toLowerCase().includes(searchTerm);
-
-    return matchesStatus && matchesSearch;
-  });
 
   const StatCard = ({
     title,
@@ -294,114 +188,128 @@ const AdminLayout = () => {
     </>
   );
 
-  const OrdersTab = () => (
-    <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-xl font-bold text-white">Orders Management</h2>
-        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <div className="flex gap-2 w-full md:w-auto">
-            <select
-              className="bg-white/10 text-white rounded-lg px-4 py-2"
-              value={searchField}
-              onChange={(e) =>
-                setSearchField(e.target.value as "code" | "customer" | "email")
-              }
-            >
-              <option value="code">Search by Code</option>
-              <option value="customer">Search by Customer</option>
-              <option value="email">Search by Email</option>
-            </select>
-            <div className="relative flex-1 md:w-64">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search orders..."
-                className="w-full bg-white/10 text-white rounded-lg pl-10 pr-4 py-2"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-          <select
-            className="bg-white/10 text-white rounded-lg px-4 py-2"
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(e.target.value as "all" | OrderStatus)
-            }
-          >
-            <option value="all">All Orders</option>
-            <option value="not_delivered">Not Delivered</option>
-            <option value="delivered">Delivered</option>
-          </select>
-        </div>
-      </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="text-gray-400 border-b border-white/10">
-              <th className="py-3 px-4 text-left">Order ID</th>
-              <th className="py-3 px-4 text-left">Date</th>
-              <th className="py-3 px-4 text-left">Customer</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Items</th>
-              <th className="py-3 px-4 text-left">Total</th>
-              <th className="py-3 px-4 text-left">Code</th>
-              <th className="py-3 px-4 text-left">Status</th>
-              <th className="py-3 px-4 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order) => {
-              const StatusIcon = getStatusIcon(order.status);
-              return (
-                <tr key={order.id} className="border-b border-white/10">
-                  <td className="py-4 px-4 text-white">{order.id}</td>
-                  <td className="py-4 px-4 text-white">{order.date}</td>
-                  <td className="py-4 px-4 text-white">{order.customer}</td>
-                  <td className="py-4 px-4 text-white">{order.email}</td>
-                  <td className="py-4 px-4 text-white">
-                    {order.items.join(", ")}
-                  </td>
-                  <td className="py-4 px-4 text-white">{order.total}</td>
-                  <td className="py-4 px-4 text-white">{order.code}</td>
-                  <td className="py-4 px-4">
-                    <div
-                      className={`flex items-center gap-2 ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      <StatusIcon className="w-4 h-4" />
-                      <span>
-                        {order.status === "delivered"
-                          ? "Delivered"
-                          : "Not Delivered"}
-                      </span>
+
+const OrdersTab = () => {
+    const { orders, isLoading, error, updateOrderStatus } = useOrders();
+    const [searchField, setSearchField] = useState<'secretCode' | 'firstName' | 'email'>('secretCode');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'all' | OrderStatus>('all');
+
+    const filteredOrders = orders.filter(order => {
+        const matchesSearch = searchQuery === '' || (
+            searchField === 'secretCode' ? order.secretCode.toLowerCase().includes(searchQuery.toLowerCase()) :
+            searchField === 'firstName' ? order.buyerDetails.firstName.toLowerCase().includes(searchQuery.toLowerCase()) :
+            order.buyerDetails.email.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        const matchesStatus = statusFilter === 'all';
+
+        return matchesSearch && matchesStatus;
+    });
+
+    if (isLoading) return <div className="text-center py-8">Loading orders...</div>;
+    if (error) return <div className="text-center py-8 text-red-500">Error: {error.message}</div>;
+
+    return (
+        <div className="bg-white/5 rounded-lg border border-white/10 p-6">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <h2 className="text-xl font-bold text-white">Orders Management</h2>
+                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                    <div className="flex gap-2 w-full md:w-auto">
+                        <select
+                            className="bg-black text-white rounded-lg px-4 py-2"
+                            value={searchField}
+                            onChange={(e) => setSearchField(e.target.value as typeof searchField)}
+                        >
+                            <option value="secretCode">Search by Code</option>
+                            <option value="firstName">Search by Name</option>
+                            <option value="email">Search by Email</option>
+                        </select>
+                        <div className="relative flex-1 md:w-64">
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search orders..."
+                                className="w-full bg-white/10 text-white rounded-lg pl-10 pr-4 py-2"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
                     </div>
-                  </td>
-                  <td className="py-4 px-4">
-                    {order.status === "not_delivered" && (
-                      <button
-                        onClick={() => markAsDelivered(order.id)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-colors"
-                      >
-                        Mark Delivered
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {filteredOrders.length === 0 && (
-          <div className="text-center py-8 text-gray-400">
-            No orders found matching your search criteria
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                    <select
+                        className="bg-black text-white rounded-lg px-4 py-2"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value as 'all' | OrderStatus)}
+                    >
+                        <option value="all">All Orders</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Expired">Expired</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className="overflow-x-auto">
+                <table className="w-full">
+                    <thead>
+                        <tr className="text-gray-400 border-b border-white/10">
+                            <th className="py-3 px-4 text-left">Order ID</th>
+                            <th className="py-3 px-4 text-left">Date</th>
+                            <th className="py-3 px-4 text-left">Customer</th>
+                            <th className="py-3 px-4 text-left">Email</th>
+                            <th className="py-3 px-4 text-left">Items</th>
+                            <th className="py-3 px-4 text-left">Total</th>
+                            <th className="py-3 px-4 text-left">Code</th>
+                            <th className="py-3 px-4 text-left">Status</th>
+                            <th className="py-3 px-4 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredOrders.map((order) => (
+                            <tr key={order._id} className="border-b border-white/10">
+                                <td className="py-4 px-4 text-white">{order._id}</td>
+                                <td className="py-4 px-4 text-white">{formatDate(order.createdAt)}</td>
+                                <td className="py-4 px-4 text-white">
+                                    {`${order.buyerDetails.firstName} ${order.buyerDetails.lastName}`}
+                                </td>
+                                <td className="py-4 px-4 text-white">{order.buyerDetails.email}</td>
+                                <td className="py-4 px-4 text-white">
+                                    {order.items.map(item => 
+                                        `${item.merchName} (${item.size}) x${item.quantity}`
+                                    ).join(", ")}
+                                </td>
+                                <td className="py-4 px-4 text-white">{formatCurrency(order.totalAmount)}</td>
+                                <td className="py-4 px-4 text-white">{order.secretCode}</td>
+                                <td className="py-4 px-4">
+                                    <div className={`flex items-center gap-2 ${getStatusColor(order.status)}`}>
+                                        <span>{order.status}</span>
+                                    </div>
+                                </td>
+                                <td className="py-4 px-4">
+                                    {order.status === 'Paid' && (
+                                        <button
+                                            onClick={() => updateOrderStatus(order._id, 'Delivered')}
+                                            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-colors"
+                                        >
+                                            Mark Delivered
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {filteredOrders.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">
+                        No orders found matching your search criteria
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
   return (
     <div className="min-h-screen bg-black">
