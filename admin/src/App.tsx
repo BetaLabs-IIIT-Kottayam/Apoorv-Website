@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router";
-import ProtectedRoute from "./components/ProtectedRoute";
+// import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./pages/AdminPanel";
 import LoginForm from "./pages/LoginPage";
 
@@ -11,12 +11,12 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <AdminLayout />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
-        <Route path="/*" element={<LoginForm />} />
+        {/* <Route path="/*" element={<LoginForm />} /> */}
       </Routes>
     </Router>
   );

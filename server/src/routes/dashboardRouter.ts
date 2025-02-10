@@ -7,7 +7,7 @@ import { getDashboardStats } from '../controllers/dashboardController';
 const router = express.Router();
 
 router.route('/')
-    .all(authenticateUser())
+    // .all(authenticateUser())
     .get(getDashboardStats)
 
 export default router;

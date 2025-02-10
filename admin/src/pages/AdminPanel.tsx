@@ -1,27 +1,21 @@
-import { useAuthStore } from "@/store/authStore";
+import { fetchDashboardStats } from "@/api";
+import SizeDistributionChart from "@/components/SizeDistributionChart";
+import { DashboardStats } from "@/types";
 import {
-  Check,
+  CheckCircle,
   Clock,
-  Edit,
+  Loader,
   Package,
-  Plus,
-  Save,
-  Shirt,
+  Search,
   ShoppingBag,
-  Trash,
-  TrendingUp,
-  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { redirect } from "react-router";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -29,163 +23,99 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { axiosInstance } from "../api";
+
+type OrderStatus = "delivered" | "not_delivered";
+
+interface Order {
+  id: number;
+  customer: string;
+  email: string;
+  items: string[];
+  total: string;
+  status: OrderStatus;
+  code: string;
+  date: string;
+}
+
+interface Analytics {
+  totalOrders: number;
+  totalRevenue: number;
+  itemsSold: number;
+  dailyAverage: number;
+  uniqueCustomers: number;
+}
 
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
-  const [orders, setOrders] = useState([
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField, setSearchField] = useState<"code" | "customer" | "email">(
+    "code"
+  );
+  const [data, setData] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [orders, setOrders] = useState<Order[]>([
     {
       id: 1,
       customer: "John Doe",
+      email: "john@example.com",
       items: ["Warrior's Hoodie"],
       total: "₹50",
       status: "not_delivered",
       code: "12345",
+      date: "2024-02-09",
     },
     {
       id: 2,
       customer: "Jane Smith",
+      email: "jane@example.com",
       items: ["Event T-Shirt", "Bushido Cap"],
       total: "₹40",
       status: "not_delivered",
       code: "67890",
+      date: "2024-02-08",
     },
     {
       id: 3,
       customer: "Mike Johnson",
+      email: "mike@example.com",
       items: ["Event T-Shirt"],
       total: "₹20",
       status: "delivered",
       code: "11223",
+      date: "2024-02-07",
     },
   ]);
 
-  // New state for CMS
-  const [merch, setMerch] = useState([
-    {
-      _id: 1,
-      name: "Warrior's Hoodie",
-      description: "Comfortable hoodie with warrior design",
-      price: 50,
-      sizes: [
-        { size: "S", stock: 10, available: true },
-        { size: "M", stock: 15, available: true },
-        { size: "L", stock: 12, available: true },
-      ],
-      isActive: true,
-    },
-  ]);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [newMerch, setNewMerch] = useState({
-    name: "",
-    description: "",
-    price: 0,
-    sizes: [
-      { size: "S", stock: 0, available: true },
-      { size: "M", stock: 0, available: true },
-      { size: "L", stock: 0, available: true },
-      { size: "XL", stock: 0, available: true },
-      { size: "2XL", stock: 0, available: true },
-    ],
-    isActive: true,
+  const [analytics, setAnalytics] = useState<Analytics>({
+    totalOrders: orders.length,
+    totalRevenue: orders.reduce(
+      (acc, order) => acc + parseInt(order.total.slice(1)),
+      0
+    ),
+    itemsSold: orders.reduce((acc, order) => acc + order.items.length, 0),
+    dailyAverage:
+      orders.reduce((acc, order) => acc + parseInt(order.total.slice(1)), 0) /
+      30,
+    uniqueCustomers: new Set(orders.map((order) => order.email)).size,
   });
 
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
 
-  const salesData = [
-    { day: "Mon", sales: 12, revenue: 600 },
-    { day: "Tue", sales: 19, revenue: 950 },
-    { day: "Wed", sales: 15, revenue: 750 },
-    { day: "Thu", sales: 22, revenue: 1100 },
-    { day: "Fri", sales: 30, revenue: 1500 },
-    { day: "Sat", sales: 40, revenue: 2000 },
-  ];
-
-  const itemData = [
-    { name: "Warrior's Hoodie", value: 45, price: 50 },
-    { name: "Event T-Shirt", value: 80, price: 20 },
-    { name: "Bushido Cap", value: 30, price: 20 },
-  ];
-
-  const sizeData = [
-    { name: "XS", value: 30 },
-    { name: "S", value: 30 },
-    { name: "M", value: 45 },
-    { name: "L", value: 35 },
-    { name: "XL", value: 25 },
-    { name: "XXL", value: 15 },
-  ];
-
+  //TODO: Order status - Paid but not delivered, Paid delivered
   const orderStatus = [
-    { name: "Not Delivered", value: 60 },
-    { name: "Delivered", value: 40 },
+    {
+      name: "Not Delivered",
+      value: orders.filter((o) => o.status === "not_delivered").length,
+    },
+    {
+      name: "Delivered",
+      value: orders.filter((o) => o.status === "delivered").length,
+    },
   ];
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
-
-  const user = useAuthStore((state) => state.user);
-  const checkAuth = useAuthStore((state) => state.checkAuth);
-
-  useEffect(() => {
-    checkAuth().then(() => {
-      if (!user) {
-        redirect("/login");
-      }
-    });
-  }, [user, checkAuth]);
-
-  // CMS functions
-  const handleAddMerch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setMerch([...merch, { ...newMerch, _id: merch.length + 1 }]);
-    setNewMerch({
-      name: "",
-      description: "",
-      price: 0,
-      sizes: [
-        { size: "XS", stock: 0, available: true },
-        { size: "S", stock: 0, available: true },
-        { size: "M", stock: 0, available: true },
-        { size: "L", stock: 0, available: true },
-        { size: "XL", stock: 0, available: true },
-        { size: "2XL", stock: 0, available: true },
-      ],
-      isActive: true,
-    });
-  };
-
-  const handleDelete = (id: number) => {
-    setMerch(merch.filter((item) => item._id !== id));
-  };
-
-  const handleEdit = (id: number) => {
-    const itemToEdit = merch.find((item) => item._id === id);
-    setEditingId(id);
-    setNewMerch(itemToEdit);
-  };
-
-  const handleUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    setMerch(
-      merch.map((item) =>
-        item._id === editingId ? { ...newMerch, _id: editingId } : item
-      )
-    );
-    setEditingId(null);
-    setNewMerch({
-      name: "",
-      description: "",
-      price: 0,
-      sizes: [
-        { size: "S", stock: 0, available: true },
-        { size: "M", stock: 0, available: true },
-        { size: "L", stock: 0, available: true },
-        { size: "XL", stock: 0, available: true },
-        { size: "2XL", stock: 0, available: true },
-      ],
-      isActive: true,
-    });
-  };
 
   const markAsDelivered = (orderId: number) => {
     setOrders(
@@ -193,173 +123,136 @@ const AdminLayout = () => {
         order.id === orderId ? { ...order, status: "delivered" } : order
       )
     );
+    updateAnalytics();
   };
 
-  const getStatusColor = (status: string) => {
+  const updateAnalytics = () => {
+    setAnalytics({
+      totalOrders: orders.length,
+      totalRevenue: orders.reduce(
+        (acc, order) => acc + parseInt(order.total.slice(1)),
+        0
+      ),
+      itemsSold: orders.reduce((acc, order) => acc + order.items.length, 0),
+      dailyAverage:
+        orders.reduce((acc, order) => acc + parseInt(order.total.slice(1)), 0) /
+        30,
+      uniqueCustomers: new Set(orders.map((order) => order.email)).size,
+    });
+  };
+
+  const getStatusColor = (status: OrderStatus) => {
     return status === "delivered" ? "text-green-500" : "text-yellow-500";
   };
 
-  const getStatusIcon = (status: string) => {
-    return status === "delivered" ? Check : Clock;
+  const getStatusIcon = (status: OrderStatus) => {
+    return status === "delivered" ? CheckCircle : Clock;
   };
 
-  const filteredOrders = orders?.filter((order) =>
-    statusFilter === "all" ? true : order.status === statusFilter
-  );
+  const filteredOrders = orders.filter((order) => {
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
+    const searchTerm = searchQuery.toLowerCase();
+    const matchesSearch =
+      searchField === "code"
+        ? order.code.toLowerCase().includes(searchTerm)
+        : searchField === "customer"
+        ? order.customer.toLowerCase().includes(searchTerm)
+        : order.email.toLowerCase().includes(searchTerm);
 
-  const [stats, setStats] = useState({
-    totalOrders: 0,
-    totalRevenue: 0,
-    itemsSold: 0,
-    dailyAverage: 0,
-    uniqueCustomers: 0,
+    return matchesStatus && matchesSearch;
   });
 
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+  }: {
+    title: string;
+    value: number | string;
+    icon: typeof Package | typeof ShoppingBag;
+    color: string;
+  }) => (
+    <div className={`${color} rounded-lg p-6 flex items-center gap-4`}>
+      <Icon className="w-8 h-8 text-white" />
+      <div>
+        <h3 className="text-white text-sm font-medium">{title}</h3>
+        <p className="text-white text-2xl font-bold">{value}</p>
+      </div>
+    </div>
+  );
+
   useEffect(() => {
-    const fetchStats = async () => {
+    const loadDashboardData = async () => {
       try {
-        const response = await axiosInstance.get("/order/stats");
-        console.log("Raw Response:", response); // Logs full response
-        console.log("Data:", response.data); // Logs extracted data
-        setStats(response.data);
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-        if (error) {
-          console.error("Response Data:", error);
-        }
+        setLoading(true);
+        const stats = await fetchDashboardStats();
+        setData(stats);
+      } catch (err) {
+        setError("Failed to load dashboard data");
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchStats();
+    loadDashboardData();
   }, []);
 
-  const statCards = [
-    {
-      title: "Total Orders",
-      value: stats.totalOrders,
-      icon: Package,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Total Revenue",
-      value: `₹${stats.totalRevenue}`,
-      icon: ShoppingBag,
-      color: "bg-green-500",
-    },
-    {
-      title: "Items Sold",
-      value: stats.itemsSold,
-      icon: Shirt,
-      color: "bg-purple-500",
-    },
-    {
-      title: "Daily Average",
-      value: `₹${stats.dailyAverage.toFixed(2)}`,
-      icon: TrendingUp,
-      color: "bg-yellow-500",
-    },
-    {
-      title: "Unique Customers",
-      value: stats.uniqueCustomers,
-      icon: Users,
-      color: "bg-red-500",
-    },
-  ];
+  console.log(data);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader className="w-8 h-8 text-white animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center p-4">{error}</div>;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const chartData = data?.merchSalesSummary.map(
+    (item: {
+      merchName: string;
+      totalQuantity: number;
+      totalRevenue: number;
+    }) => ({
+      name: item.merchName,
+      quantity: item.totalQuantity,
+      revenue: item.totalRevenue,
+    })
+  );
 
   const AnalyticsTab = () => (
     <>
-      {/* Quick Stats */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
-        {[
-          {
-            title: "Total Orders",
-            value: "150",
-            icon: Package,
-            color: "bg-blue-500",
-          },
-          {
-            title: "Total Revenue",
-            value: "₹7,500",
-            icon: ShoppingBag,
-            color: "bg-green-500",
-          },
-          {
-            title: "Items Sold",
-            value: "155",
-            icon: Shirt,
-            color: "bg-purple-500",
-          },
-          {
-            title: "Daily Average",
-            value: "₹1,250",
-            icon: TrendingUp,
-            color: "bg-yellow-500",
-          },
-          {
-            title: "Unique Customers",
-            value: "145",
-            icon: Users,
-            color: "bg-red-500",
-          },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="bg-white/5 rounded-lg border border-white/10 p-6"
-          >
-            <div className="flex items-center">
-              <div className={`p-3 rounded-full ${stat.color}`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">{stat.title}</p>
-                <p className="text-white text-2xl font-bold">{stat.value}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div> */}
-
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
-        {statCards.map((stat, i) => (
-          <div
-            key={i}
-            className="bg-white/5 rounded-lg border border-white/10 p-6"
-          >
-            <div className="flex items-center">
-              <div className={`p-3 rounded-full ${stat.color}`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">{stat.title}</p>
-                <p className="text-white text-2xl font-bold">{stat.value}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+        <StatCard
+          title="Total Orders"
+          value={data.summary.totalOrders}
+          icon={Package}
+          color="bg-blue-500"
+        />
+        <StatCard
+          title="Total Revenue"
+          value={`₹${data.summary.totalAmount}`}
+          icon={ShoppingBag}
+          color="bg-green-500"
+        />
       </div>
 
-      {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Sales Trend</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={salesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="day" stroke="#666" />
-              <YAxis stroke="#666" />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="sales" stroke="#8884d8" />
-              <Line type="monotone" dataKey="revenue" stroke="#82ca9d" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
         <div className="bg-white/5 rounded-lg border border-white/10 p-6">
           <h2 className="text-xl font-bold text-white mb-4">
             Items Distribution
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={itemData}>
+            <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
               <XAxis dataKey="name" stroke="#666" />
               <YAxis stroke="#666" />
@@ -370,33 +263,7 @@ const AdminLayout = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-          <h2 className="text-xl font-bold text-white mb-4">
-            Size Distribution
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={sizeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {sizeData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        {data && <SizeDistributionChart data={data} />}
 
         <div className="bg-white/5 rounded-lg border border-white/10 p-6">
           <h2 className="text-xl font-bold text-white mb-4">Order Status</h2>
@@ -429,13 +296,38 @@ const AdminLayout = () => {
 
   const OrdersTab = () => (
     <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h2 className="text-xl font-bold text-white">Orders Management</h2>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          <div className="flex gap-2 w-full md:w-auto">
+            <select
+              className="bg-white/10 text-white rounded-lg px-4 py-2"
+              value={searchField}
+              onChange={(e) =>
+                setSearchField(e.target.value as "code" | "customer" | "email")
+              }
+            >
+              <option value="code">Search by Code</option>
+              <option value="customer">Search by Customer</option>
+              <option value="email">Search by Email</option>
+            </select>
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search orders..."
+                className="w-full bg-white/10 text-white rounded-lg pl-10 pr-4 py-2"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
           <select
             className="bg-white/10 text-white rounded-lg px-4 py-2"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) =>
+              setStatusFilter(e.target.value as "all" | OrderStatus)
+            }
           >
             <option value="all">All Orders</option>
             <option value="not_delivered">Not Delivered</option>
@@ -449,10 +341,12 @@ const AdminLayout = () => {
           <thead>
             <tr className="text-gray-400 border-b border-white/10">
               <th className="py-3 px-4 text-left">Order ID</th>
+              <th className="py-3 px-4 text-left">Date</th>
               <th className="py-3 px-4 text-left">Customer</th>
+              <th className="py-3 px-4 text-left">Email</th>
               <th className="py-3 px-4 text-left">Items</th>
               <th className="py-3 px-4 text-left">Total</th>
-              <th className="py-3 px-4 text-left">Verification Code</th>
+              <th className="py-3 px-4 text-left">Code</th>
               <th className="py-3 px-4 text-left">Status</th>
               <th className="py-3 px-4 text-left">Actions</th>
             </tr>
@@ -460,14 +354,12 @@ const AdminLayout = () => {
           <tbody>
             {filteredOrders.map((order) => {
               const StatusIcon = getStatusIcon(order.status);
-              const displayStatus =
-                order.status === "not_delivered"
-                  ? "Not Delivered"
-                  : "Delivered";
               return (
                 <tr key={order.id} className="border-b border-white/10">
                   <td className="py-4 px-4 text-white">{order.id}</td>
+                  <td className="py-4 px-4 text-white">{order.date}</td>
                   <td className="py-4 px-4 text-white">{order.customer}</td>
+                  <td className="py-4 px-4 text-white">{order.email}</td>
                   <td className="py-4 px-4 text-white">
                     {order.items.join(", ")}
                   </td>
@@ -480,14 +372,18 @@ const AdminLayout = () => {
                       )}`}
                     >
                       <StatusIcon className="w-4 h-4" />
-                      <span>{displayStatus}</span>
+                      <span>
+                        {order.status === "delivered"
+                          ? "Delivered"
+                          : "Not Delivered"}
+                      </span>
                     </div>
                   </td>
                   <td className="py-4 px-4">
                     {order.status === "not_delivered" && (
                       <button
                         onClick={() => markAsDelivered(order.id)}
-                        className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm"
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-colors"
                       >
                         Mark Delivered
                       </button>
@@ -498,113 +394,11 @@ const AdminLayout = () => {
             })}
           </tbody>
         </table>
-      </div>
-    </div>
-  );
-
-  // New CMS Tab
-  const MerchTab = () => (
-    <div className="space-y-6">
-      <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white mb-4">
-          {editingId ? "Edit Merchandise" : "Add New Merchandise"}
-        </h2>
-        <form
-          onSubmit={editingId ? handleUpdate : handleAddMerch}
-          className="space-y-4"
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Name"
-              className="bg-white/10 text-white rounded p-2"
-              value={newMerch.name}
-              onChange={(e) =>
-                setNewMerch({ ...newMerch, name: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Price"
-              className="bg-white/10 text-white rounded p-2"
-              value={newMerch.price}
-              onChange={(e) =>
-                setNewMerch({ ...newMerch, price: Number(e.target.value) })
-              }
-            />
+        {filteredOrders.length === 0 && (
+          <div className="text-center py-8 text-gray-400">
+            No orders found matching your search criteria
           </div>
-          <textarea
-            placeholder="Description"
-            className="w-full bg-white/10 text-white rounded p-2"
-            value={newMerch.description}
-            onChange={(e) =>
-              setNewMerch({ ...newMerch, description: e.target.value })
-            }
-          />
-          <div className="grid grid-cols-5 gap-4">
-            {newMerch.sizes.map((size, index) => (
-              <div key={size.size} className="space-y-2">
-                <label className="text-white">{size.size}</label>
-                <input
-                  type="number"
-                  placeholder="Stock"
-                  className="w-full bg-white/10 text-white rounded p-2"
-                  value={size.stock}
-                  onChange={(e) => {
-                    const updatedSizes = [...newMerch.sizes];
-                    updatedSizes[index].stock = Number(e.target.value);
-                    setNewMerch({ ...newMerch, sizes: updatedSizes });
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2"
-          >
-            {editingId ? (
-              <Save className="w-4 h-4" />
-            ) : (
-              <Plus className="w-4 h-4" />
-            )}
-            {editingId ? "Update Merchandise" : "Add Merchandise"}
-          </button>
-        </form>
-      </div>
-
-      <div className="bg-white/5 rounded-lg border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white mb-4">
-          Manage Merchandise
-        </h2>
-        <div className="space-y-4">
-          {merch.map((item) => (
-            <div
-              key={item._id}
-              className="flex items-center justify-between p-4 bg-white/10 rounded"
-            >
-              <div>
-                <h3 className="text-white font-bold">{item.name}</h3>
-                <p className="text-gray-400">₹{item.price}</p>
-                <p className="text-gray-400 text-sm">{item.description}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(item._id)}
-                  className="p-2 bg-yellow-500 rounded"
-                >
-                  <Edit className="w-4 h-4 text-white" />
-                </button>
-                <button
-                  onClick={() => handleDelete(item._id)}
-                  className="p-2 bg-red-500 rounded"
-                >
-                  <Trash className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
     </div>
   );
@@ -621,48 +415,30 @@ const AdminLayout = () => {
           </p>
         </div>
 
-        {/* Updated Tabs */}
         <div className="flex gap-4 mb-8">
           <button
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "analytics"
                 ? "bg-white/20 text-white"
-                : "bg-white/5 text-gray-400"
+                : "bg-white/5 text-gray-400 hover:bg-white/10"
             }`}
             onClick={() => setActiveTab("analytics")}
           >
             Analytics
           </button>
           <button
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "orders"
                 ? "bg-white/20 text-white"
-                : "bg-white/5 text-gray-400"
+                : "bg-white/5 text-gray-400 hover:bg-white/10"
             }`}
             onClick={() => setActiveTab("orders")}
           >
             Orders
           </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === "merchandise"
-                ? "bg-white/20 text-white"
-                : "bg-white/5 text-gray-400"
-            }`}
-            onClick={() => setActiveTab("merchandise")}
-          >
-            Manage Merchandise
-          </button>
         </div>
 
-        {/* Updated Tab Content */}
-        {activeTab === "analytics" ? (
-          <AnalyticsTab />
-        ) : activeTab === "orders" ? (
-          <OrdersTab />
-        ) : (
-          <MerchTab />
-        )}
+        {activeTab === "analytics" ? <AnalyticsTab /> : <OrdersTab />}
       </div>
     </div>
   );
