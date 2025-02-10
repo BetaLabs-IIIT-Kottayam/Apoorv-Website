@@ -1,35 +1,47 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+// import { loadFull } from "tsparticles";
 import BackgroundImage from "../assets/letters.png"; 
 import Loader from "../components/Loader";
 
 const Sponsors = () => {
   const particlesInit = async (engine: any) => await loadFull(engine);
   const [contentVisible, setContentVisible] = useState(false);
+  const [sponsorLogos, setSponsorLogos] = useState<string[]>([]);
+
+  useEffect(() => {
+    const importLogos = async () => {
+      const images = import.meta.glob('../assets/sponsors/image*.{png,jpg,svg}', {
+        eager: true,
+        as: 'url'
+      });
+      setSponsorLogos(Object.values(images));
+    };
   
+    importLogos();
+  }, []);
   // Wait for loader to complete before showing content
   useEffect(() => {
     const timer = setTimeout(() => {
       setContentVisible(true);
-    }, 3400); // Adjust the time as needed
+    }, 3400);
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy data - replace with actual sponsors
-  const sponsorshipTiers = [
-    {
-      name: "Imperial Patron",
-      benefits: ["Main Stage Branding", "Keynote Speaking Slot", "Full-Page Ad in Brochure"],
-      sponsors: ["Sakura Technologies", "Bushido Labs"]
-    },
-    {
-      name: "Shogun Partner",
-      benefits: ["Workshop Sponsorship", "Social Media Shoutouts", "Logo on All Merch"],
-      sponsors: ["Katana Cloud", "Ronin Robotics"]
-    }
-  ];
+  // Existing sponsorship tiers data
+  // const sponsorshipTiers = [
+  //   {
+  //     name: "Imperial Patron",
+  //     benefits: ["Main Stage Branding", "Keynote Speaking Slot", "Full-Page Ad in Brochure"],
+  //     sponsors: ["Sakura Technologies", "Bushido Labs"]
+  //   },
+  //   {
+  //     name: "Shogun Partner",
+  //     benefits: ["Workshop Sponsorship", "Social Media Shoutouts", "Logo on All Merch"],
+  //     sponsors: ["Katana Cloud", "Ronin Robotics"]
+  //   }
+  // ];
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
@@ -113,7 +125,7 @@ const Sponsors = () => {
           </motion.div>
 
           {/* Sponsorship Tiers */}
-          <div className="grid md:grid-cols-2 gap-12 mb-24">
+          {/* <div className="grid md:grid-cols-2 gap-12 mb-24">
             {sponsorshipTiers.map((tier, index) => (
               <motion.div 
                 key={tier.name}
@@ -150,24 +162,31 @@ const Sponsors = () => {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </div> */}
            
           {/* Past Sponsors Gallery */}
-          <motion.div 
+         <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="text-center"
           >
             <h3 className="font-gang text-3xl text-white mb-12">Previous Champions</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-square bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center">
-                  {/* Add sponsor logo */}
-                  <span className="font-gang text-gray-400">Logo {i + 1}</span>
+              {sponsorLogos.map((logo, i) => (
+                <div 
+                  key={i} 
+                  className="aspect-square bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center p-4"
+                >
+                  <img 
+                    src={logo} 
+                    alt={`Sponsor Logo ${i + 1}`} 
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
               ))}
             </div>
           </motion.div>
+
 
           {/* CTA Section */}
           <motion.div 
@@ -184,7 +203,9 @@ const Sponsors = () => {
                 whileHover={{ scale: 1.05 }}
                 className="bg-red-500 text-white font-gang px-8 py-3 rounded-none border-2 border-white"
               >
-                INITIATE ALLIANCE
+                <a href="mailto:apoorv@iiitkottayam.ac.in">
+                  INITIATE ALLIANCE
+                </a>
               </motion.button>
             </div>
           </motion.div>
@@ -195,3 +216,7 @@ const Sponsors = () => {
 };
 
 export default Sponsors;
+
+function loadFull(_: any) {
+  throw new Error("Function not implemented.");
+}

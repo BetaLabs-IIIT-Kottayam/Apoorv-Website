@@ -1,23 +1,40 @@
-import type React from "react"
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Link } from "react-router"
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
   const navItems = ["Home", "Events", "Sponsors", "Merch", "Team", "Developers"]
 
   return (
-    <nav className="fixed w-full z-50 bg-transparent border-b border-white/20">
+    <nav 
+      className={`fixed w-full z-50 transition-colors duration-300 ${
+        scrolled ? 'bg-black border-b border-white/20' : 'bg-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="font-gang text-2xl text-white">
-          侍 FEST
+        <motion.h1 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          className="font-gang text-2xl text-white"
+        >
+          APOORV
         </motion.h1>
 
-        {/* Hamburger Icon for Mobile/Tablet */}
+        {/* Rest of the existing Navbar code remains the same */}
         <div className="lg:hidden flex items-center">
           <button onClick={toggleMenu} className="text-white focus:outline-none z-50">
             <span
@@ -62,7 +79,7 @@ export const Navbar: React.FC = () => {
                   <Link
                     to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
                     key={item}
-                    onClick={() => setIsOpen(false)} // Close menu on item click
+                    onClick={() => setIsOpen(false)}
                     className="text-white font-gang text-3xl"
                   >
                     {item}
@@ -78,4 +95,3 @@ export const Navbar: React.FC = () => {
 }
 
 export default Navbar
-

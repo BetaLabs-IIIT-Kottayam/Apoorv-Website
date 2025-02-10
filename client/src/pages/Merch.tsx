@@ -39,7 +39,6 @@ const Merch = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const checkRateLimit = (): boolean => {
     const now = Date.now();
@@ -63,11 +62,11 @@ const Merch = () => {
 
         const data = await response.json();
         setProducts(data.merch);
-        setIsLoading(false);
+        // setIsLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again later.");
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
 
@@ -174,7 +173,7 @@ const Merch = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setContentVisible(true);
-    }, 3200);
+    }, 3400);
     return () => clearTimeout(timer);
   }, []);
 
@@ -378,9 +377,7 @@ const Merch = () => {
     );
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+
 
   if (error && !products.length) {
     return (
