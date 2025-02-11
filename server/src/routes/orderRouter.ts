@@ -8,14 +8,14 @@ const router = express.Router();
 router.route('/')
     // .all(authenticateUser())
     .post(createOrder)
-    .get(getAllOrders);
+    .get(authenticateUser(),getAllOrders)
+    .patch(authenticateUser(),updateOrderStatus);
 
 router.post('/verifyPayment', verifyPayment)
 
 router.route('/:id')
     // .all(authenticateUser())
     .get(authenticateUser(), getOrderById)
-    .patch(authenticateUser(),updateOrderStatus);
 
 
 export default router;

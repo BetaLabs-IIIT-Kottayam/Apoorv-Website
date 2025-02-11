@@ -6,6 +6,17 @@ import {
   useOrders,
 } from "@/api";
 import SizeDistributionChart from "@/components/SizeDistributionChart";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DashboardStats } from "@/types";
 import axios from "axios";
 import { Loader, Package, Search, ShoppingBag } from "lucide-react";
@@ -212,14 +223,34 @@ const AdminLayout = () => {
                   </td>
                   <td className="px-4 py-3">
                     {order.status === "Paid" && (
-                      <button
-                        onClick={() =>
-                          updateOrderStatus(order._id, "Delivered")
-                        }
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors"
-                      >
-                        Mark Delivered
-                      </button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                            Mark Delivered
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Confirm Status Update
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Do you really want to mark this order as
+                              Delivered?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>No</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                updateOrderStatus(order._id, "Delivered")
+                              }
+                            >
+                              Yes
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                   </td>
                 </tr>
