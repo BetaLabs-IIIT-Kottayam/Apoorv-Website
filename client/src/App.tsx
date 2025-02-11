@@ -11,6 +11,11 @@ import Notfound from "./pages/Notfound";
 import Sponsors from "./pages/Sponsors";
 import Team from "./pages/Team";
 import Home from "./pages/Home";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
+import Shipping from "./pages/Shipping";
+import Cancellation from "./pages/Cancellation";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +28,7 @@ function App() {
 
     const navTimer = setTimeout(() => {
       setShowNav(true);
-    }, 7500); // Show Navbar after 7200 milliseconds
+    }, 75); // Show Navbar after 7200 milliseconds
 
     return () => {
       clearTimeout(loadingTimer);
@@ -47,6 +52,11 @@ function App() {
             <Route path="/team" element={<Team />} />
             <Route path="/developers" element={<Developers />} />
             <Route path="/merch" element={<Merch />} />
+            <Route path="/terms-conditions" element={<Terms />} />
+            <Route path="/privacy-policy" element={<Privacy />} />
+            <Route path="/contact-us" element={<Contact />} />
+            <Route path="/shipping-policy" element={<Shipping />} />
+            <Route path="/cancellation-refund" element={<Cancellation />} />
             <Route path="/testing" element={<Montana />} />
             <Route path="/*" element={<Notfound />} />
           </Routes>
