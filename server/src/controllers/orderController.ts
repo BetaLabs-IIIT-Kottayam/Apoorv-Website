@@ -3,10 +3,53 @@ import { BadRequestError, NotFoundError, UnauthenticatedError } from "../errors"
 import Order from "../models/Order";
 import Merch from "../models/Merch";
 import { StatusCodes } from "http-status-codes";
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import Razorpay from "razorpay";
 import generateInvoice from "../utils/generateInvoice";
 import transporter from "../utils/mailService";
+
+interface IMerchPhoto {
+    data: Buffer;
+    contentType: string;
+  }
+  
+  interface IMerch extends Document {
+    name: string;
+    description: string;
+    price: number;
+    photos: IMerchPhoto[];
+    sizes: string[];
+    colors: string[];
+  }
+  
+  // Types for the Order document
+  interface IOrderItem {
+    merchId: IMerch;  // This will be populated with the full Merch document
+    size: 'XS' | 'S' | 'M' | 'L' | 'XL' | '2XL' | '3XL';
+    color: string;
+    quantity: number;
+    price: number;
+  }
+  
+  interface IBuyerDetails {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  }
+  
+  export interface IOrder extends Document {
+    _id: mongoose.Types.ObjectId;
+    buyerDetails: IBuyerDetails;
+    items: IOrderItem[];
+    totalAmount: number;
+    status: string;
+    razorpayOrderId: string;
+    razorpayPaymentId?: string;
+    secretCode: string;
+    paidAt?: Date;
+  }
+  export type PopulatedOrder = Document<unknown, {}, IOrder> & IOrder;
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID!,
@@ -143,9 +186,10 @@ const verifyPayment = async (req: Request, res: Response) => {
             paidAt: new Date()
         },
         { new: true, runValidators: true }
-    ).populate('items.merchId');
+    ).populate<{ items: IOrderItem[] }>('items.merchId');
+    const populatedOrder = updatedOrder as PopulatedOrder;
 
-    const invoice = generateInvoice(updatedOrder!);
+    const invoice = generateInvoice(populatedOrder);
     const pdfBuffer = invoice.output('arraybuffer');
 
     const mailOptions = {
@@ -164,7 +208,7 @@ const verifyPayment = async (req: Request, res: Response) => {
     
     Order Items:
     ${updatedOrder?.items.map(item => `
-    - ${item.merchName}
+    - ${item.merchId.name}
       Color: ${item.color}
       Size: ${item.size}
       Quantity: ${item.quantity}

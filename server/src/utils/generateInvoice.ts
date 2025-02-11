@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
-import { IOrder } from '../models/Order';
+import { IOrder, PopulatedOrder } from '../controllers/orderController';
 
-const generateInvoice = (order : IOrder) => {
+const generateInvoice = (order : PopulatedOrder) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     
@@ -40,7 +40,7 @@ const generateInvoice = (order : IOrder) => {
       const currentY = yPos + (index * 20);
       
       // Item name (wrap text if too long)
-      const itemName = item.merchName;
+      const itemName = item.merchId.name;
       const wrappedName = doc.splitTextToSize(itemName, 60);
       doc.text(wrappedName, 30, currentY);
       
