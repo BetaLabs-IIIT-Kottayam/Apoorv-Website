@@ -6,7 +6,7 @@ import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
 
 export interface Product {
-  _id : string,
+  _id: string;
   id: string;
   name: string;
   price: number;
@@ -266,7 +266,11 @@ const Merch = () => {
     </motion.div>
   );
 
-  const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, addToCart }) => {
+  const ProductModal: React.FC<ProductModalProps> = ({
+    product,
+    onClose,
+    addToCart,
+  }) => {
     const defaultSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
     const defaultColors = ["Black", "White"];
 
@@ -363,7 +367,9 @@ const Merch = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => addToCart(product, selectedSize, selectedColor)}
+                  onClick={() =>
+                    addToCart(product, selectedSize, selectedColor)
+                  }
                   className="bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center gap-2 text-xs md:text-base"
                 >
                   <ShoppingCart size={16} />
@@ -376,8 +382,6 @@ const Merch = () => {
       </motion.div>
     );
   };
-
-
 
   if (error && !products.length) {
     return (
@@ -429,6 +433,14 @@ const Merch = () => {
           </style>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-24">
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="font-gang text-4xl sm:text-5xl text-white mb-8 sm:mb-16 text-center"
+            >
+              BATTLE GEAR
+            </motion.h2>
             {error && (
               <div className="mb-4 p-4 bg-red-500/10 text-red-500 rounded-lg">
                 {error}
