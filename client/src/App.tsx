@@ -28,7 +28,7 @@ function App() {
 
     const navTimer = setTimeout(() => {
       setShowNav(true);
-    }, 75); // Show Navbar after 7200 milliseconds
+    }, 7500); // Show Navbar after 7200 milliseconds
 
     return () => {
       clearTimeout(loadingTimer);
