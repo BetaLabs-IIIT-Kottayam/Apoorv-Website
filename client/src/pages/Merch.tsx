@@ -55,7 +55,7 @@ const Merch = () => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/v1/merch`
         );
-
+        
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
