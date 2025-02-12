@@ -24,7 +24,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"], // Explicitly allow frontend origins
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://client:5173", "http://admin:5174"], // Explicitly allow frontend origins
     credentials: true, // Allow cookies
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],

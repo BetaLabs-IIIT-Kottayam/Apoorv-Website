@@ -21,7 +21,7 @@ services:
   server:
     build: 
       context: ./server
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: server
     depends_on:
       - mongodb
@@ -39,69 +39,33 @@ services:
       SMTP_SERVICE: "gmail"
       SMTP_USER: "anshumohan22bcy19@iiitkottayam.ac.in"
       SMTP_PASS: "dosp dprv tnfs zuef"
-      NODE_ENV: development
-    # volumes:
-    #   - ./server:/app
-    #   - /app/node_modules
-    develop:
-      watch:
-        - path: ./server/package.json
-          action: rebuild
-        - path: ./server/pnpm-lock.yaml
-          action: rebuild
-        - path: ./server
-          target: /app
-          action: sync
+      NODE_ENV: production
 
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: client
     restart: always
     ports:
       - "5173:5173"
     environment:
-      - c
-    # volumes:
-    #   - ./client:/app
-    #   - /app/node_modules
+      - VITE_API_URL=http://server:5000
     depends_on:
-      - server
-    develop:
-      watch:
-        - path: ./client/package.json
-          action: rebuild
-        - path: ./client/pnpm-lock.yaml
-          action: rebuild
-        - path: ./client
-          target: /app
-          action: sync
+    - server
 
   admin:
     build:
       context: ./admin
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: admin
     restart: always
     ports:
       - "5174:5174"
     environment:
       - VITE_API_URL=http://server:5000
-    # volumes:
-    #   - ./admin:/app
-    #   - /app/node_modules
     depends_on:
       - server
-    develop:
-      watch:
-        - path: ./admin/package.json
-          action: rebuild
-        - path: ./admin/pnpm-lock.yaml
-          action: rebuild
-        - path: ./admin
-          target: /app
-          action: sync
 
 volumes:
   mongodata:
