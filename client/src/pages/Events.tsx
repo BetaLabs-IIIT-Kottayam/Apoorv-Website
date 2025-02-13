@@ -114,6 +114,21 @@ const Events = () => {
         "Unleash your creativity and transform faces with vibrant colors, intricate details, and captivating designs.",
     },
     //CINEVEDIKA
+    {
+      title: "48-Hour Flicks",
+      category: "Short Film",
+      duration: "48 hours",
+      date: "Mar 25",
+      description: "An electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours!",
+      details: "Think fast, film faster, and make every second count!"
+    },
+    {
+      title: "Reel to Real: Character Comeback",
+      category: "Acting",
+      date: "Mar 25",
+      description: "A stage for movie lovers to bring their favorite characters to life!",
+      details: "Step into the spotlight and celebrate the magic of cinema"
+    },
     // TECH CLUB
     {
       title: "Hackoona Matata",

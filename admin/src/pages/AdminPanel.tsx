@@ -66,8 +66,6 @@ const AdminLayout = () => {
     loadDashboardData();
   }, []);
 
-  console.log(data);
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">

@@ -439,7 +439,7 @@ const Merch = () => {
               transition={{ delay: 0.3 }}
               className="font-gang text-4xl sm:text-5xl text-white mb-8 sm:mb-16 text-center"
             >
-              BATTLE GEAR
+              BATTLE<span className="text-red-500">.</span>GEAR
             </motion.h2>
             {error && (
               <div className="mb-4 p-4 bg-red-500/10 text-red-500 rounded-lg">
