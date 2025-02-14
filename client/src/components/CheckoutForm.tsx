@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { CartItem } from "../pages/Merch";
+import PaymentSuccessModal from "./PaymentSuccessModal";
 
 interface CheckoutFormProps {
   cart: CartItem[];
@@ -15,8 +16,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   setCart,
   setIsCheckoutOpen,
 }) => {
-
-  console.log(cart)
+  console.log(cart);
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -25,6 +25,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Ensure safe calculation of total amount with proper type checking
   const calculateTotal = (items: CartItem[]): number => {
@@ -104,12 +105,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       if (!res) {
         throw new Error("Razorpay SDK failed to load");
       }
-    
+
       const orderResponse = await createOrder();
       console.log("Order created:", orderResponse); // Add this log
-      console.log("Order Check:", orderResponse.order.razorpayOrderId)
-    
-      if (!orderResponse || !orderResponse.order.razorpayOrderId) { // Add this check
+      console.log("Order Check:", orderResponse.order.razorpayOrderId);
+
+      if (!orderResponse || !orderResponse.order.razorpayOrderId) {
+        // Add this check
         throw new Error("Invalid order response from server");
       }
 
@@ -121,30 +123,31 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         description: "Purchase from Merch Store",
         order_id: orderResponse.order.razorpayOrderId,
         handler: async (response: any) => {
-          console.log("Razorpay Response: ", response)
+          console.log("Razorpay Response: ", response);
           try {
             const verificationResponse = await fetch(
               `${import.meta.env.VITE_API_URL}/api/v1/order/verifyPayment`,
               {
                 method: "POST",
                 headers: {
-                  "Content-Type": "application/json"
+                  "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   razorpayPaymentId: response.razorpay_payment_id,
                   razorpayOrderId: response.razorpay_order_id,
                   razorpaySignature: response.razorpay_signature,
-                })
+                }),
               }
             );
-            console.log("Verification response",verificationResponse)
+            console.log("Verification response", verificationResponse);
             if (!verificationResponse.ok) {
               throw new Error("Payment verification failed");
             }
 
+            setShowSuccessModal(true);
+
             // Clear cart and show success
             setCart([]);
-            setIsCheckoutOpen(false);
           } catch (err) {
             console.error("Payment verification error:", err);
             setError("Payment verification failed. Please contact support.");
@@ -157,7 +160,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           contact: formData.phone,
         },
         method: {
-          upi: true,  // Enable UPI
+          upi: true, // Enable UPI
           netbanking: true,
           card: true,
           wallet: true,
@@ -175,6 +178,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setIsCheckoutOpen(false); // Close checkout after user dismisses success modal
   };
 
   return (
@@ -271,6 +279,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             {loading ? "Processing..." : "Proceed to Pay"}
           </motion.button>
         </form>
+        {showSuccessModal && (
+          <PaymentSuccessModal onClose={handleCloseSuccessModal} />
+        )}
       </motion.div>
     </motion.div>
   );

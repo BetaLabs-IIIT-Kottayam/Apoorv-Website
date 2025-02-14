@@ -1,30 +1,86 @@
 module.exports = {
-  content: [
+    darkMode: ["class"],
+    content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      fontFamily: {
-        shippori: ["Shippori Mincho", "serif"],
-        noto: ["Noto Sans JP", "sans-serif"],
-        gang: ["Gang of Three", "sans-serif"],        
-      },
-      colors: {
-        primary: "#B22222", // Red
-        secondary: "#000000", // Black
-        accent: "#FFFFFF", // White
-      },
-      animation: {
-        spin: 'spin 2s linear infinite',
-      },
-      keyframes: {
-        spin: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
-        },
-      },
-    },
+  	extend: {
+  		fontFamily: {
+  			shippori: [
+  				'Shippori Mincho',
+  				'serif'
+  			],
+  			noto: [
+  				'Noto Sans JP',
+  				'sans-serif'
+  			],
+  			gang: [
+  				'Gang of Three',
+  				'sans-serif'
+  			]
+  		},
+  		colors: {
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			}
+  		},
+  		animation: {
+  			spin: 'spin 2s linear infinite'
+  		},
+  		keyframes: {
+  			spin: {
+  				'0%': {
+  					transform: 'rotate(0deg)'
+  				},
+  				'100%': {
+  					transform: 'rotate(360deg)'
+  				}
+  			}
+  		},
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		}
+  	}
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
