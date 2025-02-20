@@ -20,7 +20,7 @@ export const teamMembers: TeamMemberConfig[] = [
   { id: 13, name: "Armaan" },
   { id: 14, name: "Monish" },
   { id: 15, name: "Shashank" },
-  { id: 16, name: "Akhilesh" },
+  { id: 16, name: "akhilesh" },
   { id: 17, name: "Hisham" },
   { id: 18, name: "Hrishikesh" },
   { id: 19, name: "Sharath" },
