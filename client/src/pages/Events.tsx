@@ -10,7 +10,7 @@ const Events = () => {
     category: string;
     date: string;
     description: string;
-    details: string;
+    link: string;
   }
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -28,16 +28,13 @@ const Events = () => {
     {
       title: "Solo Sizzle",
       category: "Dance",
-      date: "Mar 18",
       description:
         "Get ready for a mesmerizing celebration of rhythm, grace, and unparalleled talent! Apoorv 25  proudly presents the Solo Sizzle,where individual performers take center stage to showcase their passion and prowess in a dance extravaganza like never before. It's not just a dance, it's a canvas for self expression and innovation.",
-      details:
-        "Dancers take the stage to showcase their passion and prowess in a breathtaking solo dance performance.",
+      link: "https://makemypass.com/solosizzle",
     },
     {
       title: "Pulse and Beats",
       category: "Dance",
-      date: "Mar 19",
       description:
         "Experience the beauty and power of dance at  Apoorv 25's PULSE AND BEATS! With stunning costumes and mesmerizing lighting, the stage will burst with color and energy, transport us to a realm of pure artistic expression.Our group dancing event is jam-packed with addictive music and high-energy dances.",
       details:
@@ -279,9 +276,6 @@ const Events = () => {
               <span className="font-gang text-base md:text-xl text-red-400 bg-white/10 px-3 md:px-4 py-1 md:py-2 rounded-full">
                 {event.category}
               </span>
-              <span className="font-gang text-base md:text-xl text-white/70 bg-white/10 px-3 md:px-4 py-1 md:py-2 rounded-full">
-                {event.date}
-              </span>
             </div>
             <p
               className="font-gang text-base md:text-2xl text-white/80 max-w-2xl mb-4 
@@ -289,12 +283,17 @@ const Events = () => {
             >
               {event.description}
             </p>
-            <p
+            {/* <p
               className="font-gang text-sm md:text-xl text-white/60 max-w-2xl
               bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl"
-            >
-              {event.details}
-            </p>
+            > */}
+            <button className="font-gang text-sm md:text-xl text-white/60 max-w-2xl
+              bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl hover:bg-white/10 ">
+              <a href={event.link} target="_blank" rel="noopener noreferrer">
+                Register Now
+              </a>
+            </button>
+            {/* </p> */}
           </div>
         </div>
       </motion.div>
@@ -302,8 +301,8 @@ const Events = () => {
   );
   return (
     <div className="relative min-h-screen bg-black">
-      <Loader pageName="Events"/>
-      
+      <Loader pageName="Events" />
+
       {/* Background Image Container */}
       {contentVisible && (
         <div
