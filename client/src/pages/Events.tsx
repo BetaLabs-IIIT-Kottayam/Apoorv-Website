@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 // import Ninja from "../assets/Ninja.png";
 import BackgroundImage from "../assets/cherryBlossom.png"; // Add your portrait image
 import Loader from "../components/Loader";
@@ -52,7 +52,7 @@ const Events = () => {
       details:
         "Each team of five, including at least one female member, will face off in a dynamic dance competition featuring diverse styles and creativity.",
     },
-  
+
     // CULTURAL CLUB - MUSIC
     {
       title: "Beyond the Harmony",
@@ -72,7 +72,7 @@ const Events = () => {
       details:
         "Whether you're a beginner or a pro, this event offers you the chance to showcase your instrumental skills and win exciting prizes.",
     },
-  
+
     // CULTURAL CLUB - DRAMA
     {
       title: "Stage Buster",
@@ -83,7 +83,7 @@ const Events = () => {
       details:
         "Teams of 2-3 members will bring cinematic magic to life, showcasing their acting skills and storytelling abilities.",
     },
-  
+
     // CULTURAL CLUB - ART
     {
       title: "Printscapes",
@@ -119,15 +119,17 @@ const Events = () => {
       category: "Short Film",
       duration: "48 hours",
       date: "Mar 25",
-      description: "An electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours!",
-      details: "Think fast, film faster, and make every second count!"
+      description:
+        "An electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours!",
+      details: "Think fast, film faster, and make every second count!",
     },
     {
       title: "Reel to Real: Character Comeback",
       category: "Acting",
       date: "Mar 25",
-      description: "A stage for movie lovers to bring their favorite characters to life!",
-      details: "Step into the spotlight and celebrate the magic of cinema"
+      description:
+        "A stage for movie lovers to bring their favorite characters to life!",
+      details: "Step into the spotlight and celebrate the magic of cinema",
     },
     // TECH CLUB
     {
@@ -175,7 +177,7 @@ const Events = () => {
       details:
         "Use your problem-solving skills and simulation tools to crack the code and prove your hardware expertise.",
     },
-  
+
     // SPORTS CLUB
     {
       title: "Valorant Showdown",
@@ -205,7 +207,7 @@ const Events = () => {
         "Join teams from around the world as they fight for supremacy in this competitive gaming showdown.",
     },
   ];
-  
+
   const FanModal = ({
     event,
     onClose,
@@ -246,19 +248,23 @@ const Events = () => {
       >
         {/* Elegant Border Decoration */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-2 border-4 border-dashed border-red-900/20 
-            rounded-xl"></div>
-          <div className="absolute inset-6 border-2 border-solid border-red-900/10 
-            rounded-xl"></div>
+          <div
+            className="absolute inset-2 border-4 border-dashed border-red-900/20 
+            rounded-xl"
+          ></div>
+          <div
+            className="absolute inset-6 border-2 border-solid border-red-900/10 
+            rounded-xl"
+          ></div>
         </div>
-  
+
         {/* Cute Ninja Cartoon - Commented out for now */}
         {/* <img 
           src={Ninja} 
           alt="Ninja Cartoon" 
           className="absolute bottom-6 w-42 h-32" 
         /> */}
-  
+
         {/* Modal Content */}
         <div className="relative py-8 px-4 md:px-8">
           <div className="flex flex-col items-center text-center">
@@ -297,19 +303,18 @@ const Events = () => {
   return (
     <div className="relative min-h-screen bg-black">
       <Loader />
-      
+
       {/* Background Image Container */}
       {contentVisible && (
-
         <div
-        className="fixed inset-0 bg-cover bg-no-repeat bg-right opacity-40"
-        style={{
-          backgroundImage: `url(${BackgroundImage})`,
-          backgroundSize: "50%",
-          backgroundPosition: "right center",
-          filter: "brightness(120%)",
-          zIndex: 0
-        }}
+          className="fixed inset-0 bg-cover bg-no-repeat bg-right opacity-40"
+          style={{
+            backgroundImage: `url(${BackgroundImage})`,
+            backgroundSize: "50%",
+            backgroundPosition: "right center",
+            filter: "brightness(120%)",
+            zIndex: 0,
+          }}
         ></div>
       )}
 
@@ -350,12 +355,12 @@ const Events = () => {
             className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-24"
           >
             <motion.h2
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="font-gang text-4xl sm:text-5xl text-white mb-8 sm:mb-16 text-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="font-gang text-5xl text-white mb-8 text-center relative z-10"
             >
-              Battlegrounds
+              BATTLE<span className="text-red-500">.</span>GROUNDS
             </motion.h2>
 
             <motion.div
@@ -379,10 +384,14 @@ const Events = () => {
                   className="bg-white/5 backdrop-blur-lg p-6 sm:p-8 rounded-xl border border-white/10 cursor-pointer hover:border-red-500/50 transition-all"
                 >
                   <div className="flex justify-between items-start mb-4 sm:mb-6">
-                    <h3 className="font-gang text-xl sm:text-2xl text-white">{event.title}</h3>
+                    <h3 className="font-gang text-xl sm:text-2xl text-white">
+                      {event.title}
+                    </h3>
                     <span className="font-gang text-red-500">{event.date}</span>
                   </div>
-                  <p className="font-gang text-gray-400 mb-4">{event.category}</p>
+                  <p className="font-gang text-gray-400 mb-4">
+                    {event.category}
+                  </p>
                   <div className="w-full py-2 sm:py-3 bg-red-500/20 text-red-500 rounded-lg text-center">
                     View Details
                   </div>

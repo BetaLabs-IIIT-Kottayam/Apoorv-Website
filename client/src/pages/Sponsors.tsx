@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
-// import { loadFull } from "tsparticles";
-import BackgroundImage from "../assets/letters.png"; 
+import BackgroundImage from "../assets/letters.png";
 import Loader from "../components/Loader";
 
 const Sponsors = () => {
@@ -12,13 +12,16 @@ const Sponsors = () => {
 
   useEffect(() => {
     const importLogos = async () => {
-      const images = import.meta.glob('../assets/sponsors/image*.{png,jpg,svg}', {
-        eager: true,
-        as: 'url'
-      });
+      const images = import.meta.glob(
+        "../assets/sponsors/image*.{png,jpg,svg}",
+        {
+          eager: true,
+          as: "url",
+        }
+      );
       setSponsorLogos(Object.values(images));
     };
-  
+
     importLogos();
   }, []);
   // Wait for loader to complete before showing content
@@ -55,7 +58,7 @@ const Sponsors = () => {
             backgroundSize: "50%",
             backgroundPosition: "center",
             filter: "brightness(120%)",
-            zIndex: 0
+            zIndex: 0,
           }}
         ></div>
       )}
@@ -93,14 +96,14 @@ const Sponsors = () => {
               color: { value: "#FF1A1A" },
               opacity: { value: 0.3 },
               size: { value: 3 },
-              move: { 
-                enable: true, 
+              move: {
+                enable: true,
                 speed: 2,
                 direction: "bottom",
-                straight: true
+                straight: true,
               },
-              shape: { type: "image", image: { src: "/cherry-blossom.png" } }
-            }
+              shape: { type: "image", image: { src: "/cherry-blossom.png" } },
+            },
           }}
           className="absolute inset-0 z-0"
         />
@@ -109,18 +112,24 @@ const Sponsors = () => {
       {contentVisible && (
         <div className="relative z-10 max-w-7xl mx-auto py-24 px-8">
           {/* Section Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-20"
           >
-            <h2 className="font-gang text-5xl text-white mb-6">
+            <motion.h2
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="font-gang text-5xl text-white mb-8 text-center relative z-10"
+            >
               HONORED <span className="text-red-500">ALLIES</span>
-            </h2>
+            </motion.h2>
             <div className="h-1 bg-red-500 w-48 mx-auto mb-8" />
             <p className="font-gang text-gray-400 max-w-2xl mx-auto">
-              Join the legacy of visionary organizations shaping the future of tech and culture. 
-              Your support fuels innovation and preserves ancient traditions.
+              Join the legacy of visionary organizations shaping the future of
+              tech and culture. Your support fuels innovation and preserves
+              ancient traditions.
             </p>
           </motion.div>
 
@@ -163,23 +172,25 @@ const Sponsors = () => {
               </motion.div>
             ))}
           </div> */}
-           
+
           {/* Past Sponsors Gallery */}
-         <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="text-center"
           >
-            <h3 className="font-gang text-3xl text-white mb-12">Previous Champions</h3>
+            <h3 className="font-gang text-3xl text-white mb-12">
+              Previous Champions
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {sponsorLogos.map((logo, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className="aspect-square bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center p-4"
                 >
-                  <img 
-                    src={logo} 
-                    alt={`Sponsor Logo ${i + 1}`} 
+                  <img
+                    src={logo}
+                    alt={`Sponsor Logo ${i + 1}`}
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
@@ -187,25 +198,25 @@ const Sponsors = () => {
             </div>
           </motion.div>
 
-
           {/* CTA Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="text-center mt-24"
           >
             <div className="border-2 border-white/10 p-8 max-w-2xl mx-auto">
-              <h3 className="font-gang text-2xl text-white mb-6">BECOME A PATRON</h3>
+              <h3 className="font-gang text-2xl text-white mb-6">
+                BECOME A PATRON
+              </h3>
               <p className="font-gang text-gray-400 mb-8">
-                Forge your legacy with us. Contact our sponsorship team to discuss partnership opportunities.
+                Forge your legacy with us. Contact our sponsorship team to
+                discuss partnership opportunities.
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 className="bg-red-500 text-white font-gang px-8 py-3 rounded-none border-2 border-white"
               >
-                <a href="mailto:apoorv@iiitkottayam.ac.in">
-                  INITIATE ALLIANCE
-                </a>
+                <a href="mailto:apoorv@iiitkottayam.ac.in">INITIATE ALLIANCE</a>
               </motion.button>
             </div>
           </motion.div>

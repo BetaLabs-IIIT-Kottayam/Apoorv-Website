@@ -1,27 +1,102 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Loader from "../components/Loader"; 
-import BackgroundImage from "../assets/dragon2.png"; 
+import Loader from "../components/Loader";
+import BackgroundImage from "../assets/dragon2.png";
+
+import { teamMembers, TeamMemberConfig } from "../config/teamConfig";
+
+interface TeamMember extends TeamMemberConfig {
+  url: string;
+}
 
 const Team = () => {
   const [contentVisible, setContentVisible] = useState(false);
+  const [teamLogos, setTeamLogos] = useState<TeamMember[]>([]);
 
-  const members = [
-    { id: 1, name: "TAKESHI", role: "DAIMYO" },
-    { id: 2, name: "AKIRA", role: "SOFTWARE SAMURAI" },
-    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
-    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
-    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
-    { id: 3, name: "HIKARU", role: "DESIGN NINJA" },
-  ];
+  useEffect(() => {
+    const importLogos = async () => {
+      const images = import.meta.glob(
+        "../assets/team/*.{png,jpg,svg,webp,heic}",
+        {
+          eager: true,
+          as: "url",
+        }
+      );
+      console.log(images);
+
+      // Transform the images into an array of member objects with improved name parsing
+      // const memberArray = Object.entries(images).map(([path, url]) => {
+      //   // Get filename from path
+      //   const fileName = path.split("/").pop() || "";
+
+      //   const nameMatch = fileName.match(/(.*?)\./);
+      //   let name = "Unknown";
+      //   let role = "Team Member";
+
+      //   if (nameMatch && nameMatch[1]) {
+      //     // Split by hyphens and process each part
+      //     const parts = nameMatch[1].split('');
+
+      //     // Convert each part to proper case
+      //     name = parts
+      //       .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      //       .join(' ');
+
+      //     if (parts.length > 2) {
+      //       role = parts[parts.length - 1].charAt(0).toUpperCase() +
+      //              parts[parts.length - 1].slice(1).toLowerCase();
+      //       // Remove role from name
+      //       name = parts
+      //         .slice(0, -1)
+      //         .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      //         .join(' ');
+      //     }
+      //   }
+
+      //   return {
+      //     url,
+      //     name,
+      //     role
+      //   };
+      // });
+      const imageMap = new Map(
+        Object.entries(images).map(([path, url]) => {
+          const fileName = path.split("/").pop()?.split(".")[0] || "";
+          return [fileName, url];
+        })
+      );
+
+      // Create team members array in the specified order
+      const orderedMembers = teamMembers
+        .map((member) => {
+          const url = imageMap.get(member.name);
+          if (!url) {
+            console.warn(`No image found for team member: ${member.name}`);
+            return null;
+          }
+          return {
+            ...member,
+            url,
+          };
+        })
+        .filter((member): member is TeamMember => member !== null);
+
+      setTeamLogos(orderedMembers);
+    };
+
+    importLogos();
+  }, []);
 
   // Wait for loader to complete before showing content
   useEffect(() => {
     const timer = setTimeout(() => {
       setContentVisible(true);
-    }, 3200); // Adjust the time as needed
+    }, 3200);
     return () => clearTimeout(timer);
   }, []);
+
+  const mentors = teamLogos.slice(0, 7);
+  const others = teamLogos.slice(7);
 
   return (
     <div className="min-h-screen bg-black py-24 px-8">
@@ -34,11 +109,11 @@ const Team = () => {
             backgroundSize: "50%",
             backgroundPosition: "left center",
             filter: "brightness(120%)",
-            zIndex: 0
+            zIndex: 0,
           }}
         ></div>
       )}
-       <style>
+      <style>
         {`
           @media (max-width: 1024px) {
             div[style*="background-size: 50%"] {
@@ -66,37 +141,63 @@ const Team = () => {
       {contentVisible && (
         <>
           <motion.h2
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-gang text-5xl text-white mb-24 text-center"
+            transition={{ duration: 0.6 }}
+            className="font-gang text-5xl text-white mb-8 text-center relative z-10"
           >
             THE<span className="text-red-500">.</span>CLAN
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            {members.map((member) => (
+          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto mb-16">
+            {mentors.map((member, index) => (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, y: 50 }} // Start from below
-                animate={{ opacity: 1, y: 0 }} // Animate to original position
-                transition={{ duration: 0.5, delay: member.id * 0.1 }} // Staggered animation
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -20 }}
+                className="relative bg-black border-2 border-white/20 p-8"
+              >
+                <div className="absolute inset-0 bg-[url('/texture.png')] opacity-10" />
+                <div className="relative z-10">
+                  <div className="h-64 bg-white/10 mb-6 group relative overflow-hidden">
+                    <img
+                      src={member.url}
+                      alt={member.name}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <h3 className="font-gang text-2xl text-white mb-2">
+                    {member.name}
+                  </h3>
+                  <div className="mt-6 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            {others.map((member, index) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -20 }}
                 className="relative bg-black border-2 border-white/10 p-8"
               >
                 <div className="absolute inset-0 bg-[url('/texture.png')] opacity-10" />
-                
                 <div className="relative z-10">
                   <div className="h-64 bg-white/10 mb-6 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('/member.jpg')] bg-cover bg-center 
-                      opacity-80 group-hover:scale-110 transition-transform duration-500" />
+                    <img
+                      src={member.url}
+                      alt={member.name}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                  
                   <h3 className="font-gang text-2xl text-white mb-2">
                     {member.name}
                   </h3>
-                  <p className="font-gang text-red-500">{member.role}</p>
-                  
                   <div className="mt-6 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
                 </div>
               </motion.div>
