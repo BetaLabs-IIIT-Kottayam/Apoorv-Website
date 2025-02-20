@@ -8,7 +8,7 @@ export const teamMembers: TeamMemberConfig[] = [
   { id: 0, name: "Anshumohan" },
   { id: 1, name: "Abhishek" },
   { id: 2, name: "Thrinadh" },
-  { id: 4, name: "Sri Harsha" },
+  { id: 4, name: "Sri harsha" },
   { id: 5, name: "Parakh" },
   { id: 6, name: "Ayush" },
   { id: 7, name: "Sarthak Gupta" },
