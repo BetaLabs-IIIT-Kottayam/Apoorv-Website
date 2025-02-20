@@ -393,7 +393,7 @@ const Merch = () => {
 
   return (
     <div className="relative min-h-screen bg-black">
-      <Loader />
+      <Loader pageName="Merch"/>
       {contentVisible && (
         <>
           <div

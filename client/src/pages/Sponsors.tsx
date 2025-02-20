@@ -45,7 +45,7 @@ const Sponsors = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      <Loader />
+      <Loader pageName="Sponsors"/>
       {/* Cherry Blossom Particles */}
       {contentVisible && (
         <div

@@ -111,7 +111,7 @@ const Developers = () => {
 
   return (
     <div className="min-h-screen bg-black py-24 px-8">
-      <Loader />
+      <Loader pageName="Developers"/>
       
       {contentVisible && (
         <div

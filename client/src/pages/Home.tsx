@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { CherryBlossom } from "../components/CherryBlossom";
 import gate from "../assets/gate.png";
 import { Link } from "react-router";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const titleMap = [

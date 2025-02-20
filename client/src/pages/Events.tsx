@@ -296,7 +296,7 @@ const Events = () => {
   );
   return (
     <div className="relative min-h-screen bg-black">
-      <Loader />
+      <Loader pageName="Events"/>
       
       {/* Background Image Container */}
       {contentVisible && (
