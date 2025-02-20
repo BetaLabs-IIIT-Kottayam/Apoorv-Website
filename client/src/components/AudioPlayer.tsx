@@ -30,7 +30,7 @@ const AudioPlayer = () => {
         right: 0,
         bottom: 0
       }}
-      className="fixed bottom-8 right-8 z-50 bg-black/90 backdrop-blur-lg p-4 rounded-lg border-2 border-red-500 shadow-xl"
+      className="fixed bottom-12 right-8 z-50 bg-black/90 backdrop-blur-lg p-4 rounded-lg border-2 border-red-500 shadow-xl"
       style={{
         cursor: 'grab',
         width: '64px',
