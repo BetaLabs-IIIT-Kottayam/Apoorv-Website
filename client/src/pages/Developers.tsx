@@ -89,7 +89,9 @@ import { motion } from "framer-motion";
 import BackgroundImage from "../assets/samurai.png";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
-import akhileshImage from "../assets/akhilesh.jpg";
+import akhileshImage from "../assets/developers/akhilesh.jpg";
+import anshumohanImage from "../assets/developers/Anshumohan.jpg";
+import shashankImage from "../assets/developers/Shashank.jpg";
 
 const Developers = () => {
   const [contentVisible, setContentVisible] = useState(false);
@@ -102,15 +104,20 @@ const Developers = () => {
   }, []);
 
   const developers = [
-    { id: 1, name: "Shashank Upadhyay", role: "Dev", imageUri: "" },
-    { id: 2, name: "Anshumohan Acharya", role: "Dev", imageUri: "" },
+    { id: 1, name: "Shashank Upadhyay", role: "Dev", imageUri: shashankImage },
+    {
+      id: 2,
+      name: "Anshumohan Acharya",
+      role: "Dev",
+      imageUri: anshumohanImage,
+    },
     { id: 3, name: "Akhilesh Nekar", role: "Dev", imageUri: akhileshImage },
   ];
 
   return (
     <div className="min-h-screen bg-black py-24 px-8">
-      <Loader pageName="Developers"/>
-      
+      <Loader pageName="Developers" />
+
       {contentVisible && (
         <div
           className="fixed inset-0 bg-cover bg-no-repeat bg-right opacity-40"
@@ -143,7 +150,7 @@ const Developers = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
                 whileHover={{ y: -20, transition: { duration: 0.3 } }}
-                className="relative z-10 backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 p-8 hover:border-primary/50 transition-colors duration-300"
+                className="relative z-10 backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 p-8 hover:border-red-500/50 transition-colors duration-300"
               >
                 <div className="absolute inset-0 bg-[url('/texture.png')] opacity-5 rounded-xl" />
 
@@ -154,11 +161,6 @@ const Developers = () => {
                       opacity-80 group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      {/* <div className="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-md">
-                        <span className="text-4xl font-gang text-primary">
-                          {dev.name.split(" ")[0][0]}
-                        </span>
-                      </div> */}
                       <img src={dev.imageUri}></img>
                     </div>
                   </div>
@@ -166,11 +168,11 @@ const Developers = () => {
                   <h3 className="font-gang text-2xl text-white mb-2">
                     {dev.name.toUpperCase()}
                   </h3>
-                  <p className="font-gang text-primary">
+                  <p className="font-gang text-red-500">
                     {dev.role.toUpperCase()}
                   </p>
 
-                  <div className="mt-6 h-[2px] bg-gradient-to-r from-primary to-transparent w-1/2" />
+                  <div className="mt-6 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
                 </div>
               </motion.div>
             ))}

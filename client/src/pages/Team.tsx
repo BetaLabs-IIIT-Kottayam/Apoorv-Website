@@ -16,49 +16,13 @@ const Team = () => {
   useEffect(() => {
     const importLogos = async () => {
       const images = import.meta.glob(
-        "../assets/team/*.{png,jpg,svg,webp,heic}",
+        "../assets/team/*.{png,jpg,svg,webp,HEIC}",
         {
           eager: true,
           as: "url",
         }
       );
-      console.log(images);
 
-      // Transform the images into an array of member objects with improved name parsing
-      // const memberArray = Object.entries(images).map(([path, url]) => {
-      //   // Get filename from path
-      //   const fileName = path.split("/").pop() || "";
-
-      //   const nameMatch = fileName.match(/(.*?)\./);
-      //   let name = "Unknown";
-      //   let role = "Team Member";
-
-      //   if (nameMatch && nameMatch[1]) {
-      //     // Split by hyphens and process each part
-      //     const parts = nameMatch[1].split('');
-
-      //     // Convert each part to proper case
-      //     name = parts
-      //       .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-      //       .join(' ');
-
-      //     if (parts.length > 2) {
-      //       role = parts[parts.length - 1].charAt(0).toUpperCase() +
-      //              parts[parts.length - 1].slice(1).toLowerCase();
-      //       // Remove role from name
-      //       name = parts
-      //         .slice(0, -1)
-      //         .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-      //         .join(' ');
-      //     }
-      //   }
-
-      //   return {
-      //     url,
-      //     name,
-      //     role
-      //   };
-      // });
       const imageMap = new Map(
         Object.entries(images).map(([path, url]) => {
           const fileName = path.split("/").pop()?.split(".")[0] || "";
