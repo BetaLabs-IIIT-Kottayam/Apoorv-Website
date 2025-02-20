@@ -8,9 +8,8 @@ const Events = () => {
   interface Event {
     title: string;
     category: string;
-    date: string;
     description: string;
-    link: string;
+    details: string;
   }
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -30,7 +29,7 @@ const Events = () => {
       category: "Dance",
       description:
         "Get ready for a mesmerizing celebration of rhythm, grace, and unparalleled talent! Apoorv 25  proudly presents the Solo Sizzle,where individual performers take center stage to showcase their passion and prowess in a dance extravaganza like never before. It's not just a dance, it's a canvas for self expression and innovation.",
-      link: "https://makemypass.com/solosizzle",
+      details: "https://makemypass.com/solosizzle",
     },
     {
       title: "Pulse and Beats",
@@ -289,7 +288,7 @@ const Events = () => {
             > */}
             <button className="font-gang text-sm md:text-xl text-white/60 max-w-2xl
               bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl hover:bg-white/10 ">
-              <a href={event.link} target="_blank" rel="noopener noreferrer">
+              <a href={event.details} target="_blank" rel="noopener noreferrer">
                 Register Now
               </a>
             </button>
