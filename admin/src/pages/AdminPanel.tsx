@@ -19,9 +19,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DashboardStats } from "@/types";
 import axios from "axios";
-import { Loader, Package, Search, ShoppingBag } from "lucide-react";
+import { Loader, Loader2, Package, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import MerchManagement from "./MerchManager";
 
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -127,13 +128,14 @@ const AdminLayout = () => {
     });
 
     if (isLoading)
-      return <div className="text-center py-8">Loading orders...</div>;
+      return <Loader2 className="w-8 h-8 text-white animate-spin" />
     if (error)
       return (
         <div className="text-center py-8 text-red-500">
           Error: {error.message}
         </div>
       );
+      console.log(filteredOrders[0].items[0].merchId.name)
 
     return (
       <div className="bg-white/5 rounded-lg border border-white/10 p-6">
@@ -182,6 +184,16 @@ const AdminLayout = () => {
               </tr>
             </thead>
             <tbody>
+              {filteredOrders.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={9}
+                    className="py-3 px-4 text-center text-gray-400"
+                  >
+                    No orders found
+                  </td>
+                </tr>
+              )}
               {filteredOrders.map((order) => (
                 <tr
                   key={order._id}
@@ -200,7 +212,7 @@ const AdminLayout = () => {
                   <td className="px-4 py-3 text-sm text-white">
                     {order.items.map((item, idx) => (
                       <div key={idx}>
-                        {`${item.merchId.name} (${item.color} - ${item.size}) x${item.quantity}`}
+                        {`${item.merchId?.name} (${item.color} - ${item.size}) x${item.quantity}`}
                       </div>
                     ))}
                   </td>
@@ -332,9 +344,23 @@ const AdminLayout = () => {
           >
             Orders
           </button>
+          <button
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              activeTab === "merch"
+                ? "bg-white/20 text-white"
+                : "bg-white/5 text-gray-400 hover:bg-white/10"
+            }`}
+            onClick={() => setActiveTab("merch")}
+          >
+            Merch Management
+          </button>
         </div>
 
-        {activeTab === "analytics" ? <AnalyticsTab /> : <OrdersTab />}
+        <div className="bg-white/5 p-4 rounded-lg">
+          {activeTab === "analytics" && <AnalyticsTab />}
+          {activeTab === "orders" && <OrdersTab />}
+          {activeTab === "merch" && <MerchManagement />}
+        </div>
       </div>
     </div>
   );
