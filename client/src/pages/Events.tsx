@@ -366,12 +366,13 @@ const Events = () => {
             </div>
             <p
               className="font-gang text-base md:text-2xl text-white/80 max-w-2xl mb-4 
-  bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl filter contrast-150 tracking-wide text-thinner"
+              bg-white/5 px-4 md:px-6 py-2 md:py-4 rounded-xl filter contrast-100 tracking-widest font-extralight"
             >
               {event.description}
             </p>
+
             <div className="flex justify-center">
-              <button className="font-shippori px-8 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/50 rounded-none transition-colors duration-300 tracking-widest text-sm">
+              <button className="font-gang px-8 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/50 rounded-none transition-colors duration-300 tracking-widest text-sm">
                 <a
                   href={event.details}
                   target="_blank"

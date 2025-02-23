@@ -12,7 +12,7 @@ const Montana: React.FC = () => {
       useEffect(() => {
         const timer = setTimeout(() => {
           setContentVisible(true);
-        }, 7400);
+        }, 4700);
         return () => clearTimeout(timer);
       }, []);
   useEffect(() => {
@@ -104,15 +104,11 @@ const Montana: React.FC = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <div className="overlay fixed inset-0 bg-black flex flex-col items-center justify-center">
-        <h1 ref={headerRef} className="header font-gang text-[12vw] font-reval text-white mb-8 opacity-0">
-          APOORV
-          <div className="mt-5 font-gang">2025</div>
-        </h1>
-        <div className="images grid grid-cols-4 gap-4 justify-center items-center">
+        <div className="images grid grid-cols-3 gap-4 justify-center items-center">
           {imageUrls.map((url, index) => (
             <div
               key={index}
-              className={`img img-${index + 1} w-[140px] h-[180px] overflow-hidden rounded-lg backdrop-blur-sm bg-white/5`}
+              className={`img img-${index + 1} w-[180px] h-[200px] overflow-hidden rounded-lg backdrop-blur-sm bg-white/5`}
             >
               <img
                 src={url || "/placeholder.svg"}
@@ -122,11 +118,16 @@ const Montana: React.FC = () => {
             </div>
           ))}
         </div>
-        {/* <div className="navbar absolute bottom-10 w-full flex justify-around text-white text-uppercase font-neue-montreal">
-          <div className="site-title">itsale montana</div>
-          <div className="site-icon">✴</div>
-          <div className="site-type">clothing brand</div>
-        </div> */}
+        <div className="navbar absolute bottom-10 w-full flex justify-around text-white text-uppercase font-neue-montreal">
+          <div className="site-type"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-type"></div>
+        </div>
       </div>
       {contentVisible && (
         <motion.div
