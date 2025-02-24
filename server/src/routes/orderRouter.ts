@@ -8,8 +8,12 @@ const router = express.Router();
 router.route('/')
     // .all(authenticateUser())
     .post(createOrder)
-    .get(authenticateUser(),getAllOrders)
-    .patch(authenticateUser(),updateOrderStatus);
+    .get(
+        // authenticateUser(),
+        getAllOrders)
+    .patch(
+        // authenticateUser(),
+        updateOrderStatus);
 
 router.post('/verifyPayment', verifyPayment)
 

@@ -17,16 +17,16 @@ const router = express.Router();
 router.route('/')
     .get(getAllMerch)
     .post(
-        authenticateUser(), 
+        // authenticateUser(), 
         upload.array('files'), createMerch)
 
 router.route('/:id')
     .get(getMerchById)
     .patch(
-        authenticateUser(), 
+        // authenticateUser(), 
         upload.array('files'), updateMerch)
     .delete(
-        authenticateUser(), 
+        // authenticateUser(), 
         deleteMerch)
 
 export default router;
