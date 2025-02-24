@@ -86,7 +86,7 @@ const MerchManagement = () => {
         : "api/v1/merch";
       const method = isEditing ? "PATCH" : "POST";
 
-      const response = await fetch(`http://10.10.0.118:5000/${url}`, {
+      const response = await fetch(`http://localhost:5000/${url}`, {
         method,
         body: formDataToSend,
       });
