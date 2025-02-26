@@ -40,30 +40,30 @@ const Loader = ({ pageName = "Welcome" }) => {
             className="absolute inset-0 flex items-center justify-center"
           >
             <div className="relative">
-              {/* Decorative corner elements */}
+              {/* Decorative corner elements - hidden on mobile (sm:), visible on larger screens */}
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute -left-16 -top-16 w-12 h-12 border-l-2 border-t-2 border-white"
+                className="hidden sm:block absolute -left-16 -top-16 w-12 h-12 border-l-2 border-t-2 border-white"
               />
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute -right-16 -top-16 w-12 h-12 border-r-2 border-t-2 border-white"
+                className="hidden sm:block absolute -right-16 -top-16 w-12 h-12 border-r-2 border-t-2 border-white"
               />
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute -left-16 -bottom-16 w-12 h-12 border-l-2 border-b-2 border-white"
+                className="hidden sm:block absolute -left-16 -bottom-16 w-12 h-12 border-l-2 border-b-2 border-white"
               />
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute -right-16 -bottom-16 w-12 h-12 border-r-2 border-b-2 border-white"
+                className="hidden sm:block absolute -right-16 -bottom-16 w-12 h-12 border-r-2 border-b-2 border-white"
               />
 
               {/* Main text */}

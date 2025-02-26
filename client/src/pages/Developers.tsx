@@ -80,7 +80,7 @@ const Developers = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
                 whileHover={{ y: -20, transition: { duration: 0.3 } }}
-                className="relative z-10 backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 p-8 hover:border-red-500/50 transition-colors duration-300"
+                className="relative z-10 backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 p-6 hover:border-red-500/50 transition-colors duration-300"
               >
                 <div className="absolute inset-0 bg-[url('/texture.png')] opacity-5 rounded-xl" />
 
@@ -102,9 +102,9 @@ const Developers = () => {
                     {dev.role.toUpperCase()}
                   </p>
 
-                  <div className="mt-6 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
+                  <div className="mt-2 h-[2px] bg-gradient-to-r from-red-500 to-transparent w-1/2" />
                   
-                  <div className="mt-4 flex space-x-4">
+                  <div className="mt-2 flex space-x-4">
                     <a 
                       href={dev.github} 
                       target="_blank" 
