@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import BackgroundImage from "../assets/dragon.png";
 import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
+import MerchDropoffPopup from "@/components/MerchDropoffPopup";
 
 
 export interface Product {
@@ -35,19 +36,8 @@ interface ProductModalProps {
 const RATE_LIMIT_MS = 500;
 let lastOperation = Date.now();
 
-// Helper function to get image URL from photo object
-const getImageUrl = (photo: any): string => {
-  if (photo.url) {
-    return photo.url;
-  } else if (photo.data) {
-    // If the photo is stored as buffer data, convert it to base64
-    // This is just an example, adjust according to your actual implementation
-    return `data:${photo.contentType};base64,${Buffer.from(photo.data).toString('base64')}`;
-  }
-  return "/placeholder-image.jpg";
-};
-
 const Merch = () => {
+  const [showDropoffPopup, setShowDropoffPopup] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contentVisible, setContentVisible] = useState<boolean>(false);
@@ -676,6 +666,13 @@ const Merch = () => {
             )}
           </AnimatePresence>
         </>
+      )}
+      {showDropoffPopup && contentVisible && (
+        <MerchDropoffPopup
+          imageUrl="/popupImage.webp" // Replace with your image path
+          onClose={() => setShowDropoffPopup(false)}
+          autoCloseTime={0} // Set to 0 to disable auto-close, or add time in ms
+        />
       )}
     </div>
   );
