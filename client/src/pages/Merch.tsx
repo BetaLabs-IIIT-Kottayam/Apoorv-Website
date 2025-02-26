@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import BackgroundImage from "../assets/dragon.png";
 import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
+
 
 export interface Product {
   _id: string;
@@ -11,7 +12,10 @@ export interface Product {
   name: string;
   price: number;
   description: string;
-  photos: { url: string }[];
+  photos: {
+    length: number;
+    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode; url: string 
+}[];
   sizes?: string[];
   colors?: string[];
 }
@@ -30,6 +34,18 @@ interface ProductModalProps {
 
 const RATE_LIMIT_MS = 500;
 let lastOperation = Date.now();
+
+// Helper function to get image URL from photo object
+const getImageUrl = (photo: any): string => {
+  if (photo.url) {
+    return photo.url;
+  } else if (photo.data) {
+    // If the photo is stored as buffer data, convert it to base64
+    // This is just an example, adjust according to your actual implementation
+    return `data:${photo.contentType};base64,${Buffer.from(photo.data).toString('base64')}`;
+  }
+  return "/placeholder-image.jpg";
+};
 
 const Merch = () => {
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
@@ -56,11 +72,13 @@ const Merch = () => {
           `${import.meta.env.VITE_API_URL}/api/v1/merch`
         );
         
+        // console.log(response);
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
 
         const data = await response.json();
+        // console.log("Data",data);
         setProducts(data.merch);
         // setIsLoading(false);
       } catch (err) {
@@ -198,7 +216,7 @@ const Merch = () => {
         <div className="space-y-4">
           {cart.map((item, index) => (
             <motion.div
-              key={`${item.id}`}
+              key={`${item.id}-${index}`}
               className="flex items-center justify-between bg-black/30 p-4 rounded-lg"
             >
               <div>
@@ -280,9 +298,39 @@ const Merch = () => {
     const [selectedColor, setSelectedColor] = useState(
       (product.colors && product.colors[0]) || defaultColors[0]
     );
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const sizes = product.sizes || defaultSizes;
     const colors = product.colors || defaultColors;
+    
+    // Make sure we have a photos array
+    const photos = product.photos[0] || [];
+    // const photos = photos2[0];
+    // console.log("Photos",photos);
+    // console.log("Photos[0",photos2);
+    // console.log(photos[0].url)
+    const nextImage = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (photos.length <= 1) return;
+      setCurrentImageIndex((prev) => 
+        prev === photos.length - 1 ? 0 : prev + 1
+      );
+    };
+
+    const prevImage = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (photos.length <= 1) return;
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? photos.length - 1 : prev - 1
+      );
+    };
+
+    // Get the current image URL
+    const currentImageUrl = photos.length > 0 
+      ? ('url' in photos) 
+        ? (photos as {url: string}).url
+        : getImageUrl(photos[currentImageIndex])
+      : "/placeholder-image.jpg";
 
     return (
       <motion.div
@@ -308,12 +356,60 @@ const Merch = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-            <motion.img
-              src={product.photos[0].url || "/placeholder-image.jpg"}
-              alt={product.name}
-              className="w-full rounded-lg border border-white/10 object-cover"
-              whileHover={{ scale: 1.05 }}
-            />
+            <div className="relative">
+              <div 
+                className="relative w-full h-64 md:h-80 overflow-hidden rounded-lg border border-white/10"
+              >
+                <motion.img
+                  src={currentImageUrl}
+                  alt={`${product.name} image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                  key={`image-${currentImageIndex}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+                
+                {photos.length > 1 && (
+                  <>
+                    <button 
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button 
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              {photos.length > 1 && (
+                <div className="flex justify-center mt-2 gap-2">
+                  {photos.map((_, index) => (
+                    <button
+                      key={`dot-${index}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(index);
+                      }}
+                      className={`w-2 h-2 rounded-full ${
+                        currentImageIndex === index ? "bg-red-500" : "bg-gray-500"
+                      }`}
+                      aria-label={`View image ${index + 1}`}
+                      aria-current={currentImageIndex === index}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div className="space-y-4 md:space-y-6">
               <p className="font-gang text-sm md:text-base text-gray-400">
@@ -390,7 +486,7 @@ const Merch = () => {
       </div>
     );
   }
-
+  
   return (
     <div className="relative min-h-screen bg-black">
       <Loader pageName="Merch"/>
@@ -448,41 +544,56 @@ const Merch = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <motion.div
-                  key={product.id}
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => setSelectedItem(product)}
-                  className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e: React.KeyboardEvent) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      setSelectedItem(product);
-                    }
-                  }}
-                >
-                  <img
-                    src={product.photos[0]?.url || "/placeholder-image.jpg"}
-                    alt={product.name}
-                    className="w-full h-64 object-cover rounded-lg mb-4"
-                    loading="lazy"
-                  />
-                  <h3 className="text-white font-gang text-xl mb-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-400 mb-2">{product.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-white font-gang text-lg">
-                      ${product.price}
-                    </span>
-                    <ShoppingCart
-                      className="text-gray-400"
-                      aria-hidden="true"
+              {products.map((product) => {
+                // Get the first image URL for the product card
+                const photos = product.photos[0] || [];
+                const imageUrl = photos && photos.length > 0
+                  ? ('url' in photos) 
+                    ? (photos as {url: string}).url
+                    : getImageUrl(photos[0])
+                  : "/placeholder-image.jpg";
+
+                  // const currentImageUrl = photos.length > 0 
+                  //     ? ('url' in photos) 
+                  //       ? (photos as {url: string}).url
+                  //       : getImageUrl(photos[currentImageIndex])
+                  //     : "/placeholder-image.jpg";
+                return (
+                  <motion.div
+                    key={product.id}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={() => setSelectedItem(product)}
+                    className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
+                    role="button"
+                    tabIndex={0}
+                    onKeyPress={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setSelectedItem(product);
+                      }
+                    }}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="w-full h-64 object-cover rounded-lg mb-4"
+                      loading="lazy"
                     />
-                  </div>
-                </motion.div>
-              ))}
+                    <h3 className="text-white font-gang text-xl mb-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-gray-400 mb-2">{product.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white font-gang text-lg">
+                        ${product.price}
+                      </span>
+                      <ShoppingCart
+                        className="text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 

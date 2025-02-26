@@ -16,7 +16,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   setCart,
   setIsCheckoutOpen,
 }) => {
-  console.log(cart);
+  // console.log(cart);
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -107,8 +107,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       }
 
       const orderResponse = await createOrder();
-      console.log("Order created:", orderResponse); // Add this log
-      console.log("Order Check:", orderResponse.order.razorpayOrderId);
+      // console.log("Order created:", orderResponse); // Add this log
+      // console.log("Order Check:", orderResponse.order.razorpayOrderId);
 
       if (!orderResponse || !orderResponse.order.razorpayOrderId) {
         // Add this check
@@ -123,7 +123,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         description: "Purchase from Merch Store",
         order_id: orderResponse.order.razorpayOrderId,
         handler: async (response: any) => {
-          console.log("Razorpay Response: ", response);
+          // console.log("Razorpay Response: ", response);
           try {
             const verificationResponse = await fetch(
               `${import.meta.env.VITE_API_URL}/api/v1/order/verifyPayment`,
@@ -139,7 +139,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 }),
               }
             );
-            console.log("Verification response", verificationResponse);
+            // console.log("Verification response", verificationResponse);
             if (!verificationResponse.ok) {
               throw new Error("Payment verification failed");
             }

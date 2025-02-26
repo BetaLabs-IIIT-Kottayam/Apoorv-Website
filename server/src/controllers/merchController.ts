@@ -47,7 +47,7 @@ const getAllMerch = async (req: Request, res: Response) => {
       
       return {
         ...itemObj,
-        photos: formattedPhotos.length > 0 ? [formattedPhotos[0]] : [] // Keep only first photo as per original logic
+        photos: formattedPhotos.length > 0 ? [formattedPhotos] : [] // Keep only first photo as per original logic
       };
     });
   
@@ -71,10 +71,10 @@ const getAllMerch = async (req: Request, res: Response) => {
     }
   
     const merchObj = merch.toObject();
-    const formattedPhotos = merch.photos.map(photo => ({
+    const formattedPhotos = merchObj.photos.map(photo => ({
       url: `data:${photo.contentType};base64,${photo.data.toString('base64')}`
-    }));
-  
+    }));    
+
     res.status(StatusCodes.OK).json({ 
       merch: {
         ...merchObj,
