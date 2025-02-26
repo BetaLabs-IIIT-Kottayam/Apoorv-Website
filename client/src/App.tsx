@@ -51,7 +51,7 @@ function App() {
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/team" element={<Team />} />
             <Route path="/developers" element={<Developers />} />
-            {/* <Route path="/merch" element={<Merch />} /> */}
+            <Route path="/merch" element={<Merch />} />
             <Route path="/terms-conditions" element={<Terms />} />
             <Route path="/privacy-policy" element={<Privacy />} />
             <Route path="/contact-us" element={<Contact />} />

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import BackgroundImage from "../assets/dragon.png";
 import CheckoutForm from "../components/CheckoutForm";
@@ -55,17 +55,18 @@ const Merch = () => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/v1/merch`
         );
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
 
         const data = await response.json();
         setProducts(data.merch);
+        console.log(products)
         // setIsLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
+        setError("");
         // setIsLoading(false);
       }
     };
@@ -241,7 +242,7 @@ const Merch = () => {
             <div className="flex justify-between text-white mb-4">
               <span>Total:</span>
               <span>
-                $
+                Rs.
                 {cart
                   .reduce(
                     (total, item) => total + item.price * item.quantity,
@@ -280,9 +281,21 @@ const Merch = () => {
     const [selectedColor, setSelectedColor] = useState(
       (product.colors && product.colors[0]) || defaultColors[0]
     );
+    const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
     const sizes = product.sizes || defaultSizes;
     const colors = product.colors || defaultColors;
+    console.log(product.photos)
+  const maxPhotos = Math.min(product.photos?.length || 1, 3);
+  
+  // Handle photo navigation
+  const nextPhoto = () => {
+    setCurrentPhotoIndex((prev) => (prev + 1) % maxPhotos);
+  };
+  
+  const prevPhoto = () => {
+    setCurrentPhotoIndex((prev) => (prev - 1 + maxPhotos) % maxPhotos);
+  };
 
     return (
       <motion.div
@@ -308,12 +321,57 @@ const Merch = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+          <div className="relative">
             <motion.img
-              src={product.photos[0].url || "/placeholder-image.jpg"}
-              alt={product.name}
-              className="w-full rounded-lg border border-white/10 object-cover"
+              src={product.photos[currentPhotoIndex]?.url || "/placeholder-image.jpg"}
+              alt={`${product.name} - Image ${currentPhotoIndex + 1}`}
+              className="w-full rounded-lg border border-white/10 object-cover aspect-square"
               whileHover={{ scale: 1.05 }}
             />
+            
+            {/* Navigation arrows - only show if multiple photos */}
+            {maxPhotos > 1 && (
+              <>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevPhoto();
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 rounded-full p-1 hover:bg-black/80"
+                  aria-label="Previous photo"
+                >
+                  <ChevronLeft className="text-white" size={20} />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextPhoto();
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 rounded-full p-1 hover:bg-black/80"
+                  aria-label="Next photo"
+                >
+                  <ChevronRight className="text-white" size={20} />
+                </button>
+                
+                {/* Photo indicators */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                  {Array.from({ length: maxPhotos }).map((_, i) => (
+                    <button 
+                      key={i}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentPhotoIndex(i);
+                      }}
+                      className={`h-2 w-2 rounded-full ${
+                        i === currentPhotoIndex ? "bg-red-500" : "bg-white/40"
+                      }`}
+                      aria-label={`Go to image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            </div>
 
             <div className="space-y-4 md:space-y-6">
               <p className="font-gang text-sm md:text-base text-gray-400">
@@ -327,11 +385,10 @@ const Merch = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${
-                        selectedSize === size
+                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${selectedSize === size
                           ? "border-red-500 text-red-500"
                           : "border-white/20 text-white/60 hover:border-white/40"
-                      }`}
+                        }`}
                       aria-pressed={selectedSize === size}
                     >
                       {size}
@@ -347,11 +404,10 @@ const Merch = () => {
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${
-                        selectedColor === color
+                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${selectedColor === color
                           ? "border-red-500 text-red-500"
                           : "border-white/20 text-white/60 hover:border-white/40"
-                      }`}
+                        }`}
                       aria-pressed={selectedColor === color}
                     >
                       {color}
@@ -362,7 +418,7 @@ const Merch = () => {
 
               <div className="flex items-center justify-between pt-4 border-t border-white/10">
                 <span className="font-gang text-xl text-white">
-                  ${product.price}
+                  Rs.{product.price}
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -391,9 +447,86 @@ const Merch = () => {
     );
   }
 
+  const ComingSoonMessage = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5 }}
+      className="flex flex-col items-center justify-center text-center px-4"
+    >
+      <motion.div
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        transition={{
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+        className="mb-8"
+      >
+        <svg
+          width="100"
+          height="100"
+          viewBox="0 0 100 100"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="text-red-500"
+        >
+          <path
+            d="M50 10C27.91 10 10 27.91 10 50C10 72.09 27.91 90 50 90C72.09 90 90 72.09 90 50C90 27.91 72.09 10 50 10ZM50 85C30.67 85 15 69.33 15 50C15 30.67 30.67 15 50 15C69.33 15 85 30.67 85 50C85 69.33 69.33 85 50 85Z"
+            fill="currentColor"
+          />
+          <path
+            d="M45 30H55V70H45V30ZM30 45H70V55H30V45Z"
+            fill="currentColor"
+          />
+        </svg>
+      </motion.div>
+
+      <motion.h2
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="font-gang text-4xl sm:text-5xl text-white mb-4"
+      >
+        近日公開
+        <span className="text-red-500">.</span>
+      </motion.h2>
+
+      <motion.p
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="text-xl text-gray-300 mb-8 font-gang"
+      >
+        COMING SOON
+      </motion.p>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.9 }}
+        className="text-gray-400 max-w-xl mx-auto mb-12"
+      >
+        Our battle gear collection is being forged with the finest materials and ancient techniques.
+        Return soon to equip yourself with legendary items worthy of a true warrior.
+      </motion.div>
+
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="flex items-center justify-center space-x-2 text-gray-500"
+      >
+        <div className="w-8 h-px bg-red-500/50"></div>
+        <span className="font-gang">戦闘の準備</span>
+        <div className="w-8 h-px bg-red-500/50"></div>
+      </motion.div>
+    </motion.div>
+  );
+
   return (
     <div className="relative min-h-screen bg-black">
-      <Loader pageName="Merch"/>
+      <Loader pageName="Merch" />
       {contentVisible && (
         <>
           <div
@@ -447,44 +580,49 @@ const Merch = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <motion.div
-                  key={product.id}
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => setSelectedItem(product)}
-                  className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e: React.KeyboardEvent) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      setSelectedItem(product);
-                    }
-                  }}
-                >
-                  <img
-                    src={product.photos[0]?.url || "/placeholder-image.jpg"}
-                    alt={product.name}
-                    className="w-full h-64 object-cover rounded-lg mb-4"
-                    loading="lazy"
-                  />
-                  <h3 className="text-white font-gang text-xl mb-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-400 mb-2">{product.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-white font-gang text-lg">
-                      ${product.price}
-                    </span>
-                    <ShoppingCart
-                      className="text-gray-400"
-                      aria-hidden="true"
+            {products.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {products.map((product) => (
+                  <motion.div
+                    key={product.id}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={() => setSelectedItem(product)}
+                    className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
+                    role="button"
+                    tabIndex={0}
+                    onKeyPress={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setSelectedItem(product);
+                      }
+                    }}
+                  >
+                    <img
+                      src={product.photos[0]?.url || "/placeholder-image.jpg"}
+                      alt={product.name}
+                      className="w-full h-64 object-cover rounded-lg mb-4"
+                      loading="lazy"
                     />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    <h3 className="text-white font-gang text-xl mb-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-gray-400 mb-2">{product.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white font-gang text-lg">
+                        Rs.{product.price}
+                      </span>
+                      <ShoppingCart
+                        className="text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <ComingSoonMessage />
+            )}
           </div>
+
 
           {cart.length > 0 && (
             <motion.button

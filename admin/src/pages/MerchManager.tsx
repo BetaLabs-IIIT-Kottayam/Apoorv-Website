@@ -55,40 +55,52 @@ const MerchManagement = () => {
 
   const fetchMerchandise = async () => {
     try {
-      setIsLoading(true);
-      const response = await fetch("http://localhost:5000/api/v1/merch");
-      if (!response.ok) throw new Error("Failed to fetch merchandise");
-      const data = await response.json();
-      setMerchandise(data.merch);
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:5000/api/v1/merch", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`  // ✅ Include token
+            }
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch merchandise");
+        const data = await response.json();
+        setMerchandise(data.merch);
     } catch (err) {
-      console.error("Error fetching merchandise:", err);
-      setError("Failed to fetch merchandise");
+        console.error("Error fetching merchandise:", err);
+        setError("Failed to fetch merchandise");
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const formDataToSend = new FormData();
 
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("price", formData.price);
-
-    Array.from(formData.photos).forEach((photo) => {
+  formDataToSend.append("name", formData.name);
+  formDataToSend.append("description", formData.description);
+  formDataToSend.append("price", formData.price);
+  
+  Array.from(formData.photos).forEach((photo) => {
       formDataToSend.append("files", photo);
-    });
+  });
 
-    try {
+  try {
+      const token = localStorage.getItem("token"); // Get token
       const url = isEditing
-        ? `api/v1/merch/${selectedMerch?._id}`
-        : "api/v1/merch";
+          ? `api/v1/merch/${selectedMerch?._id}`
+          : "api/v1/merch";
       const method = isEditing ? "PATCH" : "POST";
 
       const response = await fetch(`http://localhost:5000/${url}`, {
-        method,
-        body: formDataToSend,
+          method,
+          headers: {
+              "Authorization": `Bearer ${token}` // ✅ Include token
+          },
+          body: formDataToSend,
       });
 
       if (!response.ok) throw new Error("Failed to save merchandise");
@@ -96,31 +108,48 @@ const MerchManagement = () => {
       await fetchMerchandise();
       resetForm();
       setIsEditDialogOpen(false);
-    } catch (err) {
+  } catch (err) {
       console.error("Error saving merchandise:", err);
       setError("Failed to save merchandise");
+  }
+};
+
+const handleDelete = async (id: string) => {
+  if (!itemToDelete) return;
+
+  try {
+    const token = localStorage.getItem("token"); // Retrieve the auth token
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
     }
-  };
 
-  const handleDelete = async (id: string) => {
-    // if (!window.confirm("Are you sure you want to delete this item?")) return;
-    if (!itemToDelete) return;
+    const response = await fetch(`http://localhost:5000/api/v1/merch/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
 
-    try {
-      const response = await fetch(`http://localhost:5000/api/v1/merch/${id}`, {
-        method: "DELETE",
-      });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      throw new Error(errorData.message || "Failed to delete merchandise");
+    }
 
-      if (!response.ok) throw new Error("Failed to delete merchandise");
+    await fetchMerchandise();
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
+  } catch (err) {
+    console.error("Error deleting merchandise:", err);
 
-      await fetchMerchandise();
-      setIsDeleteDialogOpen(false);
-      setItemToDelete(null);
-    } catch (err) {
-      console.error("Error deleting merchandise:", err);
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
       setError("Failed to delete merchandise");
     }
-  };
+  }
+};
 
   const openDeleteDialog = (item: MerchItem) => {
     setItemToDelete(item);
@@ -294,7 +323,7 @@ const MerchManagement = () => {
                 <TableCell className="max-w-xs truncate">
                   {item.description}
                 </TableCell>
-                <TableCell>${item.price.toFixed(2)}</TableCell>
+                <TableCell>Rs.{item.price.toFixed(2)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button

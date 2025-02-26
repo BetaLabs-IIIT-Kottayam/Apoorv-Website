@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 // import Ninja from "../assets/Ninja.png";
-import BackgroundImage from "../assets/cherryBlossom.png"; // Add your portrait image
+import BackgroundImage from "../assets/cherryBlossom.png";
 import Loader from "../components/Loader";
 
 const Events = () => {
@@ -14,7 +14,9 @@ const Events = () => {
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  
   // Wait for loader to complete before showing content
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,275 +24,250 @@ const Events = () => {
     }, 3200); // 2000ms for loader + 1500ms for transition
     return () => clearTimeout(timer);
   }, []);
+  
   const events = [
     {
-      title: "Solo Sizzle",
-      description:
-        "Get ready for a mesmerizing celebration of rhythm, grace, and unparalleled talent! Apoorv'25  proudly presents the Solo Sizzle,\nwhere individual performers take center stage to showcase their passion and prowess in a dance extravaganza like never before. \nIt's not just a dance, it's a camvas for self expression and innovation.",
-      category: "General",
-      details: "https://makemypass.com/solosizzle",
+        "title": "Solo Sizzle",
+        "description": "Get ready for a mesmerizing celebration of rhythm, grace, and unparalleled talent! Apoorv'25  proudly presents the Solo Sizzle,\nwhere individual performers take center stage to showcase their passion and prowess in a dance extravaganza like never before. \nIt's not just a dance, it's a camvas for self expression and innovation.",
+        "category": "Dance",
+        "details": "https://makemypass.com/solosizzle"
     },
     {
-      title: "Pulse and Beats",
-      description:
-        "Experience the beauty and power of dance at  Apoorv'25's PULSE AND BEATS! With stunning costumes and mesmerizing \nlighting, the stage will burst with color and energy, transport us to a realm of pure artistic expression.\nOur group dancing event is jam-packed with addictive music and high-energy dances.",
-      category: "General",
-      details: "https://makemypass.com/pulseandbeats",
+        "title": "Pulse and Beats",
+        "description": "Experience the beauty and power of dance at  Apoorv'25's PULSE AND BEATS! With stunning costumes and mesmerizing \nlighting, the stage will burst with color and energy, transport us to a realm of pure artistic expression.\nOur group dancing event is jam-packed with addictive music and high-energy dances.",
+        "category": "Dance",
+        "details": "https://makemypass.com/pulse-and-beats"
     },
     {
-      title: "Ultimate Dance Showdown",
-      description:
-        "The Ultimate Dance Showdown is a high-energy event where teams of five showcase their dance prowess. \nEach team must include a minimum of one female member. Prepare for an electrifying competition filled \nwith diverse talents and creative spot choreography.Compete in a high-energy dance battle for the title of ultimate champions.",
-      category: "General",
-      details: "https://makemypass.com/ultimatedanceshowdown",
+        "title": "Ultimate Dance Showdown",
+        "description": "The Ultimate Dance Showdown is a high-energy event where teams of five showcase their dance prowess. \nEach team must include a minimum of one female member. Prepare for an electrifying competition filled \nwith diverse talents and creative spot choreography.Compete in a high-energy dance battle for the title of ultimate champions.",
+        "category": "Dance",
+        "details": "https://makemypass.com/ultimate-dance-showdown"
     },
     {
-      title: "Stage Buster",
-      description:
-        "Experience the thrill of cinema live on stage! In this team-based event, 2-3 members recreate iconic movie scenes and embody unforgettable characters. \nWith rounds focusing on scene recreation and character impersonation, participants showcase their creativity, acting skills, and love for storytelling.",
-      category: "General",
-      details: "https://makemypass.com/stagebuster",
+        "title": "Stage Buster",
+        "description": "Experience the thrill of cinema live on stage! In this team-based event, 2-3 members recreate iconic movie scenes and embody unforgettable characters. \nWith rounds focusing on scene recreation and character impersonation, participants showcase their creativity, acting skills, and love for storytelling.",
+        "category": "Art",
+        "details": "https://makemypass.com/stage-buster"
+    },
+    // {
+    //     "title": "Cinephile",
+    //     "description": "Join the ultimate movie trivia challenge at Apoorv Cinephile! Over three days, approach random people and ask quirky questions about movies. \nTest your knowledge, share fun facts, and enjoy the surprises along the way!",
+    //     "category": "Quiz",
+    //     "details": "Link not available."
+    // },
+    {
+        "title": "48 Hours Flicks",
+        "description": "Cinevedika presents \"48-Hour Flicks\" at Apoorv'25—an electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours! \nForm your team, receive a unique concept at registration, and bring your creative vision to life. Think fast, film faster, and make every second count!",
+        "category": "Art",
+        "details": "https://makemypass.com/48-hour-flicks"
     },
     {
-      title: "Cinephile",
-      description:
-        "Join the ultimate movie trivia challenge at Apoorv Cinephile! Over three days, approach random people and ask quirky questions about movies. \nTest your knowledge, share fun facts, and enjoy the surprises along the way!",
-      category: "General",
-      details: "https://makemypass.com/cinephile",
+        "title": "Reel to Real",
+        "description": "Apoorv'25 presents \"Reel to Real: Character Comeback\"—a stage for movie lovers to bring their favorite characters to life! \nDress up, deliver an iconic dialogue, and showcase your acting skills for exciting prizes. Whether hero or villain, step into the spotlight and celebrate the magic of cinema. ",
+        "category": "General",
+        "details": "https://makemypass.com/reel-to-real"
     },
     {
-      title: "48 Hours Flicks",
-      description:
-        'Cinevedika presents "48-Hour Flicks" at Apoorv\u201925\u2014an electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours! \nForm your team, receive a unique concept at registration, and bring your creative vision to life. Think fast, film faster, and make every second count!',
-      category: "General",
-      details: "https://makemypass.com/48hoursflicks",
+        "title": "Printscapes",
+        "description": "Dive into a world where ink dances with imagination and every print tells a story. Explore the magic of monoprinting, where no two artworks are ever the same.\nWith each press, textures come alive, colors collide, and unexpected beauty emerges. Embrace the unpredictable and transform it into art. Create, discover, and leave your mark.",
+        "category": "Dance",
+        "details": "https://makemypass.com/print-scapes"
     },
     {
-      title: "Reel to Real",
-      description:
-        'Apoorv\u201925 presents "Reel to Real: Character Comeback"\u2014a stage for movie lovers to bring their favorite characters to life! \nDress up, deliver an iconic dialogue, and showcase your acting skills for exciting prizes. Whether hero or villain, step into the spotlight and celebrate the magic of cinema. ',
-      category: "General",
-      details: "https://makemypass.com/reeltoreal",
+        "title": "Face off",
+        "description": "Transform faces into living canvases! \nOur face painting competition is a colorful celebration of artistic talent.Brush, blend, and bring your imagination to life on the human face.\nFrom whimsical designs to intricate details, let your face painting artistry shine.Join us for a lively contest where creativity knows no bounds. ",
+        "category": "Art",
+        "details": "https://makemypass.com/face-off"
     },
     {
-      title: "Printscapes",
-      description:
-        "Dive into a world where ink dances with imagination and every print tells a story. Explore the magic of monoprinting, where no two artworks are ever the same.\nWith each press, textures come alive, colors collide, and unexpected beauty emerges. Embrace the unpredictable and transform it into art. Create, discover, and leave\u00a0your\u00a0mark.",
-      category: "General",
-      details: "https://makemypass.com/printscapes",
+        "title": "Beyond the harmony",
+        "description": " Beyond the Harmony - Apoorv '25 ! Ready to let your voice shine at Beyond the Harmony? \nThis is your stage to showcase your vocal talent and unleash your creativity. Whether you're a beginner or a pro, it's your time to shine!\nThe event offers a chance to perform, win exciting prizes , and be part of an inspiring and captivating musical experience.",
+        "category": "Music",
+        "details": "https://makemypass.com/beyondtheharmony"
     },
     {
-      title: "Face off",
-      description:
-        "Transform faces into living canvases! \nOur face painting competition is a colorful celebration of artistic talent.Brush, blend, and bring your imagination to life on the human face.\nFrom whimsical designs to intricate details, let your face painting artistry shine.Join us for a lively contest where creativity knows no bounds. ",
-      category: "General",
-      details: "https://makemypass.com/faceoff",
+        "title": "Strings and Keys",
+        "description": "Strings and Keys -Apoorv '25! Get ready to showcase your talent at Strings and Keys—Apoorv's instrumental competition!\nWhether you're a beginner or a pro, this is your chance to let your music shine.\nOpen to all music lovers, the event offers exciting prizes, a stage to perform, and an experience to remember.",
+        "category": "Music",
+        "details": "https://makemypass.com/strings-and-keys"
     },
     {
-      title: "Beyond the harmony",
-      description:
-        " Beyond the Harmony - Apoorv '25 ! Ready to let your voice shine at Beyond the Harmony? \nThis is your stage to showcase your vocal talent and unleash your creativity. Whether you're a beginner or a pro, it's your time to shine!\nThe event offers a chance to perform, win exciting prizes , and be part of an inspiring and captivating musical experience.",
-      category: "General",
-      details: "https://makemypass.com/beyondtheharmony",
+        "title": "Vogue fusion",
+        "description": "The Vogue Fusion -APOORV 25!Gear up to dazzle the world with your talent!The fusion wear combines elements from different cultures and eras, creating unique and versatile outfits.\n The vogue fusion is the chance to show your unique fusion of different styles and let people be amazed with your outfits.\nLets add beauty to the apoorv and light up our campus with our outfits",
+        "category": "General",
+        "details": "https://makemypass.com/vogue-fusion"
     },
     {
-      title: "Strings and Keys",
-      description:
-        "Strings and Keys -Apoorv '25! Get ready to showcase your talent at Strings and Keys\u2014Apoorv's instrumental competition!\nWhether you\u2019re a beginner or a pro, this is your chance to let your music shine.\nOpen to all music lovers, the event offers exciting prizes, a stage to perform, and an experience to remember.",
-      category: "General",
-      details: "https://makemypass.com/stringsandkeys",
+        "title": "Apoorv's Got Latent",
+        "description": "Do you have what it takes to impress? At Apoorv's Got Latent, step into the spotlight and showcase your unique talents!\nWhether it's storytelling, music, dance, art, stand-up comedy, or something extraordinary, this is your moment to shine. \ndon't hold back—let's see what you've got! ",
+        "category": "Dance",
+        "details": "https://makemypass.com/apoorvs-got-latent"
     },
     {
-      title: "Vogue fusion",
-      description:
-        "The Vogue Fusion -APOORV 25!Gear up to dazzle the world with your talent!The fusion wear combines elements from different cultures and eras, creating unique and versatile outfits.\n The vogue fusion is the chance to show your unique fusion of different styles and let people be amazed with your outfits.\nLets add beauty to the apoorv and light up our campus with our outfits",
-      category: "General",
-      details: "https://makemypass.com/voguefusion",
+        "title": "Synapse",
+        "description": "Synapse, our college's online photography contest held during the annual fest, welcomes talented photographers from within and beyond our campus to exhibit their best work.\nWith enticing cash prizes for winners, this digital showcase adds an exciting dimension to our vibrant visual celebration.",
+        "category": "General",
+        "details": "https://makemypass.com/synapse"
     },
     {
-      title: "Apoorv's Got Latent",
-      description:
-        "Do you have what it takes to impress? At Apoorv's Got Latent, step into the spotlight and showcase your unique talents!\nWhether it\u2019s storytelling, music, dance, art, stand-up comedy, or something extraordinary, this is your moment to shine. \ndon\u2019t hold back\u2014let\u2019s see what you\u2019ve got! ",
-      category: "General",
-      details: "https://makemypass.com/apoorv'sgotlatent",
+        "title": "Chromus",
+        "description": "Dive into the art of storytelling with Chromus-a battleground where creativity meets pixels. Choose your category, from Title Sequence to Social Cause Awareness, and let your edits paint the narrative. Join us at Apoorv for an unforgettable celebration of visual mastery and imagination.",
+        "category": "Art",
+        "details": "https://makemypass.com/chromus"
     },
     {
-      title: "Synapse",
-      description:
-        "Synapse, our college's online photography contest held during the annual fest, welcomes talented photographers from within and beyond our campus to exhibit their best work.\nWith enticing cash prizes for winners, this digital showcase adds an exciting dimension to our vibrant visual celebration.",
-      category: "General",
-      details: "https://makemypass.com/synapse",
+        "title": "Project Tsukuyomi\n",
+        "description": "Project Tsukuyomi is an extraordinary treasure hunt where you and your team will embark on a journey of secrets, riddles, and challenges. \nWork together to decipher cryptic clues, solve intricate puzzles, and navigate unexpected twists, all while racing against rival groups. \nStrategy, teamwork, and sharp thinking are your greatest assets in this thrilling quest for victory.",
+        "category": "General",
+        "details": "https://makemypass.com/project-tsukuyomi"
     },
     {
-      title: "Chromus",
-      description:
-        "Chromus 2025: The Ultimate Video Editing Odyssey!\nDive into the art of storytelling with Chromus\u2014a battleground where creativity meets pixels. Choose your category, from Title Sequence to Social Cause Awareness, and let your edits paint the narrative. Join us at Apoorv for an unforgettable celebration of visual mastery and imagination.",
-      category: "General",
-      details: "https://makemypass.com/chromus",
+        "title": "Verse Voyage(Poetry)",
+        "description": "Step into the realm of rhythm and emotion with Verse Voyage, Apoorv '25's premier poetry competition!Whether your words ow like a gentle stream or crash like thunderous waves, \nthis is your chance to create something unforgettable. Let your verses paint vivid imagery, stir deep emotions, and leave a lasting impact on every reader.",
+        "category": "General",
+        "details": "https://makemypass.com/verse-voyage"
     },
     {
-      title: "Project Tsukuyomi\n",
-      description:
-        "Project Tsukuyomi is an extraordinary treasure hunt where you and your team will embark on a journey of secrets, riddles, and challenges. \nWork together to decipher cryptic clues, solve intricate puzzles, and navigate unexpected twists, all while racing against rival groups. \nStrategy, teamwork, and sharp thinking are your greatest assets in this thrilling quest for victory.",
-      category: "General",
-      details: "https://makemypass.com/projecttsukuyomi\n",
+        "title": "Writers Rumble(Short Story)",
+        "description": "Prepare to unleash the power of words in Writer's Rumble, Apoorv '25's ultimate short story competition! This literary showdown will test your creativity, storytelling prowess, \nand ability to captivate readers with compelling narratives. Whether you weave heart-wrenching dramas, pulse-pounding thrillers, or lighthearted tales, \nthis is your chance to leave a lasting impression.\n",
+        "category": "Art",
+        "details": "https://makemypass.com/writers-rumble"
     },
     {
-      title: "Verse Voyage(Poetry)",
-      description:
-        "Step into the realm of rhythm and emotion with Verse Voyage, Apoorv '25\u2019s premier poetry competition!Whether your words ow like a gentle stream or crash like thunderous waves, \nthis is your chance to create something unforgettable. Let your verses paint vivid imagery, stir deep emotions, and leave a lasting impact on every reader.",
-      category: "General",
-      details: "https://makemypass.com/versevoyage(poetry)",
+        "title": "Open Mic",
+        "description": "A chance to step onto the stage, a mic in your hand, and unleash those words—be it a poem, rap, stand-up, story, beatbox, or monologue. No rules, no judgment, just a few ears\nto listen... or maybe a chance to impress your crush! Who knows? They might just fall for your killer knock-knock jokes!\n",
+        "category": "General",
+        "details": "https://makemypass.com/open-mic"
     },
     {
-      title: "Writers Rumble(Short Story)",
-      description:
-        "Prepare to unleash the power of words in Writer\u2019s Rumble, Apoorv '25\u2019s ultimate short story competition! This literary showdown will test your creativity, storytelling prowess, \nand ability to captivate readers with compelling narratives. Whether you weave heart-wrenching dramas, pulse-pounding thrillers, or lighthearted tales, \nthis is your chance to leave a lasting impression.\n",
-      category: "General",
-      details: "https://makemypass.com/writersrumble(shortstory)",
+        "title": "Trivia Rush",
+        "description": "Calling all trivia buffs, knowledge enthusiasts, and quick thinkers to put their brains to the test in this high-stakes showdown of intelligence and strategy. \nGet ready to challenge yourself and your peers in an electrifying atmosphere filled with excitement and fun.\nAs the tension rises and the stakes get higher, only one team will emerge as the ultimate champion of the trivia showdown. Will it be you? \n",
+        "category": "Quiz",
+        "details": "https://makemypass.com/trivia-rush"
     },
     {
-      title: "Open Mic",
-      description:
-        "A chance to step onto the stage, a mic in your hand, and unleash those words\u2014be it a poem, rap, stand-up, story, beatbox, or monologue. No rules, no judgment, just a few ears\nto listen... or maybe a chance to impress your crush! Who knows? They might just fall for your killer knock-knock jokes!\n",
-      category: "General",
-      details: "https://makemypass.com/openmic",
+        "title": "MUN",
+        "description": "Ever wonder what it takes to be a world leader? We'll give you the chance to find out and dive into the world of diplomacy and debate! \nApoorv 2025 presents the Model United Nations (MUN), your chance to step into the shoes of a world leader and tackle pressing international issues.\nForge diplomatic alliances, and craft innovative solutions for a brighter future.",
+        "category": "General",
+        "details": "https://makemypass.com/mun"
     },
     {
-      title: "Trivia Rush",
-      description:
-        "Calling all trivia buffs, knowledge enthusiasts, and quick thinkers to put their brains to the test in this high-stakes showdown of intelligence and strategy. \nGet ready to challenge yourself and your peers in an electrifying atmosphere filled with excitement and fun.\nAs the tension rises and the stakes get higher, only one team will emerge as the ultimate champion of the trivia showdown. Will it be you? \n",
-      category: "General",
-      details: "https://makemypass.com/triviarush",
+        "title": "Animaniac",
+        "description": "In a realm where only the fiercest intellects and quickest minds endure, Animaniac, Apoorv'25's ultimate anime event, awaits. \nWarriors unite in squads of four, forging alliances beyond college boundaries for a high-stakes battle. \nEvery question is a duel, every answer a decisive strike—but knowledge alone won't be enough. Unpredictable power-ups can shift the tides in an instant, \nturning victory into defeat. Outsmart your opponents, seize every opportunity, and claim the title of Ultimate Anime Champion!",
+        "category": "Art",
+        "details": "https://makemypass.com/animaniac"
     },
     {
-      title: "MUN",
-      description:
-        "Ever wonder what it takes to be a world leader? We\u2019ll give you the chance to find out and dive into the world of diplomacy and debate! \nApoorv 2025 presents the Model United Nations (MUN), your chance to step into the shoes of a world leader and tackle pressing international issues.\nForge diplomatic alliances, and craft innovative solutions for a brighter future.",
-      category: "General",
-      details: "https://makemypass.com/mun",
+        "title": "Traders Turf",
+        "description": "Description not available.",
+        "category": "General",
+        "details": "https://makemypass.com/traders-turf"
     },
     {
-      title: "Animaniac",
-      description:
-        "In a realm where only the fiercest intellects and quickest minds endure, Animaniac, Apoorv'25's ultimate anime event, awaits. \nWarriors unite in squads of four, forging alliances beyond college boundaries for a high-stakes battle. \nEvery question is a duel, every answer a decisive strike\u2014but knowledge alone won\u2019t be enough. Unpredictable power-ups can shift the tides in an instant, \nturning victory into defeat. Outsmart your opponents, seize every opportunity, and claim the title of Ultimate Anime Champion!",
-      category: "General",
-      details: "https://makemypass.com/animaniac",
+        "title": "The Samurai Saga",
+        "description": "Description not available.",
+        "category": "General",
+        "details": "https://makemypass.com/the-samurai-saga"
     },
     {
-      title: "Traders Turf",
-      description: "u ",
-      category: "General",
-      details: "https://makemypass.com/tradersturf",
+        "title": "Hackoona Matata",
+        "description": "Hackoona Matata is an exhilarating hackathon where teams of 4-5 participants come together to solve problem statements across various elds like tech, healthcare,\nsustainability, and more. In race against time, teams collaborate to build innovative solutions, showcase their skills, and pitch their ideas to expert judges.",
+        "category": "Art",
+        "details": "https://unstop.com/hackathons/hackoona-matata-apoorv-2025-indian-institute-of-information-technology-iiit-kottayam-1411738?lb=uvNliz6B&utm_medium=Share&utm_source=shortUrl"
     },
     {
-      title: "The Samurai Saga",
-      description: "Website design on figma",
-      category: "General",
-      details: "https://makemypass.com/thesamuraisaga",
+        "title": " Last Bot Standing",
+        "description": "Welcome to the ultimate bot battle royale—where only the strongest, smartest, and most savage survive! Build, program, \nand unleash your robot into the combat arena, where it will face off against others in a no-holds-barred mechanical showdown. \nOutmaneuver, outthink, and outlast your opponents until only one bot remains victorious!",
+        "category": "Art",
+        "details": "https://makemypass.com/last-bot-standing"
     },
     {
-      title: "Hackoona Matata",
-      description:
-        "Hackoona Matata is an exhilarating hackathon where teams of 4-5 participants come together to solve problem statements across various elds like tech, healthcare,\nsustainability, and more. In race against time, teams collaborate to build innovative solutions, showcase their skills, and pitch their ideas to expert judges.",
-      category: "General",
-      details: "https://makemypass.com/hackoonamatata",
+        "title": "Break It to Make It",
+        "description": "Break it down, crack the code, and rebuild it better! In this brain-melting challenge, you'll be given a mysterious electronic circuit and tasked with reverse-engineering its secrets.\nWith only a simulation tool and your wits, you must decode, reconstruct, and prove your hacker-level hardware skills. If you love puzzles, this is your playground!",
+        "category": "General",
+        "details": "https://makemypass.com/break-it-to-make-it"
     },
     {
-      title: " Last Bot Standing",
-      description:
-        "Welcome to the ultimate bot battle royale\u2014where only the strongest, smartest, and most savage survive! Build, program, \nand unleash your robot into the combat arena, where it will face off against others in a no-holds-barred mechanical showdown. \nOutmaneuver, outthink, and outlast your opponents until only one bot remains victorious!",
-      category: "General",
-      details: "https://makemypass.com/lastbotstanding",
+        "title": "Chaos by Design",
+        "description": "Welcome to the dark side of design! In this chaotically cursed competition, your mission is to create the most frustratingly functional user interface ever seen. \nThink buttons that run away, pop-ups that never close, and passwords that change as you type—all in the name of beautifully bad UX. Make the judges suffer,\n make them laugh, and prove you truly understand how NOT to design a UI.",
+        "category": "General",
+        "details": "https://makemypass.com/chaos-by-design"
     },
     {
-      title: "Break It to\u00a0Make\u00a0It",
-      description:
-        "Break it down, crack the code, and rebuild it better! In this brain-melting challenge, you\u2019ll be given a mysterious electronic circuit and tasked with reverse-engineering its secrets.\nWith only a simulation tool and your wits, you must decode, reconstruct, and prove your hacker-level hardware skills. If you love puzzles, this is your playground!",
-      category: "General",
-      details: "https://makemypass.com/breakitto\u00a0make\u00a0it",
+        "title": "Digital Detective Hunt",
+        "description": "Step into the shoes of a cyber detective in this thrilling hunt to uncover the identity of an anonymous target! Armed with clues and basic yet powerful cyber tools, you'll navigate the\ndigital world to track down the mystery person. Decode, analyze, and investigate like a pro, all while honing your cybersecurity skills. Get ready to uncover secrets and feel like a true\ncyber sleuth!",
+        "category": "General",
+        "details": "https://makemypass.com/digital-treasure-hunt"
     },
     {
-      title: "Chaos by Design",
-      description:
-        "Welcome to the dark side of design! In this chaotically cursed competition, your mission is to create the most frustratingly functional user interface ever seen. \nThink buttons that run away, pop-ups that never close, and passwords that change as you type\u2014all in the name of beautifully bad UX. Make the judges suffer,\n make them laugh, and prove you truly understand how NOT to design a UI.",
-      category: "General",
-      details: "https://makemypass.com/chaosbydesign",
+        "title": "Valorant",
+        "description": "Apoorv 25's Valorant competitions feature teams from around the world competing in exciting tournaments.\nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
+        "category": "General",
+        "details": "https://makemypass.com/valorant"
     },
     {
-      title: "Digital Detective Hunt",
-      description:
-        "Step into the shoes of a cyber detective in this thrilling hunt to uncover the identity of an anonymous target! Armed with clues and basic yet powerful cyber tools, you\u2019ll navigate the\ndigital world to track down the mystery person. Decode, analyze, and investigate like a pro, all while honing your cybersecurity skills. Get ready to uncover secrets and feel like a true\ncyber sleuth!",
-      category: "General",
-      details: "https://makemypass.com/digitaldetectivehunt",
+        "title": "Freefire",
+        "description": "Apoorv 25's Free Fire competitions showcase intense battles where teams from around the world compete in high-energy tournaments. \nWith a focus on strategy, precision, and survival, the event promises an electrifying experience for both participants and spectators.",
+        "category": "Art",
+        "details": "https://makemypass.com/free-fire"
     },
     {
-      title: "Valorant",
-      description:
-        "Apoorv 25's Valorant competitions feature teams from around the world competing in exciting tournaments.\nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
-      category: "General",
-      details: "https://makemypass.com/valorant",
+        "title": "BGMI",
+        "description": "Apoorv 25's BGMI competitions feature teams from around the world competing in exciting tournaments. \nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
+        "category": "General",
+        "details": "https://makemypass.com/bgmi"
     },
     {
-      title: "Freefire",
-      description:
-        "Apoorv 25's Free Fire competitions showcase intense battles where teams from around the world compete in high-energy tournaments. \nWith a focus on strategy, precision, and survival, the event promises an electrifying experience for both participants and spectators.",
-      category: "General",
-      details: "https://makemypass.com/freefire",
+        "title": "Capture the Flag",
+        "description": "Description not available.",
+        "category": "General",
+        "details": "https://makemypass.com/apoorv-ctf"
     },
     {
-      title: "BGMI",
-      description:
-        "Apoorv 25's BGMI competitions feature teams from around the world competing in exciting tournaments. \nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
-      category: "General",
-      details: "https://makemypass.com/bgmi",
+        "title": "Code quest",
+        "description": "Welcome to the ultimate test of coding prowess at Apoorv Tech Fest! \nCodeQuest is designed to challenge participants through unique and strategic rounds that will push their problem-solving skills to the limit. \nSpanning two intense days, the competition will test coding speed, logical thinking, adaptability, and teamwork. Get ready to compete against the best minds and prove your coding excellence!",
+        "category": "Art",
+        "details": "https://makemypass.com/code-quest"
     },
     {
-      title: "Capture the Flag",
-      description:
-        "Time to put your hacker-hoodie on! Get ready to hack your way through the notorious cybersecurity challenges that we've made just for you! ",
-      category: "General",
-      details: "https://makemypass.com/capturetheflag",
+        "title": "Turings Twisted Tales\n",
+        "description": "Description not available.",
+        "category": "General",
+        "details": "https://makemypass.com/turings-twisted-tales"
     },
     {
-      title: "Code quest",
-      description: "3 days long coding challenge ",
-      category: "General",
-      details: "https://makemypass.com/codequest",
-    },
-    {
-      title: "Turings Twisted Tales\n",
-      description:
-        "We\u2019re planning a story-based gaming event for the fest where players interact with AI-powered NPCs, solve challenges, and make decisions that shape the storyline. \nThe goal is to reach and defeat the adaptive AI boss in an epic\u00a0final\u00a0battle.",
-      category: "General",
-      details: "https://makemypass.com/turingstwistedtales\n",
-    },
-    {
-      title: "Non-Competitive Dance",
-      description: "Stage Performances",
-      category: "General",
-      details: "https://makemypass.com/non-competitivedance",
-    },
-    {
-      title: "Reverb",
-      description: "Officail Band",
-      category: "General",
-      details: "https://makemypass.com/reverb",
-    },
-    {
-      title: "Drama Act",
-      description: "Stage Act",
-      category: "General",
-      details: "https://makemypass.com/dramaact",
-    },
-    {
-      title: "RoboRally",
-      description:
-        "Participants build and race robot cars, with sessions on software and hardware integration.(TECH WORKSHOP)",
-      category: "General",
-      details: "https://makemypass.com/roborally",
+        "title": "Gamevita 3.0",
+        "description": "Welcome to Apoorv's GameVita 4.0! A 72-hour game dev extravaganza where you'llunleash your creativity, choose any engine or framework, and create the coolest\nsoftware. The theme will be revealed at the start of the challenge, sparking your imagination and setting the stage for an epic journey.",
+        "category": "Art",
+        "details": "https://makemypass.com/game-vita-3-0"
     },
   ];
+
+  // Extract unique categories from events data
+  const uniqueCategories = [...new Set(events.map(event => event.category))];
+
+  // Toggle category selection
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  // Filter events based on search term and selected categories
+  const filteredEvents = events.filter(event => {
+    const matchesSearch = 
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = 
+      selectedCategories.length === 0 || 
+      selectedCategories.includes(event.category);
+    
+    return matchesSearch && matchesCategory;
+  });
 
   const FanModal = ({
     event,
@@ -342,13 +319,6 @@ const Events = () => {
           ></div>
         </div>
 
-        {/* Cute Ninja Cartoon - Commented out for now */}
-        {/* <img 
-          src={Ninja} 
-          alt="Ninja Cartoon" 
-          className="absolute bottom-6 w-42 h-32" 
-        /> */}
-
         {/* Modal Content */}
         <div className="relative py-8 px-4 md:px-8">
           <div className="flex flex-col items-center text-center">
@@ -387,6 +357,7 @@ const Events = () => {
       </motion.div>
     </motion.div>
   );
+  
   return (
     <div className="relative min-h-screen bg-black">
       <Loader pageName="Events" />
@@ -450,18 +421,121 @@ const Events = () => {
               BATTLE<span className="text-red-500">.</span>GROUNDS
             </motion.h2>
 
+            {/* Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-8"
+            >
+              <div className="relative max-w-xl mx-auto">
+                <input
+                  type="text"
+                  placeholder="Search events..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-6 py-3 bg-white/5 border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 font-gang"
+                />
+                <svg 
+                  className="absolute right-4 top-3 w-6 h-6 text-gray-400" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth="2" 
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </motion.div>
+
+            {/* Category Filters */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mb-8"
+            >
+              <div className="max-w-4xl mx-auto">
+                <h3 className="text-white font-gang text-lg mb-3">Filter by category:</h3>
+                <div className="flex flex-wrap gap-3">
+                  {uniqueCategories.map(category => (
+                    <div 
+                      key={category}
+                      className={`flex items-center px-4 py-2 rounded-full cursor-pointer transition-all ${
+                        selectedCategories.includes(category) 
+                          ? 'bg-red-500/30 border border-red-500/80' 
+                          : 'bg-white/5 border border-white/20 hover:bg-white/10'
+                      }`}
+                      onClick={() => toggleCategory(category)}
+                    >
+                      <div className={`w-4 h-4 border ${
+                        selectedCategories.includes(category) 
+                          ? 'border-red-500 bg-red-500/80' 
+                          : 'border-white/60'
+                        } rounded mr-2 flex items-center justify-center`}
+                      >
+                        {selectedCategories.includes(category) && (
+                          <svg 
+                            className="w-3 h-3 text-white" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24" 
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth="3" 
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-white font-gang">{category}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* No results message */}
+            {filteredEvents.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-8"
+              >
+                <p className="text-white/70 font-gang text-xl">No events found matching your search criteria</p>
+                <button 
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategories([]);
+                  }}
+                  className="mt-4 px-6 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors font-gang"
+                >
+                  Clear Filters
+                </button>
+              </motion.div>
+            )}
+
+            {/* Events Grid */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
             >
-              {events.map((event, i) => (
+              {filteredEvents.map((event, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + i * 0.1 }}
+                  transition={{ delay: 0.7 + i * 0.05 }}
                   whileHover={{
                     scale: 1.05,
                     rotate: Math.random() > 0.5 ? 2 : -2,
@@ -488,6 +562,7 @@ const Events = () => {
         )}
       </AnimatePresence>
 
+      {/* Event Detail Modal */}
       <AnimatePresence>
         {selectedEvent && (
           <FanModal

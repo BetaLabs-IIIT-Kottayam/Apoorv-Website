@@ -15,6 +15,8 @@ const errorHandlerMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(err);
+  
   let customError = {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || 'Something went wrong, please try again later',

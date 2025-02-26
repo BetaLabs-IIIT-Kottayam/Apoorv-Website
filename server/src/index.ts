@@ -35,7 +35,7 @@ app.use(mongoSanitize());
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://client:5173", "http://admin:5174","http://10.10.0.118:5173","http://10.10.0.118:5174", "apoorv.iiitkottayam.ac.in"], // Explicitly allow frontend origins
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://client:5173", "http://admin:5174","http://10.10.0.118:5173","http://10.10.0.118:5174", "https://apoorv.iiitkottayam.ac.in"], // Explicitly allow frontend origins
     credentials: true, // Allow cookies
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],

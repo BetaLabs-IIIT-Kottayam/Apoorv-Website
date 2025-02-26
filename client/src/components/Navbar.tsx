@@ -17,9 +17,7 @@ export const Navbar: React.FC = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  const navItems = ["Home", "Events", "Sponsors", 
-    // "Merch", 
-    "Team", "Developers"]
+  const navItems = ["Home", "Events", "Sponsors", "Merch", "Team", "Developers"]
 
   return (
     <nav 
