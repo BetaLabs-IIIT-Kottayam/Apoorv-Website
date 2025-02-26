@@ -135,7 +135,7 @@ const AdminLayout = () => {
           Error: {error.message}
         </div>
       );
-      console.log(filteredOrders[0].items[0].merchId.name)
+      // console.log(filteredOrders[0].items[0].merchId.name)
 
     return (
       <div className="bg-white/5 rounded-lg border border-white/10 p-6">
@@ -297,7 +297,7 @@ const AdminLayout = () => {
       navigate("/login");
     } catch (err) {
       // Even if logout fails, clear token and redirect
-      console.log(err);
+      // console.log(err);
       localStorage.removeItem("token");
       navigate("/login");
     }

@@ -5,13 +5,17 @@ import BackgroundImage from "../assets/dragon.png";
 import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
 
+
 export interface Product {
   _id: string;
   id: string;
   name: string;
   price: number;
   description: string;
-  photos: { url: string }[];
+  photos: {
+    length: number;
+    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode; url: string 
+}[];
   sizes?: string[];
   colors?: string[];
 }
@@ -30,6 +34,18 @@ interface ProductModalProps {
 
 const RATE_LIMIT_MS = 500;
 let lastOperation = Date.now();
+
+// Helper function to get image URL from photo object
+const getImageUrl = (photo: any): string => {
+  if (photo.url) {
+    return photo.url;
+  } else if (photo.data) {
+    // If the photo is stored as buffer data, convert it to base64
+    // This is just an example, adjust according to your actual implementation
+    return `data:${photo.contentType};base64,${Buffer.from(photo.data).toString('base64')}`;
+  }
+  return "/placeholder-image.jpg";
+};
 
 const Merch = () => {
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
@@ -61,6 +77,7 @@ const Merch = () => {
         }
 
         const data = await response.json();
+        // console.log("Data",data);
         setProducts(data.merch);
         console.log(products)
         // setIsLoading(false);
@@ -199,7 +216,7 @@ const Merch = () => {
         <div className="space-y-4">
           {cart.map((item, index) => (
             <motion.div
-              key={`${item.id}`}
+              key={`${item.id}-${index}`}
               className="flex items-center justify-between bg-black/30 p-4 rounded-lg"
             >
               <div>
