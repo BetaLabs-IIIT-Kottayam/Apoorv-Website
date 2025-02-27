@@ -16,22 +16,22 @@ import merchRouter from "./routes/merchRouter";
 import orderRouter from "./routes/orderRouter";
 import dashboardRouter from "./routes/dashboardRouter";
 import cookieParser from "cookie-parser";
-import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
+// import rateLimit from 'express-rate-limit';
+// import mongoSanitize from 'express-mongo-sanitize';
 
 dotenv.config();
 
 const app = express();
 
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 100, 
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Too many requests from this IP, please try again after 15 minutes'
-});
+// const globalLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, 
+//   max: 100, 
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: 'Too many requests from this IP, please try again after 15 minutes'
+// });
 
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 app.use(express.json());
 app.use(
   cors({
@@ -59,7 +59,7 @@ app.use((req, res, next) => {
 // app.use("/api/v1/private", authenticateUser(),  (req, res) => {
 //   res.send("Welcome to the private route")
 // })
-app.use(globalLimiter);
+// app.use(globalLimiter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/merch", merchRouter);
 app.use("/api/v1/order", orderRouter);

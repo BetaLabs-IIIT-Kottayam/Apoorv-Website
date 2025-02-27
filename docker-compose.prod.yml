@@ -58,8 +58,8 @@ services:
       PORT: 5000
       ADMIN_USERNAME: "admin"
       ADMIN_PASSWORD: "admin@apoorv"
-      RAZORPAY_KEY_ID: "rzp_test_Ar28lFL78DCFaF"
-      RAZORPAY_KEY_SECRET: "4zb95zJewnYiCjpIlJndHO5k"
+      RAZORPAY_KEY_ID: "rzp_live_wm3RAP4PWqiCLd"
+      RAZORPAY_KEY_SECRET: "0BUFetF6fAWqWalK0A9WBAus"
       SMTP_SERVICE: "gmail"
       SMTP_USER: "anshumohan22bcy19@iiitkottayam.ac.in"
       SMTP_PASS: "dosp dprv tnfs zuef"
@@ -74,7 +74,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://server:5000
+      - VITE_API_URL=http://10.10.0.118:5000
     depends_on:
     - server
 
@@ -87,7 +87,7 @@ services:
     ports:
       - "5174:5174"
     environment:
-      - VITE_API_URL=http://server:5000
+      - VITE_API_URL=http://10.10.0.118:5000
     depends_on:
       - server
 

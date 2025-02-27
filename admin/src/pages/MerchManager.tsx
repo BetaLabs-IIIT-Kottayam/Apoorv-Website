@@ -123,7 +123,7 @@ const handleDelete = async (id: string) => {
       throw new Error("Unauthorized: No token found");
     }
 
-    const response = await fetch(`http://localhost:5000/api/v1/merch/${id}`, {
+    const response = await fetch(`http://${import.meta.env.VITE_API_URL}/api/v1/merch/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
