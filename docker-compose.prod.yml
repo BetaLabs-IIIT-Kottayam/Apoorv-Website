@@ -46,9 +46,6 @@ services:
         sleep 86400
       done
       '
-  depends_on:
-    mongodb:
-      condition: service_healthy
 
   server:
     build:
