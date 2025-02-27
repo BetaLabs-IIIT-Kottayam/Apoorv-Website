@@ -14,7 +14,7 @@ interface IOrderItem {
     size: 'XS' |'S' | 'M' | 'L' | 'XL' | '2XL' | '3XL';
     quantity: number;
     price: number;
-    color: string;
+    color?: string;
 }
 
 interface IOrder extends Document {
@@ -39,7 +39,7 @@ const orderSchema: Schema = new Schema({
     items: [{
         merchId: { type: mongoose.Types.ObjectId, ref: 'Merch', required: true },
         size: { type: String, enum: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'], required: true },
-        color: { type: String, required: true },
+        color: { type: String, default : 'default' },
         // variant: { type: String, required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },

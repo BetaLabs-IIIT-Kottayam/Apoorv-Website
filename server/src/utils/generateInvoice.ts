@@ -68,8 +68,8 @@ const generateInvoice = (order: PopulatedOrder) => {
   );
   // Create items table
   const tableTop = 170;
-  const tableHeaders = ["Item", "Color", "Size", "Qty", "Price", "Total"];
-  const columnWidths = [75, 20, 20, 15, 20, 15];
+  const tableHeaders = ["Item", "Size", "Qty", "Price", "Total"];
+  const columnWidths = [85, 25, 20, 25, 25];
   let currentY = tableTop;
   // Table header background
   doc.setFillColor(41, 128, 185);
@@ -101,18 +101,16 @@ const generateInvoice = (order: PopulatedOrder) => {
     );
     doc.text(nameLines, currentX + 5, currentY);
     currentX += columnWidths[0];
-    // Other columns
-    doc.text(item.color || "-", currentX + 5, currentY);
+
+    // Skip color column and continue with other columns
+    doc.text(item.size || "-", currentX + 5, currentY);
     currentX += columnWidths[1];
 
-    doc.text(item.size || "-", currentX + 5, currentY);
+    doc.text(item.quantity.toString(), currentX + 5, currentY);
     currentX += columnWidths[2];
 
-    doc.text(item.quantity.toString(), currentX + 5, currentY);
-    currentX += columnWidths[3];
-
     doc.text(`Rs.${item.price}`, currentX + 5, currentY);
-    currentX += columnWidths[4];
+    currentX += columnWidths[3];
 
     doc.text(`Rs.${item.price * item.quantity}`, currentX + 5, currentY);
     currentY += 15;

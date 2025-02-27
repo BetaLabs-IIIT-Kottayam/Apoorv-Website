@@ -29,7 +29,7 @@ const merchSchema: Schema = new Schema({
     default: ["XS", "S", "M", "L", "XL", "2XL"],
     required: false,
   }, // Add sizes array
-  colors: { type: [String], default: ["Red", "White"], required: false }, // Add colors array
+  colors: { type: [String], required: false }, // Add colors array
 });
 
 const Merch = mongoose.model<IMerch>("Merch", merchSchema);

@@ -26,7 +26,7 @@ interface IMerchPhoto {
   interface IOrderItem {
     merchId: IMerch;  // This will be populated with the full Merch document
     size: 'XS' | 'S' | 'M' | 'L' | 'XL' | '2XL' | '3XL';
-    color: string;
+    color?: string;
     quantity: number;
     price: number;
   }
@@ -272,7 +272,6 @@ const verifyPayment = async (req: Request, res: Response) => {
                         <div class="item">
                             <h4>${item.merchId.name}</h4>
                             <p>
-                                <strong>Color:</strong> ${item.color}<br>
                                 <strong>Size:</strong> ${item.size}<br>
                                 <strong>Quantity:</strong> ${item.quantity}<br>
                                 <strong>Price:</strong> ₹${item.price}<br>
