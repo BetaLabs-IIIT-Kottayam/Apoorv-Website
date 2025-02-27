@@ -126,6 +126,8 @@ const Montana: React.FC = () => {
           <div className="site-icon"></div>
           <div className="site-icon"></div>
           <div className="site-icon"></div>
+          <div className="site-icon"></div>
+          <div className="site-icon"></div>
           <div className="site-type"></div>
         </div>
       </div>

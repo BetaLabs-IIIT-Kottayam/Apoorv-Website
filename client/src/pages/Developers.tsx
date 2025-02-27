@@ -3,7 +3,7 @@ import BackgroundImage from "../assets/samurai.png";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
 import akhileshImage from "../assets/developers/akhilesh.jpg";
-import anshumohanImage from "../assets/developers/Anshumohan.png";
+import anshumohanImage from "../assets/developers/Anshumohan.jpg";
 import shashankImage from "../assets/developers/Shashank.jpg";
 import { Github, Linkedin } from "lucide-react";
 
