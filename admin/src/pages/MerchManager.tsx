@@ -58,7 +58,7 @@ const MerchManagement = () => {
         setIsLoading(true);
         const token = localStorage.getItem("token");
 
-        const response = await fetch("http://server:5000/api/v1/merch", {
+        const response = await fetch("http://${import.meta.env.VITE_API_URL}/api/v1/merch", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`  // ✅ Include token

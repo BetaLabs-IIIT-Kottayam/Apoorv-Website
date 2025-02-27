@@ -1,7 +1,7 @@
 import { DashboardStats } from "@/types";
 import axios from "axios";
 
-const API_BASE_URL = "http://server:5000/api/v1"; // Replace with your backend API URL
+const API_BASE_URL = `http://${import.meta.env.VITE_API_URL}/api/v1`; // Replace with your backend API URL
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
