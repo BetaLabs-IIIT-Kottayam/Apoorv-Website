@@ -514,7 +514,7 @@ const Merch = () => {
 
               <div className="flex items-center justify-between pt-4 border-t border-white/10">
                 <span className="font-gang text-xl text-white">
-                  ${product.price}
+                  Rs.{product.price}
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -632,7 +632,7 @@ const Merch = () => {
                       </div>
                       <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                       <p className="text-gray-300 mb-4">{product.description}</p>
-                      <p className="text-lg font-bold">${product.price}</p>
+                      <p className="text-lg font-bold">Rs.{product.price}</p>
                     </div>
                   );
                 })}
