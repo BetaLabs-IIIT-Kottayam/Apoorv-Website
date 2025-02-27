@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import BackgroundImage from "../assets/dragon.png";
 import CheckoutForm from "../components/CheckoutForm";
 import Loader from "../components/Loader";
+import MerchDropoffPopup from "@/components/MerchDropoffPopup";
 
 
 export interface Product {
@@ -50,6 +51,7 @@ const getImageUrl = (photo: any): string => {
 };
 
 const Merch = () => {
+  const [showDropoffPopup, setShowDropoffPopup] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contentVisible, setContentVisible] = useState<boolean>(false);
@@ -676,6 +678,13 @@ const Merch = () => {
           </div>
         </>
       )}
+      {showDropoffPopup && (
+  <MerchDropoffPopup
+    imageUrl="/popupImage.webp" // Replace with your image path
+    onClose={() => setShowDropoffPopup(false)}
+    autoCloseTime={0} // Set to 0 to disable auto-close, or add time in ms
+  />
+)}
     </div>
   );
 };
