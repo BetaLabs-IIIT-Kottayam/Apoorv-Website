@@ -95,7 +95,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           : "api/v1/merch";
       const method = isEditing ? "PATCH" : "POST";
 
-      const response = await fetch(`http://server:5000/${url}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/${url}`, {
           method,
           headers: {
               "Authorization": `Bearer ${token}` // ✅ Include token

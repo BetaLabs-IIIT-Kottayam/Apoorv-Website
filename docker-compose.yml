@@ -87,7 +87,7 @@ services:
     ports:
       - "5174:5174"
     environment:
-      - VITE_API_URL=http://server:5000
+      - VITE_API_URL="https://apoorvbk.iiitkottayam.ac.in/"
     # volumes:
     #   - ./admin:/app
     #   - /app/node_modules

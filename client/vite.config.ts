@@ -39,6 +39,6 @@ export default defineConfig({
     },
   },
   define: {
-    'import.meta.env.VITE_API_URL': "https://apoorvbk.iiitkottayam.ac.in"
+    'import.meta.env.VITE_API_URL': JSON.stringify("https://apoorvbk.iiitkottayam.ac.in")
   }
 });
