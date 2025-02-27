@@ -19,31 +19,29 @@ services:
       - mongodb
     volumes:
       - ./mongodb_backups:/backups
-    entrypoint: >
-      /bin/sh -c '
-      echo "Waiting for MongoDB to start..."
+    entrypoint: [ "/bin/bash" ]
+    command: |
+      -c "
+      echo 'Waiting for MongoDB to start...'
       sleep 30
       while true; do
-        TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-        BACKUP_PATH="/backups/backup_$TIMESTAMP"
-        echo "Creating backup at $BACKUP_PATH"
-        mongodump --host mongodb --port 27017 --authenticationDatabase admin --username admin --password "apoorv@2025" --out $BACKUP_PATH
-        
-        echo "Compressing backup..."
+        TIMESTAMP=$$(date +%Y%m%d_%H%M%S)
+        BACKUP_PATH='/backups/backup_'$$TIMESTAMP
+        echo 'Creating backup at '$$BACKUP_PATH
+        mongodump --host mongodb --port 27017 --authenticationDatabase admin --username admin --password 'apoorv@2025' --out $$BACKUP_PATH
+        echo 'Compressing backup...'
         cd /backups
-        tar -czf "backup_$TIMESTAMP.tar.gz" "backup_$TIMESTAMP"
-        rm -rf "backup_$TIMESTAMP"
-        
-        echo "Cleaning up backups older than 7 days..."
-        find /backups -name "backup_*.tar.gz" -type f -mtime +7 -delete
-        
-        echo "Backup completed at $(date). Next backup in 24 hours."
+        tar -czf 'backup_'$$TIMESTAMP'.tar.gz' 'backup_'$$TIMESTAMP
+        rm -rf 'backup_'$$TIMESTAMP
+        echo 'Cleaning up backups older than 7 days...'
+        find /backups -name 'backup_*.tar.gz' -type f -mtime +7 -delete
+        echo 'Backup completed at '$(date)'. Next backup in 24 hours.'
         sleep 86400
       done
-      '
+      "
 
   server:
-    build: 
+    build:
       context: ./server
       dockerfile: Dockerfile
     container_name: server
@@ -76,7 +74,7 @@ services:
     environment:
       - VITE_API_URL=http://10.10.0.118:5000
     depends_on:
-    - server
+      - server
 
   admin:
     build:
