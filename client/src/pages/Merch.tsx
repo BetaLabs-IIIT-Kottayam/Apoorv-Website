@@ -16,7 +16,7 @@ export interface Product {
   description: string;
   photos: {
     length: number;
-    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode; 
+    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode;
     url: string
   }[];
   sizes?: string[];
@@ -386,7 +386,7 @@ const Merch = () => {
 
     // Make sure we have a photos array
     const photos = product.photos[0] || [];
-    
+
     const nextImage = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (photos.length <= 1) return;
@@ -501,8 +501,8 @@ const Merch = () => {
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${selectedSize === size
-                          ? "border-red-500 text-red-500"
-                          : "border-white/20 text-white/60 hover:border-white/40"
+                        ? "border-red-500 text-red-500"
+                        : "border-white/20 text-white/60 hover:border-white/40"
                         }`}
                       aria-pressed={selectedSize === size}
                     >
@@ -678,13 +678,13 @@ const Merch = () => {
           </div>
         </>
       )}
-      {showDropoffPopup && (
-  <MerchDropoffPopup
-    imageUrl="/popupImage.webp" // Replace with your image path
-    onClose={() => setShowDropoffPopup(false)}
-    autoCloseTime={0} // Set to 0 to disable auto-close, or add time in ms
-  />
-)}
+      {showDropoffPopup && contentVisible && (
+        <MerchDropoffPopup
+          imageUrl="/popupImage.webp" // Replace with your image path
+          onClose={() => setShowDropoffPopup(false)}
+          autoCloseTime={0} // Set to 0 to disable auto-close, or add time in ms
+        />
+      )}
     </div>
   );
 };
