@@ -283,7 +283,7 @@ const AdminLayout = () => {
 
       // Send logout request to backend
       await axios.post(
-        "http://localhost:5000/api/v1/auth/logout",
+        "http://server:5000/api/v1/auth/logout",
         {},
         {
           headers: {

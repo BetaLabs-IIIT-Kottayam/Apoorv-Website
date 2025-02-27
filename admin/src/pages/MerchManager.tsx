@@ -58,7 +58,7 @@ const MerchManagement = () => {
         setIsLoading(true);
         const token = localStorage.getItem("token");
 
-        const response = await fetch("http://localhost:5000/api/v1/merch", {
+        const response = await fetch("http://server:5000/api/v1/merch", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`  // ✅ Include token
@@ -95,7 +95,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           : "api/v1/merch";
       const method = isEditing ? "PATCH" : "POST";
 
-      const response = await fetch(`http://localhost:5000/${url}`, {
+      const response = await fetch(`http://server:5000/${url}`, {
           method,
           headers: {
               "Authorization": `Bearer ${token}` // ✅ Include token
