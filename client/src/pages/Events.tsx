@@ -47,7 +47,7 @@ const Events = () => {
     {
         "title": "Stage Buster",
         "description": "Experience the thrill of cinema live on stage! In this team-based event, 2-3 members recreate iconic movie scenes and embody unforgettable characters. \nWith rounds focusing on scene recreation and character impersonation, participants showcase their creativity, acting skills, and love for storytelling.",
-        "category": "Art",
+        "category": "Drama",
         "details": "https://makemypass.com/stage-buster"
     },
     // {
@@ -59,19 +59,19 @@ const Events = () => {
     {
         "title": "48 Hours Flicks",
         "description": "Cinevedika presents \"48-Hour Flicks\" at Apoorv'25—an electrifying challenge where teams race against time to script, shoot, and edit a short film in just 48 hours! \nForm your team, receive a unique concept at registration, and bring your creative vision to life. Think fast, film faster, and make every second count!",
-        "category": "Art",
+        "category": "Cinevedika",
         "details": "https://makemypass.com/48-hour-flicks"
     },
     {
         "title": "Reel to Real",
         "description": "Apoorv'25 presents \"Reel to Real: Character Comeback\"—a stage for movie lovers to bring their favorite characters to life! \nDress up, deliver an iconic dialogue, and showcase your acting skills for exciting prizes. Whether hero or villain, step into the spotlight and celebrate the magic of cinema. ",
-        "category": "General",
+        "category": "Cinevedika",
         "details": "https://makemypass.com/reel-to-real"
     },
     {
         "title": "Printscapes",
         "description": "Dive into a world where ink dances with imagination and every print tells a story. Explore the magic of monoprinting, where no two artworks are ever the same.\nWith each press, textures come alive, colors collide, and unexpected beauty emerges. Embrace the unpredictable and transform it into art. Create, discover, and leave your mark.",
-        "category": "Dance",
+        "category": "Art",
         "details": "https://makemypass.com/print-scapes"
     },
     {
@@ -95,49 +95,49 @@ const Events = () => {
     {
         "title": "Vogue fusion",
         "description": "The Vogue Fusion -APOORV 25!Gear up to dazzle the world with your talent!The fusion wear combines elements from different cultures and eras, creating unique and versatile outfits.\n The vogue fusion is the chance to show your unique fusion of different styles and let people be amazed with your outfits.\nLets add beauty to the apoorv and light up our campus with our outfits",
-        "category": "General",
+        "category": "Fashion",
         "details": "https://makemypass.com/vogue-fusion"
     },
     {
         "title": "Apoorv's Got Latent",
         "description": "Do you have what it takes to impress? At Apoorv's Got Latent, step into the spotlight and showcase your unique talents!\nWhether it's storytelling, music, dance, art, stand-up comedy, or something extraordinary, this is your moment to shine. \ndon't hold back—let's see what you've got! ",
-        "category": "Dance",
+        "category": "Cultural",
         "details": "https://makemypass.com/apoorvs-got-latent"
     },
     {
         "title": "Synapse",
         "description": "Synapse, our college's online photography contest held during the annual fest, welcomes talented photographers from within and beyond our campus to exhibit their best work.\nWith enticing cash prizes for winners, this digital showcase adds an exciting dimension to our vibrant visual celebration.",
-        "category": "General",
+        "category": "Photography",
         "details": "https://makemypass.com/synapse"
     },
     {
         "title": "Chromus",
         "description": "Dive into the art of storytelling with Chromus-a battleground where creativity meets pixels. Choose your category, from Title Sequence to Social Cause Awareness, and let your edits paint the narrative. Join us at Apoorv for an unforgettable celebration of visual mastery and imagination.",
-        "category": "Art",
+        "category": "Photography",
         "details": "https://makemypass.com/chromus"
     },
     {
         "title": "Project Tsukuyomi\n",
         "description": "Project Tsukuyomi is an extraordinary treasure hunt where you and your team will embark on a journey of secrets, riddles, and challenges. \nWork together to decipher cryptic clues, solve intricate puzzles, and navigate unexpected twists, all while racing against rival groups. \nStrategy, teamwork, and sharp thinking are your greatest assets in this thrilling quest for victory.",
-        "category": "General",
+        "category": "Social",
         "details": "https://makemypass.com/project-tsukuyomi"
     },
     {
         "title": "Verse Voyage(Poetry)",
         "description": "Step into the realm of rhythm and emotion with Verse Voyage, Apoorv '25's premier poetry competition!Whether your words ow like a gentle stream or crash like thunderous waves, \nthis is your chance to create something unforgettable. Let your verses paint vivid imagery, stir deep emotions, and leave a lasting impact on every reader.",
-        "category": "General",
+        "category": "Literature",
         "details": "https://makemypass.com/verse-voyage"
     },
     {
         "title": "Writers Rumble(Short Story)",
         "description": "Prepare to unleash the power of words in Writer's Rumble, Apoorv '25's ultimate short story competition! This literary showdown will test your creativity, storytelling prowess, \nand ability to captivate readers with compelling narratives. Whether you weave heart-wrenching dramas, pulse-pounding thrillers, or lighthearted tales, \nthis is your chance to leave a lasting impression.\n",
-        "category": "Art",
+        "category": "Literature",
         "details": "https://makemypass.com/writers-rumble"
     },
     {
         "title": "Open Mic",
         "description": "A chance to step onto the stage, a mic in your hand, and unleash those words—be it a poem, rap, stand-up, story, beatbox, or monologue. No rules, no judgment, just a few ears\nto listen... or maybe a chance to impress your crush! Who knows? They might just fall for your killer knock-knock jokes!\n",
-        "category": "General",
+        "category": "Literature",
         "details": "https://makemypass.com/open-mic"
     },
     {
@@ -149,97 +149,97 @@ const Events = () => {
     {
         "title": "MUN",
         "description": "Ever wonder what it takes to be a world leader? We'll give you the chance to find out and dive into the world of diplomacy and debate! \nApoorv 2025 presents the Model United Nations (MUN), your chance to step into the shoes of a world leader and tackle pressing international issues.\nForge diplomatic alliances, and craft innovative solutions for a brighter future.",
-        "category": "General",
+        "category": "Debate",
         "details": "https://makemypass.com/mun"
     },
     {
         "title": "Animaniac",
         "description": "In a realm where only the fiercest intellects and quickest minds endure, Animaniac, Apoorv'25's ultimate anime event, awaits. \nWarriors unite in squads of four, forging alliances beyond college boundaries for a high-stakes battle. \nEvery question is a duel, every answer a decisive strike—but knowledge alone won't be enough. Unpredictable power-ups can shift the tides in an instant, \nturning victory into defeat. Outsmart your opponents, seize every opportunity, and claim the title of Ultimate Anime Champion!",
-        "category": "Art",
+        "category": "Anime",
         "details": "https://makemypass.com/animaniac"
     },
     {
         "title": "Traders Turf",
-        "description": "Description not available.",
-        "category": "General",
+        "description": "Paper trading is a simulated trading practice that allows you to trade without using real money.",
+        "category": "Finance",
         "details": "https://makemypass.com/traders-turf"
     },
     {
         "title": "The Samurai Saga",
         "description": "Description not available.",
-        "category": "General",
+        "category": "Design",
         "details": "https://makemypass.com/the-samurai-saga"
     },
     {
         "title": "Hackoona Matata",
         "description": "Hackoona Matata is an exhilarating hackathon where teams of 4-5 participants come together to solve problem statements across various elds like tech, healthcare,\nsustainability, and more. In race against time, teams collaborate to build innovative solutions, showcase their skills, and pitch their ideas to expert judges.",
-        "category": "Art",
+        "category": "Tech",
         "details": "https://unstop.com/hackathons/hackoona-matata-apoorv-2025-indian-institute-of-information-technology-iiit-kottayam-1411738?lb=uvNliz6B&utm_medium=Share&utm_source=shortUrl"
     },
     {
         "title": " Last Bot Standing",
         "description": "Welcome to the ultimate bot battle royale—where only the strongest, smartest, and most savage survive! Build, program, \nand unleash your robot into the combat arena, where it will face off against others in a no-holds-barred mechanical showdown. \nOutmaneuver, outthink, and outlast your opponents until only one bot remains victorious!",
-        "category": "Art",
+        "category": "Tech",
         "details": "https://makemypass.com/last-bot-standing"
     },
     {
         "title": "Break It to Make It",
         "description": "Break it down, crack the code, and rebuild it better! In this brain-melting challenge, you'll be given a mysterious electronic circuit and tasked with reverse-engineering its secrets.\nWith only a simulation tool and your wits, you must decode, reconstruct, and prove your hacker-level hardware skills. If you love puzzles, this is your playground!",
-        "category": "General",
+        "category": "Tech",
         "details": "https://makemypass.com/break-it-to-make-it"
     },
     {
         "title": "Chaos by Design",
         "description": "Welcome to the dark side of design! In this chaotically cursed competition, your mission is to create the most frustratingly functional user interface ever seen. \nThink buttons that run away, pop-ups that never close, and passwords that change as you type—all in the name of beautifully bad UX. Make the judges suffer,\n make them laugh, and prove you truly understand how NOT to design a UI.",
-        "category": "General",
+        "category": "Tech",
         "details": "https://makemypass.com/chaos-by-design"
     },
     {
         "title": "Digital Detective Hunt",
         "description": "Step into the shoes of a cyber detective in this thrilling hunt to uncover the identity of an anonymous target! Armed with clues and basic yet powerful cyber tools, you'll navigate the\ndigital world to track down the mystery person. Decode, analyze, and investigate like a pro, all while honing your cybersecurity skills. Get ready to uncover secrets and feel like a true\ncyber sleuth!",
-        "category": "General",
+        "category": "Tech",
         "details": "https://makemypass.com/digital-treasure-hunt"
     },
     {
         "title": "Valorant",
         "description": "Apoorv 25's Valorant competitions feature teams from around the world competing in exciting tournaments.\nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
-        "category": "General",
+        "category": "E-Sports",
         "details": "https://makemypass.com/valorant"
     },
     {
         "title": "Freefire",
         "description": "Apoorv 25's Free Fire competitions showcase intense battles where teams from around the world compete in high-energy tournaments. \nWith a focus on strategy, precision, and survival, the event promises an electrifying experience for both participants and spectators.",
-        "category": "Art",
+        "category": "E-Sports",
         "details": "https://makemypass.com/free-fire"
     },
     {
         "title": "BGMI",
         "description": "Apoorv 25's BGMI competitions feature teams from around the world competing in exciting tournaments. \nThe focus is on teamwork, communication, and skill, making it an intense and competitive game for both players and fans.",
-        "category": "General",
+        "category": "E-Sports",
         "details": "https://makemypass.com/bgmi"
     },
     {
         "title": "Capture the Flag",
-        "description": "Description not available.",
-        "category": "General",
+        "description": "Capture the Flag (CTF) is a popular cybersecurity competition that challenges participants to solve a variety of cybersecurity-related puzzles and challenges. A Jeopardy-style CTF is one where participants are presented with a series of challenges, and they earn points for each challenge they complete.",
+        "category": "Tech",
         "details": "https://makemypass.com/apoorv-ctf"
     },
     {
         "title": "Code quest",
         "description": "Welcome to the ultimate test of coding prowess at Apoorv Tech Fest! \nCodeQuest is designed to challenge participants through unique and strategic rounds that will push their problem-solving skills to the limit. \nSpanning two intense days, the competition will test coding speed, logical thinking, adaptability, and teamwork. Get ready to compete against the best minds and prove your coding excellence!",
-        "category": "Art",
+        "category": "Tech",
         "details": "https://makemypass.com/code-quest"
     },
     {
         "title": "Turings Twisted Tales\n",
         "description": "Description not available.",
-        "category": "General",
+        "category": "Tech",
         "details": "https://makemypass.com/turings-twisted-tales"
     },
     {
         "title": "Gamevita 3.0",
         "description": "Welcome to Apoorv's GameVita 4.0! A 72-hour game dev extravaganza where you'llunleash your creativity, choose any engine or framework, and create the coolest\nsoftware. The theme will be revealed at the start of the challenge, sparking your imagination and setting the stage for an epic journey.",
-        "category": "Art",
+        "category": "Tech",
         "details": "https://makemypass.com/game-vita-3-0"
     },
   ];

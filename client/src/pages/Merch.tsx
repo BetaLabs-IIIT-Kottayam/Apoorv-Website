@@ -263,7 +263,7 @@ const Merch = () => {
             <div className="flex justify-between text-white mb-4">
               <span>Total:</span>
               <span>
-                $
+                Rs.
                 {cart
                   .reduce(
                     (total, item) => total + item.price * item.quantity,
