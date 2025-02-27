@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, ShoppingCart, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -284,6 +285,83 @@ const Merch = () => {
     </motion.div>
   );
 
+  const ComingSoonMessage = () => (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5 }}
+      className="flex flex-col items-center justify-center text-center px-4"
+    >
+      <motion.div
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        transition={{ 
+          repeat: Infinity, 
+          repeatType: "reverse"
+        }}
+        className="mb-8"
+      >
+        <svg 
+          width="100" 
+          height="100" 
+          viewBox="0 0 100 100" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+          className="text-red-500"
+        >
+          <path 
+            d="M50 10C27.91 10 10 27.91 10 50C10 72.09 27.91 90 50 90C72.09 90 90 72.09 90 50C90 27.91 72.09 10 50 10ZM50 85C30.67 85 15 69.33 15 50C15 30.67 30.67 15 50 15C69.33 15 85 30.67 85 50C85 69.33 69.33 85 50 85Z" 
+            fill="currentColor"
+          />
+          <path 
+            d="M45 30H55V70H45V30ZM30 45H70V55H30V45Z" 
+            fill="currentColor"
+          />
+        </svg>
+      </motion.div>
+      
+      <motion.h2
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="font-gang text-4xl sm:text-5xl text-white mb-4"
+      >
+        近日公開 
+        <span className="text-red-500">.</span>
+      </motion.h2>
+      
+      <motion.p
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="text-xl text-gray-300 mb-8 font-gang"
+      >
+        COMING SOON
+      </motion.p>
+      
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.9 }}
+        className="text-gray-400 max-w-xl mx-auto mb-12"
+      >
+        Our battle gear collection is being forged with the finest materials and ancient techniques. 
+        Return soon to equip yourself with legendary items worthy of a true warrior.
+      </motion.div>
+      
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="flex items-center justify-center space-x-2 text-gray-500"
+      >
+        <div className="w-8 h-px bg-red-500/50"></div>
+        <span className="font-gang">戦闘の準備</span>
+        <div className="w-8 h-px bg-red-500/50"></div>
+      </motion.div>
+    </motion.div>
+  );
+
   const ProductModal: React.FC<ProductModalProps> = ({
     product,
     onClose,
@@ -296,7 +374,7 @@ const Merch = () => {
     const [selectedSize, setSelectedSize] = useState(
       (product.sizes && product.sizes[0]) || defaultSizes[0]
     );
-    const [selectedColor, _] = useState(
+    const [selectedColor] = useState(
       (product.colors && product.colors[0]) || defaultColors[0]
     );
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -543,22 +621,9 @@ const Merch = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {products.map((product) => {
-                // Get the first image URL for the product card
-                const photos = product.photos[0] || [];
-                const imageUrl = photos && photos.length > 0
-                  ? ('url' in photos) 
-                    ? (photos as {url: string}).url
-                    : getImageUrl(photos[0])
-                  : "/placeholder-image.jpg";
-
-                  // const currentImageUrl = photos.length > 0 
-                  //     ? ('url' in photos) 
-                  //       ? (photos as {url: string}).url
-                  //       : getImageUrl(photos[currentImageIndex])
-                  //     : "/placeholder-image.jpg";
-                return (
+{products.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {products.map((product) => (
                   <motion.div
                     key={product.id}
                     whileHover={{ scale: 1.05 }}
@@ -573,7 +638,7 @@ const Merch = () => {
                     }}
                   >
                     <img
-                      src={imageUrl}
+                      src={product.photos[0]?.url || "/placeholder-image.jpg"}
                       alt={product.name}
                       className="w-full h-64 object-cover rounded-lg mb-4"
                       loading="lazy"
@@ -592,9 +657,11 @@ const Merch = () => {
                       />
                     </div>
                   </motion.div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <ComingSoonMessage />
+            )}
           </div>
 
           {cart.length > 0 && (
