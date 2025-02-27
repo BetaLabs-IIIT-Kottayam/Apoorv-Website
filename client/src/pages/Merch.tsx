@@ -205,7 +205,7 @@ const Merch = () => {
       animate={{ x: 0 }}
       exit={{ x: "100%" }}
       transition={{ type: "tween" }}
-      className="fixed top-0 right-0 w-full md:w-96 h-full bg-gradient-to-br from-gray-900 to-black shadow-2xl z-50 p-6 overflow-y-auto"
+      className="fixed top-10 right-0 w-full md:w-96 h-full bg-gradient-to-br from-gray-900 to-black shadow-2xl z-50 p-6 overflow-y-auto rounded-md"
     >
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl text-white font-gang">Your Cart</h2>
