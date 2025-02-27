@@ -11,10 +11,10 @@ services:
     volumes:
       - mongodata:/data/db
     healthcheck:
-    test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
-    interval: 10s
-    timeout: 10s
-    retries: 5
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   mongodb-backup:
     image: mongo:latest
@@ -51,7 +51,7 @@ services:
       condition: service_healthy
 
   server:
-    build: 
+    build:
       context: ./server
       dockerfile: Dockerfile
     container_name: server
@@ -84,7 +84,7 @@ services:
     environment:
       - VITE_API_URL=http://server:5000
     depends_on:
-    - server
+      - server
 
   admin:
     build:
