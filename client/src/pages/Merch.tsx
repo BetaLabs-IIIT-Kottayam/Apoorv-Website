@@ -15,8 +15,9 @@ export interface Product {
   description: string;
   photos: {
     length: number;
-    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode; url: string 
-}[];
+    map(arg0: (_: any, index: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode; 
+    url: string
+  }[];
   sizes?: string[];
   colors?: string[];
 }
@@ -72,7 +73,7 @@ const Merch = () => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/v1/merch`
         );
-        
+
         // console.log(response);
         if (!response.ok) {
           throw new Error("Failed to fetch products");
@@ -223,7 +224,7 @@ const Merch = () => {
               <div>
                 <h3 className="text-white font-gang">{item.name}</h3>
                 <p className="text-gray-400 text-sm">
-                  {item.size} 
+                  {item.size}
                 </p>
               </div>
               <div className="flex items-center space-x-4">
@@ -286,7 +287,7 @@ const Merch = () => {
   );
 
   const ComingSoonMessage = () => (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5 }}
@@ -295,41 +296,41 @@ const Merch = () => {
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
-        transition={{ 
-          repeat: Infinity, 
+        transition={{
+          repeat: Infinity,
           repeatType: "reverse"
         }}
         className="mb-8"
       >
-        <svg 
-          width="100" 
-          height="100" 
-          viewBox="0 0 100 100" 
-          fill="none" 
+        <svg
+          width="100"
+          height="100"
+          viewBox="0 0 100 100"
+          fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="text-red-500"
         >
-          <path 
-            d="M50 10C27.91 10 10 27.91 10 50C10 72.09 27.91 90 50 90C72.09 90 90 72.09 90 50C90 27.91 72.09 10 50 10ZM50 85C30.67 85 15 69.33 15 50C15 30.67 30.67 15 50 15C69.33 15 85 30.67 85 50C85 69.33 69.33 85 50 85Z" 
+          <path
+            d="M50 10C27.91 10 10 27.91 10 50C10 72.09 27.91 90 50 90C72.09 90 90 72.09 90 50C90 27.91 72.09 10 50 10ZM50 85C30.67 85 15 69.33 15 50C15 30.67 30.67 15 50 15C69.33 15 85 30.67 85 50C85 69.33 69.33 85 50 85Z"
             fill="currentColor"
           />
-          <path 
-            d="M45 30H55V70H45V30ZM30 45H70V55H30V45Z" 
+          <path
+            d="M45 30H55V70H45V30ZM30 45H70V55H30V45Z"
             fill="currentColor"
           />
         </svg>
       </motion.div>
-      
+
       <motion.h2
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
         className="font-gang text-4xl sm:text-5xl text-white mb-4"
       >
-        近日公開 
+        近日公開
         <span className="text-red-500">.</span>
       </motion.h2>
-      
+
       <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -338,18 +339,18 @@ const Merch = () => {
       >
         COMING SOON
       </motion.p>
-      
+
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.9 }}
         className="text-gray-400 max-w-xl mx-auto mb-12"
       >
-        Our battle gear collection is being forged with the finest materials and ancient techniques. 
+        Our battle gear collection is being forged with the finest materials and ancient techniques.
         Return soon to equip yourself with legendary items worthy of a true warrior.
       </motion.div>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2 }}
@@ -380,17 +381,14 @@ const Merch = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const sizes = product.sizes || defaultSizes;
-    
+
     // Make sure we have a photos array
     const photos = product.photos[0] || [];
-    // const photos = photos2[0];
-    // console.log("Photos",photos);
-    // console.log("Photos[0",photos2);
-    // console.log(photos[0].url)
+    
     const nextImage = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (photos.length <= 1) return;
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === photos.length - 1 ? 0 : prev + 1
       );
     };
@@ -398,15 +396,15 @@ const Merch = () => {
     const prevImage = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (photos.length <= 1) return;
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? photos.length - 1 : prev - 1
       );
     };
 
     // Get the current image URL
-    const currentImageUrl = photos.length > 0 
-      ? ('url' in photos) 
-        ? (photos as {url: string}).url
+    const currentImageUrl = photos.length > 0
+      ? ('url' in photos)
+        ? (photos as { url: string }).url
         : getImageUrl(photos[currentImageIndex])
       : "/placeholder-image.jpg";
 
@@ -435,7 +433,7 @@ const Merch = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             <div className="relative">
-              <div 
+              <div
                 className="relative w-full h-64 md:h-80 overflow-hidden rounded-lg border border-white/10"
               >
                 <motion.img
@@ -448,17 +446,17 @@ const Merch = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 />
-                
+
                 {photos.length > 1 && (
                   <>
-                    <button 
+                    <button
                       onClick={prevImage}
                       className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
                       aria-label="Previous image"
                     >
                       <ChevronLeft size={20} />
                     </button>
-                    <button 
+                    <button
                       onClick={nextImage}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
                       aria-label="Next image"
@@ -468,7 +466,7 @@ const Merch = () => {
                   </>
                 )}
               </div>
-              
+
               {photos.length > 1 && (
                 <div className="flex justify-center mt-2 gap-2">
                   {photos.map((_, index) => (
@@ -478,9 +476,8 @@ const Merch = () => {
                         e.stopPropagation();
                         setCurrentImageIndex(index);
                       }}
-                      className={`w-2 h-2 rounded-full ${
-                        currentImageIndex === index ? "bg-red-500" : "bg-gray-500"
-                      }`}
+                      className={`w-2 h-2 rounded-full ${currentImageIndex === index ? "bg-red-500" : "bg-gray-500"
+                        }`}
                       aria-label={`View image ${index + 1}`}
                       aria-current={currentImageIndex === index}
                     />
@@ -501,11 +498,10 @@ const Merch = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${
-                        selectedSize === size
+                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${selectedSize === size
                           ? "border-red-500 text-red-500"
                           : "border-white/20 text-white/60 hover:border-white/40"
-                      }`}
+                        }`}
                       aria-pressed={selectedSize === size}
                     >
                       {size}
@@ -513,26 +509,6 @@ const Merch = () => {
                   ))}
                 </div>
               </div>
-{/* 
-              <div role="group" aria-label="Color selection">
-                <h3 className="font-gang text-white mb-2">Color</h3>
-                <div className="flex flex-wrap gap-2">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm border ${
-                        selectedColor === color
-                          ? "border-red-500 text-red-500"
-                          : "border-white/20 text-white/60 hover:border-white/40"
-                      }`}
-                      aria-pressed={selectedColor === color}
-                    >
-                      {color}
-                    </button>
-                  ))}
-                </div>
-              </div> */}
 
               <div className="flex items-center justify-between pt-4 border-t border-white/10">
                 <span className="font-gang text-xl text-white">
@@ -564,10 +540,10 @@ const Merch = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="relative min-h-screen bg-black">
-      <Loader pageName="Merch"/>
+      <Loader pageName="Merch" />
       {contentVisible && (
         <>
           <div
@@ -621,83 +597,83 @@ const Merch = () => {
               </div>
             )}
 
-{products.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <motion.div
-                    key={product.id}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => setSelectedItem(product)}
-                    className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
-                    role="button"
-                    tabIndex={0}
-                    onKeyPress={(e: React.KeyboardEvent) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setSelectedItem(product);
-                      }
-                    }}
-                  >
-                    <img
-                      src={product.photos[0]?.url || "/placeholder-image.jpg"}
-                      alt={product.name}
-                      className="w-full h-64 object-cover rounded-lg mb-4"
-                      loading="lazy"
-                    />
-                    <h3 className="text-white font-gang text-xl mb-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-400 mb-2">{product.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-white font-gang text-lg">
-                        ${product.price}
-                      </span>
-                      <ShoppingCart
-                        className="text-gray-400"
-                        aria-hidden="true"
-                      />
+            {products.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map((product) => {
+                  // Get the first image URL for the product card
+                  const photos = product.photos[0] || [];
+                  const imageUrl = photos && photos.length > 0
+                    ? ('url' in photos)
+                      ? (photos as { url: string }).url
+                      : getImageUrl(photos[0])
+                    : "/placeholder-image.jpg";
+
+                  return (
+                    <div
+                      key={product.id}
+                      onClick={() => setSelectedItem(product)}
+                      className="bg-black/50 border border-white/10 rounded-lg p-4 cursor-pointer hover:border-red-500/50 transition-all"
+                      role="button"
+                      tabIndex={0}
+                      onKeyPress={(e: React.KeyboardEvent) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          setSelectedItem(product);
+                        }
+                      }}
+                    >
+                      <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
+                        <img
+                          src={imageUrl}
+                          alt={product.name}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                      <p className="text-gray-300 mb-4">{product.description}</p>
+                      <p className="text-lg font-bold">${product.price}</p>
                     </div>
-                  </motion.div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <ComingSoonMessage />
             )}
+
+            {cart.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => setIsCartOpen(true)}
+                className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center gap-2 cursor-pointer shadow-lg z-40 hover:bg-red-600 transition-colors"
+                aria-label={`Open cart with ${cart.length} items`}
+              >
+                <ShoppingCart size={20} />
+                <span className="font-gang text-xs md:text-base">
+                  {cart.length} item{cart.length !== 1 ? "s" : ""}
+                </span>
+              </motion.button>
+            )}
+
+            <AnimatePresence mode="wait">
+              {selectedItem && (
+                <ProductModal
+                  key="product-modal"
+                  product={selectedItem}
+                  onClose={() => setSelectedItem(null)}
+                  addToCart={addToCart}
+                />
+              )}
+              {isCartOpen && <CartCheckout key="cart-checkout" />}
+              {isCheckoutOpen && (
+                <CheckoutForm
+                  key="checkout-form"
+                  cart={cart}
+                  setCart={setCart}
+                  setIsCheckoutOpen={setIsCheckoutOpen}
+                />
+              )}
+            </AnimatePresence>
           </div>
-
-          {cart.length > 0 && (
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => setIsCartOpen(true)}
-              className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg flex items-center gap-2 cursor-pointer shadow-lg z-40 hover:bg-red-600 transition-colors"
-              aria-label={`Open cart with ${cart.length} items`}
-            >
-              <ShoppingCart size={20} />
-              <span className="font-gang text-xs md:text-base">
-                {cart.length} item{cart.length !== 1 ? "s" : ""}
-              </span>
-            </motion.button>
-          )}
-
-          <AnimatePresence mode="wait">
-            {selectedItem && (
-              <ProductModal
-                key="product-modal"
-                product={selectedItem}
-                onClose={() => setSelectedItem(null)}
-                addToCart={addToCart}
-              />
-            )}
-            {isCartOpen && <CartCheckout key="cart-checkout" />}
-            {isCheckoutOpen && (
-              <CheckoutForm
-                key="checkout-form"
-                cart={cart}
-                setCart={setCart}
-                setIsCheckoutOpen={setIsCheckoutOpen}
-              />
-            )}
-          </AnimatePresence>
         </>
       )}
     </div>
