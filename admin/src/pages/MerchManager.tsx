@@ -57,13 +57,15 @@ const MerchManagement = () => {
     try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-
-        const response = await fetch(`http://${import.meta.env.VITE_API_URL}/api/v1/merch`, {
+        console.log(token)
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/merch`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`  // ✅ Include token
             }
         });
+
+        console.log(response)
 
         if (!response.ok) throw new Error("Failed to fetch merchandise");
         const data = await response.json();
