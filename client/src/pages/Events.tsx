@@ -222,7 +222,7 @@ const Events = () => {
         "title": "Capture the Flag",
         "description": "Capture the Flag (CTF) is a popular cybersecurity competition that challenges participants to solve a variety of cybersecurity-related puzzles and challenges. A Jeopardy-style CTF is one where participants are presented with a series of challenges, and they earn points for each challenge they complete.",
         "category": "Tech",
-        "details": "https://makemypass.com/apoorv-ctf"
+        "details": "https://unstop.com/p/apoorvctf-2025-apoorv-2025-iiit-kottayam-1410897"
     },
     {
         "title": "Code quest",
