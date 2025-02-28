@@ -101,13 +101,16 @@ const Merch = () => {
         setError("Please wait before adding more items");
         return;
       }
-
+  
+      // Create a unique key for the item
+      const itemKey = `${product.id || product._id}-${size}-${color}`;
+  
       setCart((prevCart) => {
+        // Check if the item already exists using the unique key
         const existingItemIndex = prevCart.findIndex(
-          (item) =>
-            item.id === product.id && item.size === size && item.color === color
+          (item) => `${item.id || item._id}-${item.size}-${item.color}` === itemKey
         );
-
+  
         if (existingItemIndex > -1) {
           const updatedCart = [...prevCart];
           const newQuantity = Math.min(
@@ -131,7 +134,7 @@ const Merch = () => {
           ];
         }
       });
-
+  
       setSelectedItem(null);
       setIsCartOpen(true);
       setError("");
