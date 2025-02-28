@@ -64,8 +64,8 @@ services:
       RAZORPAY_KEY_ID: "rzp_live_wm3RAP4PWqiCLd"
       RAZORPAY_KEY_SECRET: "0BUFetF6fAWqWalK0A9WBAus"
       SMTP_SERVICE: "gmail"
-      SMTP_USER: "anshumohan22bcy19@iiitkottayam.ac.in"
-      SMTP_PASS: "dosp dprv tnfs zuef"
+      SMTP_USER: "apoorv@iiitkottayam.ac.in"
+      SMTP_PASS: "uzjj xxpr nfzt lhdy"
       NODE_ENV: production
 
   client:

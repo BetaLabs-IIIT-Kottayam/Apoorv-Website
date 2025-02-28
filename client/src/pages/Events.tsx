@@ -232,7 +232,7 @@ const Events = () => {
     },
     {
         "title": "Turings Twisted Tales\n",
-        "description": "Description not available.",
+        "description": "We're planning a story-based gaming event for the fest where players interact with AI-powered NPCs, solve challenges, and make decisions that shape the storyline. The goal is to reach and defeat the adaptive AI boss in an epic final battle.",
         "category": "Tech",
         "details": "https://makemypass.com/turings-twisted-tales"
     },
