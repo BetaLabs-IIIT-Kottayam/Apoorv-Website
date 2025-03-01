@@ -380,6 +380,7 @@ const AdminLayout = () => {
       localStorage.removeItem("token");
       navigate("/login");
     } catch (err) {
+      console.error(err);
       // Even if logout fails, clear token and redirect
       // console.log(err);
       localStorage.removeItem("token");
