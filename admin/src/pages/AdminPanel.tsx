@@ -19,10 +19,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DashboardStats } from "@/types";
 import axios from "axios";
-import { Loader, Loader2, Package, Search, ShoppingBag } from "lucide-react";
+import { Loader, Loader2, Mail, Package, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import MerchManagement from "./MerchManager";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AdminLayout = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -110,7 +112,11 @@ const AdminLayout = () => {
       "secretCode" | "firstName" | "email"
     >("secretCode");
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+    const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState("");
+  
     const filteredOrders = orders.filter((order) => {
       const matchesSearch =
         searchQuery === "" ||
@@ -123,10 +129,47 @@ const AdminLayout = () => {
           : order.buyerDetails.email
               .toLowerCase()
               .includes(searchQuery.toLowerCase()));
-
+  
       return matchesSearch;
     });
-
+  
+    const handleResendInvoice = (id: string) => {
+      setCurrentOrderId(id);
+      setIsResendDialogOpen(true);
+    };
+  
+    const confirmResendInvoice = async () => {
+      if (!currentOrderId) return;
+  
+      try {
+        setIsResending(true);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/order/resend-invoice`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: currentOrderId }),
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.msg || "Failed to resend invoice");
+        }
+  
+        setSuccessMessage("Invoice resent successfully!");
+        setIsResendDialogOpen(false);
+  
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      } catch (err) {
+        console.error("Error resending invoice:", err);
+      } finally {
+        setIsResending(false);
+      }
+    };
+  
     if (isLoading)
       return <Loader2 className="w-8 h-8 text-white animate-spin" />
     if (error)
@@ -136,7 +179,7 @@ const AdminLayout = () => {
         </div>
       );
       // console.log(filteredOrders[0].items[0].merchId.name)
-
+  
     return (
       <div className="bg-white/5 rounded-lg border border-white/10 p-6">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -167,7 +210,13 @@ const AdminLayout = () => {
             </div>
           </div>
         </div>
-
+  
+        {successMessage && (
+          <div className="bg-green-500/20 border border-green-500 text-green-500 px-4 py-2 rounded mb-4">
+            {successMessage}
+          </div>
+        )}
+  
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -231,7 +280,16 @@ const AdminLayout = () => {
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleResendInvoice(order._id)}
+                      disabled={isResending}
+                    >
+                      <Mail className="w-4 h-4" />
+                    </Button>
+                    
                     {order.status === "Paid" && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -273,6 +331,32 @@ const AdminLayout = () => {
             </div>
           )}
         </div>
+  
+        <Dialog open={isResendDialogOpen} onOpenChange={setIsResendDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Resend Invoice</DialogTitle>
+              <DialogDescription>
+                Resend the invoice to the customer's email?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsResendDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => confirmResendInvoice()}
+                disabled={isResending}
+              >
+                {isResending ? "Sending..." : "Resend"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   };

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ImageIcon, Mail, Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { ImageIcon, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface MerchItem {
@@ -42,52 +42,6 @@ const MerchManagement = () => {
   const [itemToDelete, setItemToDelete] = useState<MerchItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // Add these state variables
-  const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState(String || null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [successMessage, setSuccessMessage] = useState("");
-
-  // Add these functions
-  const handleResendInvoice = (id: string) => {
-    setCurrentOrderId(id);
-    setIsResendDialogOpen(true);
-  };
-
-  const confirmResendInvoice = async () => {
-    if (!currentOrderId) return;
-
-    try {
-      setIsResending(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/order/resend-invoice`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: currentOrderId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.msg || "Failed to resend invoice");
-      }
-
-      setSuccessMessage("Invoice resent successfully!");
-      setIsResendDialogOpen(false);
-
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
-    } catch (err) {
-      console.error("Error resending invoice:", err);
-      setError("Failed to resend invoice");
-    } finally {
-      setIsResending(false);
-    }
-  };
-
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -101,54 +55,51 @@ const MerchManagement = () => {
 
   const fetchMerchandise = async () => {
     try {
-      setIsLoading(true);
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/merch`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ Include token
-          },
-        }
-      );
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/merch`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`  // ✅ Include token
+            }
+        });
 
-      if (!response.ok) throw new Error("Failed to fetch merchandise");
-      const data = await response.json();
-      setMerchandise(data.merch);
+        if (!response.ok) throw new Error("Failed to fetch merchandise");
+        const data = await response.json();
+        setMerchandise(data.merch);
     } catch (err) {
-      console.error("Error fetching merchandise:", err);
-      setError("Failed to fetch merchandise");
+        console.error("Error fetching merchandise:", err);
+        setError("Failed to fetch merchandise");
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const formDataToSend = new FormData();
 
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("price", formData.price);
-
-    Array.from(formData.photos).forEach((photo) => {
+  formDataToSend.append("name", formData.name);
+  formDataToSend.append("description", formData.description);
+  formDataToSend.append("price", formData.price);
+  
+  Array.from(formData.photos).forEach((photo) => {
       formDataToSend.append("files", photo);
-    });
+  });
 
-    try {
+  try {
       const token = localStorage.getItem("token"); // Get token
       const url = isEditing
-        ? `api/v1/merch/${selectedMerch?._id}`
-        : "api/v1/merch";
+          ? `api/v1/merch/${selectedMerch?._id}`
+          : "api/v1/merch";
       const method = isEditing ? "PATCH" : "POST";
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/${url}`, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ Include token
-        },
-        body: formDataToSend,
+          method,
+          headers: {
+              "Authorization": `Bearer ${token}` // ✅ Include token
+          },
+          body: formDataToSend,
       });
 
       if (!response.ok) throw new Error("Failed to save merchandise");
@@ -156,51 +107,48 @@ const MerchManagement = () => {
       await fetchMerchandise();
       resetForm();
       setIsEditDialogOpen(false);
-    } catch (err) {
+  } catch (err) {
       console.error("Error saving merchandise:", err);
       setError("Failed to save merchandise");
+  }
+};
+
+const handleDelete = async (id: string) => {
+  if (!itemToDelete) return;
+
+  try {
+    const token = localStorage.getItem("token"); // Retrieve the auth token
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
     }
-  };
 
-  const handleDelete = async (id: string) => {
-    if (!itemToDelete) return;
+    const response = await fetch(`http://${import.meta.env.VITE_API_URL}/api/v1/merch/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
 
-    try {
-      const token = localStorage.getItem("token"); // Retrieve the auth token
-      if (!token) {
-        throw new Error("Unauthorized: No token found");
-      }
-
-      const response = await fetch(
-        `http://${import.meta.env.VITE_API_URL}/api/v1/merch/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-        throw new Error(errorData.message || "Failed to delete merchandise");
-      }
-
-      await fetchMerchandise();
-      setIsDeleteDialogOpen(false);
-      setItemToDelete(null);
-    } catch (err) {
-      console.error("Error deleting merchandise:", err);
-
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Failed to delete merchandise");
-      }
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      throw new Error(errorData.message || "Failed to delete merchandise");
     }
-  };
+
+    await fetchMerchandise();
+    setIsDeleteDialogOpen(false);
+    setItemToDelete(null);
+  } catch (err) {
+    console.error("Error deleting merchandise:", err);
+
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError("Failed to delete merchandise");
+    }
+  }
+};
 
   const openDeleteDialog = (item: MerchItem) => {
     setItemToDelete(item);
@@ -391,14 +339,6 @@ const MerchManagement = () => {
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleResendInvoice(item._id)}
-                      disabled={isResending}
-                    >
-                      <Mail className="w-4 h-4" />
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -426,31 +366,6 @@ const MerchManagement = () => {
                 onClick={() => handleDelete(itemToDelete?._id || "")}
               >
                 Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-        <Dialog open={isResendDialogOpen} onOpenChange={setIsResendDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Resend Invoice</DialogTitle>
-              <DialogDescription>
-                Resend the invoice to the customer's email?
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsResendDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="default"
-                onClick={() => confirmResendInvoice()}
-                disabled={isResending}
-              >
-                {isResending ? "Sending..." : "Resend"}
               </Button>
             </DialogFooter>
           </DialogContent>
