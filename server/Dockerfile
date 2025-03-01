@@ -30,4 +30,4 @@ RUN npm install -g pnpm && pnpm install --prod
 EXPOSE 5000
 
 # Start the application in production mode
-CMD ["pnpm", "start"]
+CMD ["pnpm","--max-old-space-size=4096", "start"]

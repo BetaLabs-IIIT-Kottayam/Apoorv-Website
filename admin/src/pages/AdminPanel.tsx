@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DashboardStats } from "@/types";
 import axios from "axios";
-import { Loader, Loader2, Mail, Package, Search, ShoppingBag } from "lucide-react";
+import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon, Loader, Loader2, Mail, Package, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import MerchManagement from "./MerchManager";
@@ -107,7 +107,7 @@ const AdminLayout = () => {
   );
 
   const OrdersTab = () => {
-    const { orders, isLoading, error, updateOrderStatus } = useOrders();
+    const { orders, isLoading, updateOrderStatus, fetchOrders, page, totalPages, totalOrders } = useOrders();
     const [searchField, setSearchField] = useState<
       "secretCode" | "firstName" | "email"
     >("secretCode");
@@ -116,31 +116,33 @@ const AdminLayout = () => {
     const [isResending, setIsResending] = useState(false);
     const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState("");
+    const [error, setError] = useState<string | null>(null);
   
     const filteredOrders = orders.filter((order) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        (searchField === "secretCode"
-          ? order.secretCode.toLowerCase().includes(searchQuery.toLowerCase())
-          : searchField === "firstName"
-          ? order.buyerDetails.firstName
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          : order.buyerDetails.email
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()));
-  
-      return matchesSearch;
+      if (searchQuery === "") return true;
+      
+      switch (searchField) {
+        case "secretCode":
+          return order.secretCode.toLowerCase().includes(searchQuery.toLowerCase());
+        case "firstName":
+          return order.buyerDetails.firstName.toLowerCase().includes(searchQuery.toLowerCase());
+        case "email":
+          return order.buyerDetails.email.toLowerCase().includes(searchQuery.toLowerCase());
+        default:
+          return true;
+      }
     });
   
     const handleResendInvoice = (id: string) => {
       setCurrentOrderId(id);
       setIsResendDialogOpen(true);
+      // Clear any previous error when opening the dialog
+      setError(null);
     };
   
     const confirmResendInvoice = async () => {
       if (!currentOrderId) return;
-    
+  
       try {
         const token = localStorage.getItem("token");
         setIsResending(true);
@@ -152,18 +154,17 @@ const AdminLayout = () => {
           },
           body: JSON.stringify({ id: currentOrderId }),
         });
-    
+  
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.msg || "Failed to resend invoice");
         }
-    
-        // Check if the response indicates the confirmation email was sent
+  
         const data = await response.json();
-        
+  
         if (data.success) {
           setSuccessMessage("Invoice resent successfully!");
-          setIsResendDialogOpen(false); // Close dialog only on success
+          setIsResendDialogOpen(false);
           
           // Clear success message after 3 seconds
           setTimeout(() => {
@@ -172,21 +173,19 @@ const AdminLayout = () => {
         }
       } catch (err) {
         console.error("Error resending invoice:", err);
-        setError("Failed to resend invoice");
+        setError(err instanceof Error ? err.message : "Failed to resend invoice");
       } finally {
         setIsResending(false);
       }
     };
   
-    if (isLoading)
-      return <Loader2 className="w-8 h-8 text-white animate-spin" />
-    if (error)
+    if (isLoading) {
       return (
-        <div className="text-center py-8 text-red-500">
-          Error: {error.message}
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="w-8 h-8 text-white animate-spin" />
         </div>
       );
-      // console.log(filteredOrders[0].items[0].merchId.name)
+    }
   
     return (
       <div className="bg-white/5 rounded-lg border border-white/10 p-6">
@@ -225,6 +224,12 @@ const AdminLayout = () => {
           </div>
         )}
   
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-500 px-4 py-2 rounded mb-4">
+            {error}
+          </div>
+        )}
+  
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -241,103 +246,151 @@ const AdminLayout = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length === 0 && (
+              {filteredOrders.length === 0 ? (
                 <tr>
                   <td
                     colSpan={9}
-                    className="py-3 px-4 text-center text-gray-400"
+                    className="py-8 px-4 text-center text-gray-400"
                   >
-                    No orders found
+                    No orders found matching your search criteria
                   </td>
                 </tr>
-              )}
-              {filteredOrders.map((order) => (
-                <tr
-                  key={order._id}
-                  className="hover:bg-gray-800/50 transition-colors"
-                >
-                  <td className="px-4 py-3 text-sm text-white">{order._id}</td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {formatDate(order.createdAt)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {`${order.buyerDetails.firstName} ${order.buyerDetails.lastName}`}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {order.buyerDetails.email}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {order.items.map((item, idx) => (
-                      <div key={idx}>
-                        {`${item.merchId?.name} (${item.color} - ${item.size}) x${item.quantity}`}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {formatCurrency(order.totalAmount)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white">
-                    {order.secretCode}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleResendInvoice(order._id)}
-                      disabled={isResending}
-                    >
-                      <Mail className="w-4 h-4" />
-                    </Button>
-                    
-                    {order.status === "Paid" && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors">
-                            Mark Delivered
-                          </button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Confirm Status Update
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Do you really want to mark this order as
-                              Delivered?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>No</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                updateOrderStatus(order._id, "Delivered")
-                              }
+              ) : (
+                filteredOrders.map((order) => (
+                  <tr
+                    key={order._id}
+                    className="hover:bg-gray-800/50 transition-colors border-b border-white/5"
+                  >
+                    <td className="px-4 py-3 text-sm text-white">{order._id}</td>
+                    <td className="px-4 py-3 text-sm text-white">
+                      {formatDate(order.createdAt)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white">
+                      {`${order.buyerDetails.firstName} ${order.buyerDetails.lastName}`}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white">
+                      {order.buyerDetails.email}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white">
+                      {order.items.map((item, idx) => (
+                        <div key={idx}>
+                          {`${item.merchId?.name} (${item.color} - ${item.size}) x${item.quantity}`}
+                        </div>
+                      ))}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white">
+                      {formatCurrency(order.totalAmount)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white font-mono">
+                      {order.secretCode}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                          order.status
+                        )}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleResendInvoice(order._id)}
+                        disabled={isResending && currentOrderId === order._id}
+                        className="text-white hover:text-blue-400"
+                        title="Resend Invoice"
+                      >
+                        <Mail className="w-4 h-4" />
+                      </Button>
+  
+                      {order.status === "Paid" && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              className="bg-green-500 hover:bg-green-600 text-white transition-colors"
                             >
-                              Yes
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                              Mark Delivered
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Confirm Status Update
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Do you really want to mark this order as
+                                Delivered?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  updateOrderStatus(order._id, "Delivered")
+                                }
+                              >
+                                Confirm
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
-          {filteredOrders.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
-              No orders found matching your search criteria
-            </div>
-          )}
+        </div>
+  
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-400">
+            {searchQuery ? (
+              `Showing ${filteredOrders.length} filtered orders`
+            ) : (
+              `Showing ${orders.length} of ${totalOrders} orders`
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOrders(1)}
+              disabled={page === 1}
+            >
+              <ChevronFirstIcon className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOrders(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeftIcon className="w-4 h-4" />
+            </Button>
+            <span className="text-white px-3 py-1">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOrders(page + 1)}
+              disabled={page === totalPages}
+            >
+              <ChevronRightIcon className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOrders(totalPages)}
+              disabled={page === totalPages}
+            >
+              <ChevronLastIcon className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
   
         <Dialog open={isResendDialogOpen} onOpenChange={setIsResendDialogOpen}>
@@ -348,6 +401,11 @@ const AdminLayout = () => {
                 Resend the invoice to the customer's email?
               </DialogDescription>
             </DialogHeader>
+            {error && (
+              <div className="bg-red-500/20 border border-red-500 text-red-500 px-4 py-2 rounded mb-4">
+                {error}
+              </div>
+            )}
             <DialogFooter>
               <Button
                 variant="outline"
@@ -357,10 +415,17 @@ const AdminLayout = () => {
               </Button>
               <Button
                 variant="default"
-                onClick={() => confirmResendInvoice()}
+                onClick={confirmResendInvoice}
                 disabled={isResending}
               >
-                {isResending ? "Sending..." : "Resend"}
+                {isResending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Resend"
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -375,7 +440,7 @@ const AdminLayout = () => {
 
       // Send logout request to backend
       await axios.post(
-        `http://${import.meta.env.VITE_API_URL}/api/v1/auth/logout`,
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/logout`,
         {},
         {
           headers: {
@@ -418,31 +483,28 @@ const AdminLayout = () => {
 
         <div className="flex gap-4 mb-8">
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "analytics"
+            className={`px-4 py-2 rounded-lg transition-colors ${activeTab === "analytics"
                 ? "bg-white/20 text-white"
                 : "bg-white/5 text-gray-400 hover:bg-white/10"
-            }`}
+              }`}
             onClick={() => setActiveTab("analytics")}
           >
             Analytics
           </button>
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "orders"
+            className={`px-4 py-2 rounded-lg transition-colors ${activeTab === "orders"
                 ? "bg-white/20 text-white"
                 : "bg-white/5 text-gray-400 hover:bg-white/10"
-            }`}
+              }`}
             onClick={() => setActiveTab("orders")}
           >
             Orders
           </button>
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "merch"
+            className={`px-4 py-2 rounded-lg transition-colors ${activeTab === "merch"
                 ? "bg-white/20 text-white"
                 : "bg-white/5 text-gray-400 hover:bg-white/10"
-            }`}
+              }`}
             onClick={() => setActiveTab("merch")}
           >
             Merch Management

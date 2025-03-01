@@ -256,9 +256,8 @@ const verifyPayment = async (req: Request, res: Response) => {
                 </div>
                 
                 <div class="content">
-                    <p>Dear ${updatedOrder?.buyerDetails.firstName} ${
-      updatedOrder?.buyerDetails.lastName
-    },</p>
+                    <p>Dear ${updatedOrder?.buyerDetails.firstName} ${updatedOrder?.buyerDetails.lastName
+      },</p>
                     
                     <p>Thank you for your order! We're excited to process your purchase.</p>
                     
@@ -270,29 +269,27 @@ const verifyPayment = async (req: Request, res: Response) => {
                             <h3>${updatedOrder?.secretCode}</h3>
                             <small>Please keep this code safe for future reference</small>
                         </div>
-                        <p><strong>Total Amount:</strong> ₹${
-                          updatedOrder?.totalAmount
-                        }</p>
+                        <p><strong>Total Amount:</strong> ₹${updatedOrder?.totalAmount
+      }</p>
                     </div>
     
                     <h3>Order Items</h3>
                     ${updatedOrder?.items
-                      .map(
-                        (item) => `
+        .map(
+          (item) => `
                         <div class="item">
                             <h4>${item.merchId.name}</h4>
                             <p>
                                 <strong>Size:</strong> ${item.size}<br>
                                 <strong>Quantity:</strong> ${item.quantity}<br>
                                 <strong>Price:</strong> ₹${item.price}<br>
-                                <strong>Total:</strong> ₹${
-                                  item.price * item.quantity
-                                }
+                                <strong>Total:</strong> ₹${item.price * item.quantity
+            }
                             </p>
                         </div>
                     `
-                      )
-                      .join("")}
+        )
+        .join("")}
     
                     <p>Please find your invoice attached to this email.</p>
                 </div>
@@ -328,10 +325,27 @@ const verifyPayment = async (req: Request, res: Response) => {
 };
 
 const getAllOrders = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
+
+  // Get total count (without populating for efficiency)
+  const totalOrders = await Order.countDocuments();
+
+  // Get paginated orders with population
   const orders = await Order.find({})
     .populate("items.merchId")
-    .sort("-createdAt"); // Latest orders first
-  res.status(StatusCodes.OK).json({ orders, count: orders.length });
+    .sort("-createdAt")
+    .skip(skip)
+    .limit(limit);
+  res.status(StatusCodes.OK).json({
+    orders,
+    count: orders.length,
+    totalOrders,
+    totalPages: Math.ceil(totalOrders / limit),
+    currentPage: page
+  });
+  // res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 
 const getOrderById = async (req: Request, res: Response) => {

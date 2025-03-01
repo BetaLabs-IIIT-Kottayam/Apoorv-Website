@@ -67,6 +67,7 @@ services:
       SMTP_USER: "apoorv@iiitkottayam.ac.in"
       SMTP_PASS: "uzjj xxpr nfzt lhdy"
       NODE_ENV: production
+      NODE_OPTIONS: "--max-old-space-size=4096"
 
   client:
     build:

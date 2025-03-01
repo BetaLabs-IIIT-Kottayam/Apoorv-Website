@@ -16,7 +16,7 @@ export const fetchDashboardStats = async (): Promise<DashboardStats> => {
   return response.data;
 };
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // Type definitions
 type OrderStatus = "Pending" | "Paid" | "Expired" | "Delivered";
@@ -64,84 +64,111 @@ export interface Order {
   updatedAt: string;
 }
 
-interface OrdersResponse {
-  orders: Order[];
-  count: number;
-} // Adjust based on your setup
-
-export const fetchOrders = async (): Promise<OrdersResponse> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/order`,{
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    throw error;
-  }
-};
+// interface OrdersResponse {
+//   orders: Order[];
+//   count: number;
+// } // Adjust based on your setup
 
 // Custom hook for orders
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const loadOrders = async () => {
+  const fetchOrders = useCallback(async (pageNum = page) => {
     try {
       setIsLoading(true);
-      const { orders } = await fetchOrders();
-      setOrders(orders);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch orders")
+      setError(null);
+      
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/order?page=${pageNum}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setOrders(data.orders || []);
+      setTotalPages(data.totalPages || 1);
+      setPage(pageNum);
+      setTotalOrders(data.totalOrders || 0);
+      setCurrentPage(data.currentPage || pageNum);
+      return data;
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError(err instanceof Error ? err.message : "Failed to load orders. Please try again.");
+      // Return empty data instead of throwing to prevent component crashes
+      return { orders: [], count: 0, totalOrders: 0, totalPages: 0, currentPage: pageNum };
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadOrders();
-  }, []);
+  }, [page]);
 
   const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/order`, {
+      setError(null);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/order`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ id: orderId, status }),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
       }
 
-      // Refresh orders after update
-      await loadOrders();
-    } catch (error) {
-      console.error("Error updating order status:", error);
-      throw error;
+      // Update the order in the current state to avoid refetching
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order._id === orderId ? { ...order, status } : order
+        )
+      );
+      
+      return true;
+    } catch (err) {
+      console.error("Error updating order status:", err);
+      setError(err instanceof Error ? err.message : "Failed to update order status");
+      return false;
     }
   };
+
+  useEffect(() => {
+    fetchOrders(1);
+  }, []);
 
   return {
     orders,
     isLoading,
     error,
-    refreshOrders: loadOrders,
+    page: currentPage,
+    totalPages,
+    totalOrders,
+    fetchOrders,
     updateOrderStatus,
   };
 };
