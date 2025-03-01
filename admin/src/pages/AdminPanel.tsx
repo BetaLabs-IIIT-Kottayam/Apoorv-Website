@@ -140,31 +140,39 @@ const AdminLayout = () => {
   
     const confirmResendInvoice = async () => {
       if (!currentOrderId) return;
-  
+    
       try {
+        const token = localStorage.getItem("token");
         setIsResending(true);
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/order/resend-invoice`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({ id: currentOrderId }),
         });
-  
+    
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.msg || "Failed to resend invoice");
         }
-  
-        setSuccessMessage("Invoice resent successfully!");
-        setIsResendDialogOpen(false);
-  
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
+    
+        // Check if the response indicates the confirmation email was sent
+        const data = await response.json();
+        
+        if (data.success) {
+          setSuccessMessage("Invoice resent successfully!");
+          setIsResendDialogOpen(false); // Close dialog only on success
+          
+          // Clear success message after 3 seconds
+          setTimeout(() => {
+            setSuccessMessage("");
+          }, 3000);
+        }
       } catch (err) {
         console.error("Error resending invoice:", err);
+        setError("Failed to resend invoice");
       } finally {
         setIsResending(false);
       }
